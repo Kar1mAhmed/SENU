@@ -7,9 +7,9 @@ export default function Home() {
       <div className="absolute inset-0 bg-gradient-to-b from-[#1e1e1e] via-[#1e1e1e] via-[#5d31ff]/3 to-[#1e1e1e]"></div>
 
       {/* Enhanced glowing orb effects */}
-      <div className="absolute w-[600px] h-[600px] bg-[#5d31ff]/10 rounded-full blur-[100px] animate-pulse-slow"></div>
-      <div className="absolute w-[550px] h-[550px] bg-[#1e1e1e]/30 rounded-full blur-[80px] animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
-      <div className="absolute w-[580px] h-[580px] bg-[#5d31ff]/15 rounded-full blur-[90px] animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-[#5d31ff]/10 rounded-full blur-[100px] animate-pulse-slow"></div>
+      <div className="absolute w-[250px] h-[250px] md:w-[550px] md:h-[550px] bg-[#1e1e1e]/30 rounded-full blur-[80px] animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute w-[280px] h-[280px] md:w-[580px] md:h-[580px] bg-[#5d31ff]/15 rounded-full blur-[90px] animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
 
       <div className="relative z-10 text-center">
         {/* SENU text with glow */}
