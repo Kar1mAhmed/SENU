@@ -1,21 +1,17 @@
 'use client';
 
-import styles from './page.module.css';
-
 export default function Home() {
   return (
-    <main className={styles.main}>
-      <div className={styles.container}>
-        <div className={styles.loadingContainer}>
-          <h1 className={styles.senu}>SENU</h1>
-          <div className={styles.loadingDots}>
-            <span className={styles.dot}></span>
-            <span className={styles.dot}></span>
-            <span className={styles.dot}></span>
-          </div>
+    <div className="h-screen w-full bg-[#1e1e1e] flex items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-white text-6xl font-bold mb-4">SENU</h1>
+        <div className="flex justify-center gap-2 mb-4">
+          <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+          <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+          <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
         </div>
-        <p className={styles.subtitle}>Coming Soon</p>
+        <p className="text-white text-xl">Coming Soon</p>
       </div>
-    </main>
+    </div>
   );
 }
