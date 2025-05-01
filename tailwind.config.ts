@@ -16,6 +16,8 @@ const config: Config = {
             animation: {
                 'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                 'bounce': 'bounce 1s infinite',
+                'float-slow': 'float 6s ease-in-out infinite',
+                'float-very-slow': 'float 8s ease-in-out infinite',
             },
             keyframes: {
                 pulse: {
@@ -43,6 +45,10 @@ const config: Config = {
                     },
                 },
                 bounce: {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-20px)' },
+                },
+                float: {
                     '0%, 100%': { transform: 'translateY(0)' },
                     '50%': { transform: 'translateY(-20px)' },
                 },
