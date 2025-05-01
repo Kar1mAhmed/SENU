@@ -20,7 +20,7 @@ export default function Home() {
         </h1>
 
         {/* Modern Coming Soon text with subtle motion */}
-        <p className="text-xl font-light tracking-widest text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] animate-float-very-slow" style={{ animationDelay: '0.5s' }}>
+        <p className="text-lg md:text-xl font-light tracking-widest text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] animate-float-very-slow" style={{ animationDelay: '0.5s' }}>
           COMING SOON
         </p>
       </div>
