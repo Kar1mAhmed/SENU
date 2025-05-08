@@ -62,7 +62,7 @@ export default function Home() {
 
       <div className="relative z-10 text-center">
         {/* Logo */}
-        <div className="mb-0 md:mb-[-150px] mt-0 md:mt-[-150px]">
+        <div className="mb-[-75px] md:mb-[-150px] mt-0 md:mt-[-150px]">
           <img
             src="/logo.svg"
             alt="SENU"
