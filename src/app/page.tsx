@@ -8,8 +8,8 @@ const services = [
   "COMING SOON",
   "Shorts",
   "Branding",
-  "YouTube",
-  "Ads Design",
+  "Long Form",
+  "Ads",
   "Motion Graphics",
   "Social Media"
 ];
@@ -29,17 +29,17 @@ export default function Home() {
   }, [currentServiceIndex]);
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-black overflow-hidden px-4">
+    <div className="min-h-screen w-full flex items-center justify-center bg-black overflow-hidden px-2">
       {/* Background grid pattern */}
       <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5"></div>
 
       <div className="relative z-10 text-center max-w-6xl w-full">
         {/* Logo */}
-        <div className="mb-8 md:mb-12">
+        <div className="mb-6 md:mb-12">
           <img
             src="/logowhite.png"
             alt="SENU"
-            className="h-[120px] md:h-[180px] lg:h-[200px] w-auto mx-auto"
+            className="h-[120px] md:h-[100px] lg:h-[200px] w-auto mx-auto"
           />
         </div>
 
@@ -50,9 +50,9 @@ export default function Home() {
               key={currentServiceIndex}
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -50, opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-white font-alexandria absolute w-full whitespace-nowrap"
+              exit={{ y: -5, opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="text- sm:text-xl md:text-2xl lg:text-3xl text-white font-alexandria absolute w-full whitespace-nowrap"
             >
               {services[currentServiceIndex]}
             </motion.p>
