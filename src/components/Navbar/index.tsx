@@ -17,7 +17,7 @@ const Navbar = () => {
             {/* Left: Logo */}
             <div className="flex-shrink-0">
               <a href="/">
-                <img src="/logo.svg" alt="Senu Logo" className="w-[180px] h-[24px] md:w-[261px] md:h-[35px]" />
+                <img src="/logo.svg" alt="Senu Logo" className="w-[195px] h-[32px] md:w-[261px] md:h-[35px]" />
               </a>
             </div>
 
@@ -56,9 +56,9 @@ const Navbar = () => {
         <div className="md:hidden fixed top-[140px] left-0 w-full z-50 px-4">
           <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-3xl p-8">
             <nav className="flex flex-col items-center text-center gap-y-6">
-              <a href="/about" onClick={() => setIsMenuOpen(false)} className="font-alexandria text-base font-normal uppercase text-neutral-300 hover:text-white transition-colors w-full pb-4 border-b border-white/10">About</a>
-              <a href="/service" onClick={() => setIsMenuOpen(false)} className="font-alexandria text-base font-normal uppercase text-neutral-300 hover:text-white transition-colors w-full pb-4 border-b border-white/10">Service</a>
-              <a href="/portfolio" onClick={() => setIsMenuOpen(false)} className="font-alexandria text-base font-normal uppercase text-neutral-300 hover:text-white transition-colors w-full pb-4">Portfolio</a>
+              <a href="/about" onClick={() => setIsMenuOpen(false)} className="font-alexandria text-sm font-normal uppercase text-neutral-300 hover:text-white transition-colors w-full pb-4 border-b border-white/10">About</a>
+              <a href="/service" onClick={() => setIsMenuOpen(false)} className="font-alexandria text-sm font-normal uppercase text-neutral-300 hover:text-white transition-colors w-full pb-4 border-b border-white/10">Service</a>
+              <a href="/portfolio" onClick={() => setIsMenuOpen(false)} className="font-alexandria text-sm font-normal uppercase text-neutral-300 hover:text-white transition-colors w-full pb-4">Portfolio</a>
             </nav>
 
             <div className="flex flex-col items-center gap-y-8 mt-8">

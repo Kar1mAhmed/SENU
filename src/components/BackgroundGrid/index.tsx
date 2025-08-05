@@ -13,7 +13,7 @@ const BackgroundGrid = () => {
           <div key={colIndex} className="border-r-2 border-grid">
             <div
               className={`flex h-full flex-col items-center justify-around ${
-                colIndex % 1.9 !== 0 ? 'pt-20' : ''
+                colIndex % 2 === 1 ? 'pt-20' : ''
               }`}
             >
               {[...Array(5)].map((_, rowIndex) => {
