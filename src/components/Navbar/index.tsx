@@ -17,7 +17,7 @@ const Navbar = () => {
             {/* Left: Logo */}
             <div className="flex-shrink-0">
               <a href="/">
-                <img src="/logo.svg" alt="Senu Logo" className="w-[195px] h-[32px] md:w-[261px] md:h-[35px]" />
+                <img src="/logo.svg" alt="Senu Logo" className="ml-2 w-[200px] h-[32px] md:w-[261px] md:h-[35px]" />
               </a>
             </div>
 
@@ -43,7 +43,7 @@ const Navbar = () => {
 
             {/* Mobile Menu Button */}
             <div className="md:hidden">
-              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white text-2xl">
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="mr-2 text-white text-[25px]">
                 <FiMenu />
               </button>
             </div>
