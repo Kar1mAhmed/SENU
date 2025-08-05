@@ -8,57 +8,43 @@ const config: Config = {
     ],
     theme: {
         extend: {
+
             colors: {
-                primary: '#5d31ff',
-                secondary: '#1e1e1e',
-                'primary-light': '#7d5fff',
+                black: '#070707',
+                blue: {
+                    DEFAULT: '#0055D1',
+                    soft:    '#6EA2E3',   // new
+                    light: '#DCF0F4',
+                },
+                red: {
+                    DEFAULT: '#C13C1B',
+                    light: '#E6CCE2',
+                },
+                yellow: {
+                    DEFAULT: '#FAC53A',
+                    light: '#F1C5A4',
+                },
+                green: {
+                    DEFAULT: '#4FAF78',
+                    soft:    '#91CCAA',   // new
+
+                    light: '#D4E9DD',
+                },
+                grid: '#1A1A1A',
             },
             fontFamily: {
-                'alexandria': ['Alexandria', 'sans-serif'],
+                'new-black': ['var(--font-new-black)', 'sans-serif'],
+                alexandria: ['var(--font-alexandria)', 'sans-serif'],
             },
-            animation: {
-                'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                'bounce': 'bounce 1s infinite',
-                'float-slow': 'float 6s ease-in-out infinite',
-                'float-very-slow': 'float 8s ease-in-out infinite',
-            },
-            keyframes: {
-                pulse: {
-                    '0%, 100%': { opacity: '1' },
-                    '50%': { opacity: '0.5' },
-                },
-                gradient: {
-                    '0%, 100%': {
-                        'background-size': '200% 200%',
-                        'background-position': 'left center',
-                    },
-                    '50%': {
-                        'background-size': '200% 200%',
-                        'background-position': 'right center',
-                    },
-                },
-                'text-gradient': {
-                    '0%, 100%': {
-                        'background-size': '200% 200%',
-                        'background-position': 'left center',
-                    },
-                    '50%': {
-                        'background-size': '200% 200%',
-                        'background-position': 'right center',
-                    },
-                },
-                bounce: {
-                    '0%, 100%': { transform: 'translateY(0)' },
-                    '50%': { transform: 'translateY(-20px)' },
-                },
-                float: {
-                    '0%, 100%': { transform: 'translateY(0)' },
-                    '50%': { transform: 'translateY(-20px)' },
-                },
+            backgroundImage: {
+                'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                'gradient-conic':
+                    'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+                'glass-fill': 'radial-gradient(circle at top right, rgba(77, 77, 77, 0.5) 0%, rgba(77, 77, 77, 0.2) 100%)',
             },
         },
     },
     plugins: [],
 };
 
-export default config; 
+export default config;

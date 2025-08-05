@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: 'NewBlack';
+    src: url('/fonts/New-Black.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+  }
+}
+
+
+body {
+  background-color: #070707;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
