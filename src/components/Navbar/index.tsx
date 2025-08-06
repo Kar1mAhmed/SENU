@@ -34,10 +34,10 @@ const Navbar = () => {
             {/* Right: Socials and Button (Desktop) */}
             <div className="hidden md:flex flex-shrink-0 items-center gap-x-6">
               <div className="flex items-center gap-x-5 text-neutral-300 text-[15px]"> 
-                <a href="https://www.behance.net/senustudio" className="hover:text-white transition-colors"><FaBehance /></a>
-                <a href="https://www.instagram.com/senustudio?igsh=MWlwYXVsNzhjaGl4OQ==" className="hover:text-white transition-colors"><FaInstagram /></a>
-                <a href="https://vimeo.com/user148650237?fl=pp&fe=sh" className="hover:text-white transition-colors"><FaVimeo /></a>
-                <a href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09" className="hover:text-white transition-colors"><SiX /></a>
+                <a href="https://www.behance.net/senustudio" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><FaBehance /></a>
+                <a href="https://www.instagram.com/senustudio?igsh=MWlwYXVsNzhjaGl4OQ==" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><FaInstagram /></a>
+                <a href="https://vimeo.com/user148650237?fl=pp&fe=sh" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><FaVimeo /></a>
+                <a href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><SiX /></a>
               </div>
               <Button>Get in touch</Button>
             </div>
@@ -64,10 +64,10 @@ const Navbar = () => {
 
             <div className="flex flex-col items-center gap-y-8 mt-8">
               <div className="flex items-center gap-x-8 text-white text-2xl">
-              <a href="https://www.behance.net/senustudio" className="hover:text-white transition-colors"><FaBehance /></a>
-                <a href="https://www.instagram.com/senustudio?igsh=MWlwYXVsNzhjaGl4OQ==" className="hover:text-white transition-colors"><FaInstagram /></a>
-                <a href="https://vimeo.com/user148650237?fl=pp&fe=sh" className="hover:text-white transition-colors"><FaVimeo /></a>
-                <a href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09" className="hover:text-white transition-colors"><SiX /></a>
+              <a href="https://www.behance.net/senustudio" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><FaBehance /></a>
+                <a href="https://www.instagram.com/senustudio?igsh=MWlwYXVsNzhjaGl4OQ==" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><FaInstagram /></a>
+                <a href="https://vimeo.com/user148650237?fl=pp&fe=sh" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><FaVimeo /></a>
+                <a href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><SiX /></a>
               </div>
               <Button className="w-full h-[48px]">Get in touch</Button>
             </div>
