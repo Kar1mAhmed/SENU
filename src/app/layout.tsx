@@ -4,8 +4,8 @@ import localFont from 'next/font/local';
 import './../styles/globals.css';
 
 export const metadata: Metadata = {
-  title: 'SENU',
-  description: 'SENU - Creative Studio',
+  title: 'Senu',
+  description: 'Senu - Creative Studio',
 };
 
 const alexandria = Alexandria({

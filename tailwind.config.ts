@@ -13,7 +13,7 @@ const config: Config = {
                 black: '#070707',
                 blue: {
                     DEFAULT: '#0055D1',
-                    soft:    '#6EA2E3',   // new
+                    soft: '#6EA2E3',   // new
                     light: '#DCF0F4',
                 },
                 red: {
@@ -26,7 +26,7 @@ const config: Config = {
                 },
                 green: {
                     DEFAULT: '#4FAF78',
-                    soft:    '#91CCAA',   // new
+                    soft: '#91CCAA',   // new
 
                     light: '#D4E9DD',
                 },
