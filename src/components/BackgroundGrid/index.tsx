@@ -8,9 +8,12 @@ const iconUrls = [
 const BackgroundGrid = () => {
   return (
     <div className="fixed inset-0 -z-10 h-full w-full overflow-hidden">
-      <div className="relative grid h-full w-full grid-cols-4">
+      <div className="relative grid h-full w-full grid-cols-2 md:grid-cols-4">
         {[...Array(4)].map((_, colIndex) => (
-          <div key={colIndex} className="border-r-2 border-grid">
+          <div
+            key={colIndex}
+            className={`border-r-2 border-grid ${colIndex >= 2 ? 'hidden md:block' : ''}`}
+          >
             <div
               className={`flex h-full flex-col items-center justify-around ${
                 colIndex % 2 === 1 ? 'pt-20' : ''

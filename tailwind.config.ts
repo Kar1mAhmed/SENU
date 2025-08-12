@@ -43,7 +43,8 @@ const config: Config = {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
                 'gradient-conic':
                     'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-                'glass-fill': 'radial-gradient(circle at top right, rgba(77, 77, 77, 0.5) 0%, rgba(77, 77, 77, 0.2) 100%)',
+                'glass-fill': 'radial-gradient(circle at top left, rgba(77, 77, 77, 0.5) 0%, rgba(77, 77, 77, 0.2) 100%)',
+                'glass-fill-clients': 'radial-gradient(ellipse  at top left, rgba(77, 77, 77, 0.5) -10%, rgba(77, 77, 77, 0.2) 100%)',
             },
 
         },
