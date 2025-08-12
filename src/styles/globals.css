@@ -13,7 +13,7 @@
 
   @media (max-width: 767px) {
     .animate-scroll {
-      animation-duration: 5zs;
+      animation-duration: 4s;
     }
   }
 }
