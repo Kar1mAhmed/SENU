@@ -27,7 +27,7 @@ const Ribbon = () => {
   const repeatedIcons = Array(10).fill(iconUrls).flat();
 
   return (
-    <div className="relative w-full h-32 overflow-hidden pointer-events-none">
+    <div className="relative w-full h-40 overflow-hidden pointer-events-none">
       {/* Blue Ribbon */}
       <div
         className="absolute top-1/2 w-full h-[45px] bg-blue transform -rotate-[2.2deg] flex items-center justify-center"

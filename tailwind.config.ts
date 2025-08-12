@@ -27,8 +27,11 @@ const config: Config = {
                 green: {
                     DEFAULT: '#4FAF78',
                     soft: '#91CCAA',   // new
-
                     light: '#D4E9DD',
+                },
+                purple: {
+                    DEFAULT: '#8B5A9F',
+                    light: '#C8A8D8',
                 },
                 grid: '#1A1A1A',
             },
@@ -42,6 +45,7 @@ const config: Config = {
                     'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
                 'glass-fill': 'radial-gradient(circle at top right, rgba(77, 77, 77, 0.5) 0%, rgba(77, 77, 77, 0.2) 100%)',
             },
+
         },
     },
     plugins: [],
