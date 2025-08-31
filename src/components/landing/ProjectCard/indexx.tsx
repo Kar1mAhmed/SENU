@@ -57,13 +57,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, isLeft }) => 
                     isLeft 
                         ? 'top-[10%]' // Left column: top 20% of image height
                         : 'bottom-[10%]' // Right column: bottom (with 20% offset from bottom)
-                } w-[8%] aspect-[1/4] min-w-[30px] max-w-[45px] min-h-[90px] max-h-[180px] ${colors.bg} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90`}>
+                } w-[7%] aspect-[1/5] min-w-[30px] max-w-[45px] min-h-[90px] max-h-[170px] ${colors.bg} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90`}>
                     {icons.map((icon, iconIndex) => (
                         <Icon 
                             key={iconIndex} 
                             src={icon} 
                             colorClass={colors.iconColor} 
-                            className="w-[50%] h-[50%] min-w-[12px] min-h-[12px] max-w-[22px] max-h-[22px]" 
+                            className="w-[55%] h-[55%] min-w-[12px] min-h-[12px] max-w-[24px] max-h-[24px]" 
                         />
                     ))}
                 </div>
