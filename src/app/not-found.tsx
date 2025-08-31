@@ -1,8 +1,8 @@
 'use client';
 import React from 'react';
-import Navbar from '@/components/Navbar';
-import BackgroundGrid from '@/components/BackgroundGrid';
-import SingleRibbon from '@/components/SingleRibbon';
+import Navbar from '@/components/main/Navbar';
+import BackgroundGrid from '@/components/main/BackgroundGrid';
+import SingleRibbon from '@/components/main/SingleRibbon';
 
 export default function GlobalNotFound() {
   return (
@@ -55,7 +55,7 @@ export default function GlobalNotFound() {
       {/* Orange bottom ribbon with yellow icons - part of page flow */}
       <div className="w-full">
         <SingleRibbon 
-          bgClass="bg-red" 
+          bgClass="bg-orange" 
           iconColorClass="bg-yellow" 
           heightClass="h-[35px] md:h-[45px]"
         />

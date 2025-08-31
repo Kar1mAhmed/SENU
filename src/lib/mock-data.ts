@@ -1,0 +1,68 @@
+import { Project } from './types';
+
+export const mockProjects: Project[] = [
+    {
+        id: '1',
+        name: 'Brand Suggestions',
+        client: 'T3d',
+        work: ['Branding', 'Logo design'],
+        imageUrl: '/images/service-branding.jpg',
+        category: 'Branding',
+    },
+    {
+        id: '2',
+        name: 'Corporate Identity',
+        client: 'Stark Industries',
+        work: ['Branding'],
+        imageUrl: '/images/service-branding.jpg',
+        category: 'Branding',
+    },
+    {
+        id: '3',
+        name: 'Logo System',
+        client: 'Innovate Co',
+        work: ['Logo design'],
+        imageUrl: '/images/service-branding.jpg',
+        category: 'Logo design',
+    },
+    {
+        id: '4',
+        name: 'Symbol Design',
+        client: 'Symbolic Inc.',
+        work: ['Logo design'],
+        imageUrl: '/images/service-branding.jpg',
+        category: 'Logo design',
+    },
+    {
+        id: '5',
+        name: 'Web App UI',
+        client: 'Future Tech',
+        work: ['UI/UX'],
+        imageUrl: '/images/service-branding.jpg',
+        category: 'UI/UX',
+    },
+    {
+        id: '6',
+        name: 'Mobile App UX',
+        client: 'Appify',
+        work: ['UI/UX'],
+        imageUrl: '/images/service-branding.jpg',
+        category: 'UI/UX',
+    },
+    {
+        id: '7',
+        name: 'Product Packaging',
+        client: 'Eco Goods',
+        work: ['Products'],
+        imageUrl: '/images/service-branding.jpg',
+        category: 'Products',
+    },
+    {
+        id: '8',
+        name: 'Gadget Design',
+        client: 'Gadgetron',
+        work: ['Products'],
+        imageUrl: '/images/service-branding.jpg',
+        category: 'Products',
+    },
+];

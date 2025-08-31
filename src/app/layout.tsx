@@ -29,8 +29,8 @@ const newBlack = localFont({
   variable: '--font-new-black',
 });
 
-import BackgroundGrid from '../components/BackgroundGrid';
-import Navbar from '@/components/Navbar';
+import BackgroundGrid from '../components/main/BackgroundGrid';
+import Navbar from '@/components/main/Navbar';
 
 
 export default function RootLayout({

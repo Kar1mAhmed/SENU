@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Button from '../Button';
+import Button from '@/components/main/Button';
 import { FaInstagram, FaBehance, FaVimeo} from 'react-icons/fa';
 import { SiX } from 'react-icons/si';
 import { FiMenu, FiX } from 'react-icons/fi';

@@ -1,8 +1,9 @@
-import EmailSignup from '@/components/EmailSignup';
-import HeroSection from '@/components/HeroSection';
-import Ribbon from '@/components/Ribbon';
-import WhatWeDo from '@/components/WhatWeDo';
-import OurClients from '@/components/OurClients';
+import EmailSignup from '@/components/main/EmailSignup';
+import HeroSection from '@/components/landing/HeroSection';
+import Ribbon from '@/components/main/Ribbon';
+import WhatWeDo from '@/components/landing/WhatWeDo';
+import OurClients from '@/components/landing/OurClients';
+import ProjectHighlight from '@/components/landing/ProjectHighlight';
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
         <Ribbon />
         <WhatWeDo />
         <OurClients />
+        <ProjectHighlight />
       </main>
     </div>
   );

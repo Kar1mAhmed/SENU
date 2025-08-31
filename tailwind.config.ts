@@ -10,14 +10,26 @@ const config: Config = {
         extend: {
 
             colors: {
+                
                 black: '#070707',
                 blue: {
                     DEFAULT: '#0055D1',
+                    40: "#60A5FA",
                     soft: '#6EA2E3',   // new
                     light: '#DCF0F4',
                 },
-                red: {
+                orange: {
                     DEFAULT: '#C13C1B',
+                    50: '#FF7124',
+                    30: '#FDBA74',
+                    soft: '#DD846E',
+                    light: '#E6CCE2',
+                },
+                red: {
+                    DEFAULT: '#EF4444',
+                    50:"#EF4444",
+                    20: "#FECACA",
+                    soft: '#DD846E',
                     light: '#E6CCE2',
                 },
                 yellow: {
@@ -26,6 +38,7 @@ const config: Config = {
                 },
                 green: {
                     DEFAULT: '#4FAF78',
+                    40: '#6EE7B7',
                     soft: '#91CCAA',   // new
                     light: '#D4E9DD',
                 },
@@ -45,6 +58,17 @@ const config: Config = {
                     'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
                 'glass-fill': 'radial-gradient(circle at top left, rgba(77, 77, 77, 0.5) 0%, rgba(77, 77, 77, 0.2) 100%)',
                 'glass-fill-clients': 'radial-gradient(ellipse  at top left, rgba(77, 77, 77, 0.5) -10%, rgba(77, 77, 77, 0.2) 100%)',
+                'button-border': 'linear-gradient(to right, rgba(77, 77, 77, 0.1) 0%, rgba(77, 77, 77, 0.5) 35%, rgba(77, 77, 77, 0.1) 68%, rgba(77, 77, 77, 0.5) 100%)',
+                'stroke-gradient': 'linear-gradient(to right, rgba(77, 77, 77, 0.1) 0%, rgba(77, 77, 77, 0.5) 35%, rgba(77, 77, 77, 0.1) 68%, rgba(77, 77, 77, 0.5) 100%)',
+            },
+            animation: {
+                'scroll': 'scroll 100s linear infinite',
+            },
+            keyframes: {
+                'scroll': {
+                    from: { transform: 'translateX(0)' },
+                    to: { transform: 'translateX(-100%)' },
+                }
             },
 
         },

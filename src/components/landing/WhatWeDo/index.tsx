@@ -43,7 +43,7 @@ const WhatWeDo: React.FC = () => {
         <section className="w-full py-16 md:py-20 overflow-hidden">
             <div className="max-w-10xl px-4 md:px-6">
                 <div className="text-center mb-16 md:mb-20">
-                    <h2 className="font-new-black text-white text-4xl md:text-7xl">What We Do</h2>
+                    <h2 className="font-new-black text-white font-light text-4xl md:text-7xl">What We Do</h2>
                 </div>
                                 <div className="flex flex-col lg:flex-row items-center justify-center gap-8 md:gap-4">
                     {services.map((service) => (

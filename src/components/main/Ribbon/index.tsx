@@ -1,4 +1,5 @@
 import React from 'react';
+import Icon from '../Icon';
 
 const iconUrls = [
   '/Icons/bird.svg',
@@ -6,22 +7,6 @@ const iconUrls = [
   '/Icons/columns.svg',
   '/Icons/eye.svg',
 ];
-
-const Icon = ({ src, colorClass }: { src: string; colorClass: string }) => (
-  <div
-    className={`w-4 h-4 md:w-6 md:h-6 ${colorClass}`}
-    style={{
-      WebkitMaskImage: `url(${src})`,
-      maskImage: `url(${src})`,
-      WebkitMaskSize: 'contain',
-      maskSize: 'contain',
-      WebkitMaskRepeat: 'no-repeat',
-      maskRepeat: 'no-repeat',
-      WebkitMaskPosition: 'center',
-      maskPosition: 'center',
-    }}
-  />
-);
 
 const Ribbon = () => {
   const repeatedIcons = Array(10).fill(iconUrls).flat().sort(() => Math.random() - 0.5);
