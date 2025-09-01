@@ -27,30 +27,30 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({ className = '' }) => {
     const metrics: Metric[] = [
         {
             id: '1',
-            value: '+70M',
+            value: '700M+',
             label: 'Views Gained',
-            description: 'Views gained for all projects',
+            description: 'Views gained on all platforms',
             colorClass: 'bg-green'
         },
         {
             id: '2',
-            value: '35%',
+            value: '45%',
             label: 'Engagement Boost',
-            description: 'Average increase in engagement',
+            description: 'Average increase in engagement for our clients',
             colorClass: 'bg-blue'
         },
         {
             id: '3',
             value: '620+',
             label: 'Projects Delivered',
-            description: 'Successful launches',
+            description: 'Successful projects completed',
             colorClass: 'bg-red-50'
         },
         {
             id: '4',
-            value: '195',
+            value: '195+',
             label: 'Clients',
-            description: 'Customers worked with us',
+            description: 'Clients worked with us',
             colorClass: 'bg-orange-50'
         }
     ];
