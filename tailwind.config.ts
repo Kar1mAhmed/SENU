@@ -34,7 +34,7 @@ const config: Config = {
                 },
                 yellow: {
                     DEFAULT: '#FAC53A',
-                    light: '#F1C5A4',
+                    light: '#FEF08A',
                 },
                 green: {
                     DEFAULT: '#4FAF78',

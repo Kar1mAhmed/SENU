@@ -22,7 +22,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({ className = '' }) => {
         { bg: 'bg-green', iconColor: 'bg-green-40' },
         { bg: 'bg-red-50', iconColor: 'bg-red-20' },
         { bg: 'bg-blue', iconColor: 'bg-blue-40' },
-        { bg: 'bg-orange-50', iconColor: 'bg-orange-30' },
+        { bg: 'bg-yellow', iconColor: 'bg-yellow-light' },
     ];
     const metrics: Metric[] = [
         {
@@ -70,7 +70,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({ className = '' }) => {
                             {metrics.map((metric, index) => (
                                 <div
                                     key={metric.id}
-                                    className="bg-transparent border border-[#474747]/30 rounded-lg p-6 md:p-8 flex flex-col items-center text-center hover:border-[#474747]/60 transition-all duration-300"
+                                    className="bg-black border border-[#474747]/30 rounded-lg p-6 md:p-8 flex flex-col items-center text-center hover:border-[#474747]/60 transition-all duration-300"
                                 >
                                     {/* Icon/Accent */}
                                     <div className={`w-12 h-12 md:w-16 md:h-16 ${colorVariations[index].bg} rounded-full mb-4 md:mb-6 flex items-center justify-center`}>
