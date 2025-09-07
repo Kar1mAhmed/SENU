@@ -27,7 +27,7 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({ className = '' }) => {
     const metrics: Metric[] = [
         {
             id: '1',
-            value: '700M+',
+            value: '70M+',
             label: 'Views Gained',
             description: 'Views gained on all platforms',
             colorClass: 'bg-green'
@@ -63,41 +63,41 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({ className = '' }) => {
                     Our <span className="font-medium">Impact</span>
                 </h2>
 
-                {/* Metrics Grid */}
-                <div className="flex justify-center w-full px-4">
-                    <div className="w-full max-w-[1000px] md:max-w-[1900px] lg:max-w-[1900px] xl:max-w-[1980px]">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
-                            {metrics.map((metric, index) => (
-                                <div
-                                    key={metric.id}
-                                    className="bg-black border border-[#474747]/30 rounded-lg p-6 md:p-8 flex flex-col items-center text-center hover:border-[#474747]/60 transition-all duration-300"
-                                >
+                {/* Metrics Grid - Aligned with BackgroundGrid */}
+                <div className="w-full h-full">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-rows-2 md:grid-rows-1 gap-y-8 md:gap-y-0 h-full w-full">
+                        {metrics.map((metric, index) => (
+                            <div
+                                key={metric.id}
+                                className="flex justify-center items-center px-3 md:px-4 lg:px-6"
+                            >
+                                <div className="bg-black border-[#474747]/20 border rounded-lg mt-4 md:mt-2 p-4 md:p-6 lg:p-8 flex flex-col items-center justify-center text-center w-full max-w-[260px] md:max-w-[300px] lg:max-w-[360px] h-[200px] md:h-[240px] lg:h-[280px]">
                                     {/* Icon/Accent */}
-                                    <div className={`w-12 h-12 md:w-16 md:h-16 ${colorVariations[index].bg} rounded-full mb-4 md:mb-6 flex items-center justify-center`}>
-                                            <Icon
-                                                src={icons[index]}
-                                                colorClass={colorVariations[index].iconColor}
-                                                className="w-[60%] h-[60%] min-w-[12px] min-h-[12px] max-w-[26px] max-h-[26px]"
-                                            />
+                                    <div className={`w-10 h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 ${colorVariations[index].bg} rounded-full mb-3 md:mb-4 lg:mb-6 flex items-center justify-center`}>
+                                        <Icon
+                                            src={icons[index]}
+                                            colorClass={colorVariations[index].iconColor}
+                                            className="w-[60%] h-[60%] min-w-[10px] min-h-[10px] max-w-[24px] max-h-[24px]"
+                                        />
                                     </div>
 
                                     {/* Value */}
-                                    <h3 className="text-2xl md:text-3xl lg:text-4xl text-white font-light mb-2">
+                                    <h3 className="text-xl md:text-2xl lg:text-4xl text-white font-light mb-2">
                                         {metric.value}
                                     </h3>
 
                                     {/* Label */}
-                                    <p className="text-white font-medium text-sm md:text-base mb-1">
+                                    <p className="text-white font-medium text-xs md:text-sm lg:text-base mb-1">
                                         {metric.label}
                                     </p>
 
                                     {/* Description */}
-                                    <p className="text-gray-400 text-xs md:text-sm">
+                                    <p className="text-gray-400 text-xs md:text-sm leading-tight">
                                         {metric.description}
                                     </p>
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

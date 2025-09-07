@@ -1,23 +1,44 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '@/components/main/Button';
-import { FaInstagram, FaBehance, FaVimeo} from 'react-icons/fa';
+import { FaInstagram, FaBehance, FaVimeo } from 'react-icons/fa';
 import { SiX } from 'react-icons/si';
 import { FiMenu, FiX } from 'react-icons/fi';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    console.log('🧭 Navbar scroll detection activated - playing hide and seek with the footer!');
+
+    const handleScroll = () => {
+      const footer = document.querySelector('footer');
+      if (footer) {
+        const footerRect = footer.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+
+        // Hide navbar when footer is 200px from top of viewport
+        const shouldHide = footerRect.top <= viewportHeight - 200;
+        setIsVisible(!shouldHide);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-40 pt-[46px] px-4 lg:px-0">
-        <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-full max-w-[1240px] h-[71px] mx-auto pl-4 pr-4 lg:pl-[64px] lg:pr-[24px] py-[16px] flex items-center">
+      <header className={`fixed top-0 left-0 w-full z-40 pt-[46px] px-4 lg:px-0 transition-all duration-500 ease-in-out ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
+        }`}>
+        <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-full w-full max-w-[1000px] lg:max-w-[1100px] xl:max-w-[1280px] h-[71px] mx-auto pr-4 lg:pr-[24px] py-[16px] flex items-center">
           <nav className="relative flex items-center justify-between w-full">
             {/* Left: Logo */}
             <div className="flex-shrink-0">
               <a href="/">
-                <img src="/logo.svg" alt="Senu Logo" className="ml-2 w-[200px] h-[32px] md:w-[261px] md:h-[35px]" />
+                <img src="/logo.svg" alt="Senu Logo" className="w-[45px] h-[45px] lg:w-[55px] lg:h-[55px] mx-8 lg:mx-12" />
               </a>
             </div>
 
@@ -32,7 +53,7 @@ const Navbar = () => {
 
             {/* Right: Socials and Button (Desktop) */}
             <div className="hidden lg:flex flex-shrink-0 items-center gap-x-6">
-              <div className="flex items-center gap-x-5 text-neutral-300 text-[15px]"> 
+              <div className="flex items-center gap-x-5 text-neutral-300 text-[15px]">
                 <a href="https://www.behance.net/senustudio" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><FaBehance /></a>
                 <a href="https://www.instagram.com/senustudio?igsh=MWlwYXVsNzhjaGl4OQ==" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><FaInstagram /></a>
                 <a href="https://vimeo.com/user148650237?fl=pp&fe=sh" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><FaVimeo /></a>
@@ -63,7 +84,7 @@ const Navbar = () => {
 
             <div className="flex flex-col items-center gap-y-8 mt-8">
               <div className="flex items-center gap-x-8 text-white text-2xl">
-              <a href="https://www.behance.net/senustudio" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><FaBehance /></a>
+                <a href="https://www.behance.net/senustudio" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><FaBehance /></a>
                 <a href="https://www.instagram.com/senustudio?igsh=MWlwYXVsNzhjaGl4OQ==" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><FaInstagram /></a>
                 <a href="https://vimeo.com/user148650237?fl=pp&fe=sh" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><FaVimeo /></a>
                 <a href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><SiX /></a>

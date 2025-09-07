@@ -19,3 +19,20 @@ export type Project = {
   imageUrl: string;
   category: 'Branding' | 'Logo design' | 'UI/UX' | 'Products' | 'Prints' | 'Motions' | 'Shorts';
 };
+
+export type Testimonial = {
+  id: string;
+  name: string;
+  position: string;
+  company: string;
+  testimonial: string;
+  personImage: string;
+  backgroundImage: string;
+  backgroundColor: string;
+};
+
+export type FAQ = {
+  id: string;
+  question: string;
+  answer: string;
+};

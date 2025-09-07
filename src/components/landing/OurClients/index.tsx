@@ -18,7 +18,8 @@ const clientLogos = [
 const OurClients: React.FC = () => {
     return (
         <section className="py-16 md:py-20">
-            <div className="max-w-7xl mx-auto md:px-6 lg:px-8">
+            <div className="flex justify-center w-full px-4">
+                <div className="w-full max-w-[1000px] lg:max-w-[1100px] xl:max-w-[1280px]">
                 <h2 className="text-4xl font-light ml-2 text-white sm:text-5xl md:text-6xl">
                     Our
                     <br />
@@ -34,6 +35,7 @@ const OurClients: React.FC = () => {
                             ))}
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </section>
