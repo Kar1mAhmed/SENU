@@ -10,9 +10,6 @@ const clientLogos = [
     { name: 'oryx', src: '/images/clients/7.svg' },
     { name: 'khazna', src: '/images/clients/8.svg' },
     { name: 'lego', src: '/images/clients/9.svg' },
-    { name: 'tanoreen', src: '/images/clients/10.svg' },
-    { name: 'tanoreen', src: '/images/clients/11.svg' },
-
 ];
 
 const OurClients: React.FC = () => {
