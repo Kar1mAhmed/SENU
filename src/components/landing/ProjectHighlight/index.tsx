@@ -77,7 +77,7 @@ const ProjectHighlight: React.FC = () => {
                                         .map((project, idx) => {
                                             const originalIndex = idx * 2;
                                             return (
-                                                <div key={project.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[560px]">
+                                                <div key={project.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
                                                     <ProjectCard 
                                                         project={project} 
                                                         index={originalIndex}
@@ -96,7 +96,7 @@ const ProjectHighlight: React.FC = () => {
                                         .map((project, idx) => {
                                             const originalIndex = (idx * 2) + 1;
                                             return (
-                                                <div key={project.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[560px]">
+                                                <div key={project.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
                                                     <ProjectCard 
                                                         project={project} 
                                                         index={originalIndex}

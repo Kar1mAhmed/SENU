@@ -23,7 +23,7 @@ const Navbar = () => {
         const viewportHeight = window.innerHeight;
 
         // Hide navbar when footer is 200px from top of viewport
-        const shouldHide = footerRect.top <= viewportHeight - 100;
+        const shouldHide = footerRect.top <= viewportHeight - 400;
         setIsVisible(!shouldHide);
       }
     };

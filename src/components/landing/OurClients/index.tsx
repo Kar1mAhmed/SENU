@@ -15,9 +15,9 @@ const clientLogos = [
 const OurClients: React.FC = () => {
     return (
         <section className="py-16 md:py-20">
-            <div className="flex justify-center w-full px-4">
+            <div className="flex justify-center w-full ">
                 <div className="w-full max-w-[1000px] lg:max-w-[1100px] xl:max-w-[1280px]">
-                <h2 className="text-4xl font-light ml-2 text-white sm:text-5xl md:text-6xl">
+                <h2 className="text-4xl font-light ml-2 text-white sm:text-5xl md:text-6xl px-4 md:px-0">
                     Our
                     <br />
                     <span className="text-[#FAC53A] font-medium"> Clients </span>

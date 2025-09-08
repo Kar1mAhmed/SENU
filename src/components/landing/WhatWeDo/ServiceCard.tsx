@@ -22,13 +22,13 @@ const ServiceCard: React.FC<WithClassName<ServiceCardProps>> = ({ service, class
       >
         {/* Background media (transparent art) */}
         <div
-          className="absolute inset-0 bg-cover bg-center opacity-50 group-hover:opacity-70 transition-opacity duration-300"
+          className="absolute inset-0 bg-cover bg-center opacity-40 group-hover:opacity-90 transition-opacity duration-300"
           style={{ backgroundImage: `url(${imageSrc})` }}
         />
 
         {/* Grid pattern overlay */}
         <div
-          className="absolute inset-0 opacity-40"
+          className="absolute inset-0 opacity-30"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',

@@ -13,8 +13,7 @@ export default function TestimonialCard({ testimonial, className = '', style }: 
 
     return (
         <div
-            className={`relative overflow-hidden flex flex-col justify-between p-6 text-white flex-shrink-0 w-[286px] h-[276px] lg:w-[360px] lg:h-[348px] ${className}`}
-            style={{ backgroundColor: testimonial.backgroundColor, ...style }}
+            className={`relative overflow-hidden flex flex-col justify-between bg-glass-fill backdrop-blur-md  rounded-xl p-8 backdrop-blur-sm mx-4 text-white flex-shrink-0 w-[286px] h-[276px] lg:w-[360px] lg:h-[348px] ${className}`}
         >
             {/* Background Image */}
             <div className="absolute inset-0 opacity-20">

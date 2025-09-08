@@ -6,7 +6,7 @@ export const mockProjects: Project[] = [
         name: 'Brand Suggestions',
         client: 'T3d',
         work: ['Branding', 'Logo design'],
-        imageUrl: '/images/service-branding.jpg',
+        imageUrl: '/images/covers/2.jpg',
         category: 'Branding',
     },
     {
@@ -14,7 +14,7 @@ export const mockProjects: Project[] = [
         name: 'Corporate Identity',
         client: 'Stark Industries',
         work: ['Branding'],
-        imageUrl: '/images/service-branding.jpg',
+        imageUrl: '/images/covers/1.jpg',
         category: 'Branding',
     },
     {
@@ -22,7 +22,7 @@ export const mockProjects: Project[] = [
         name: 'Logo System',
         client: 'Innovate Co',
         work: ['Logo design'],
-        imageUrl: '/images/service-branding.jpg',
+        imageUrl: '/images/covers/4.jpg',
         category: 'Logo design',
     },
     {
@@ -30,7 +30,7 @@ export const mockProjects: Project[] = [
         name: 'Symbol Design',
         client: 'Symbolic Inc.',
         work: ['Logo design'],
-        imageUrl: '/images/service-branding.jpg',
+        imageUrl: '/images/covers/3.jpg',
         category: 'Logo design',
     },
     {
@@ -74,8 +74,8 @@ export const mockTestimonials: Testimonial[] = [
         position: 'Co-Founder',
         company: 'Co-Founder Agency',
         testimonial: 'The material is really updated, so I don\'t think I need to go to anywhere else for learning.',
-        personImage: '/images/clients/job-ghadzi.jpg',
-        backgroundImage: '/images/clients/bg-purple.jpg',
+        personImage: '/images/head/1.jpg',
+        backgroundImage: '/images/clients/1.svg',
         backgroundColor: '#0055D1' // Brand blue
     },
     {
@@ -84,8 +84,8 @@ export const mockTestimonials: Testimonial[] = [
         position: 'Senior Entrepreneur',
         company: 'Senior Entrepreneur',
         testimonial: 'Very different from conventional learning, this one is easier, should be more like this.',
-        personImage: '/images/clients/james-son.jpg',
-        backgroundImage: '/images/clients/bg-blue.jpg',
+        personImage: '/images/head/2.jpg',
+        backgroundImage: '/images/clients/2.svg',
         backgroundColor: '#C13C1B' // Brand orange
     },
     {
@@ -94,8 +94,8 @@ export const mockTestimonials: Testimonial[] = [
         position: 'Senior Entrepreneur',
         company: 'Senior Entrepreneur',
         testimonial: 'Again with like this it\'s not comfortable just learning via zoom at school.',
-        personImage: '/images/clients/james-son-2.jpg',
-        backgroundImage: '/images/clients/bg-green.jpg',
+        personImage: '/images/head/3.jpg',
+        backgroundImage: '/images/clients/3.svg',
         backgroundColor: '#4FAF78' // Brand green
     },
     {
@@ -103,9 +103,9 @@ export const mockTestimonials: Testimonial[] = [
         name: 'James Son',
         position: 'Senior Entrepreneur',
         company: 'Senior Entrepreneur',
-        testimonial: 'Very different from conventional learning, this one is easier, should be more like this.',
-        personImage: '/images/clients/james-son-3.jpg',
-        backgroundImage: '/images/clients/bg-red.jpg',
+        testimonial: 'I think this is best team to work with, the took our project to the next level, ',
+        personImage: '/images/head/4.jpg',
+        backgroundImage: '/images/clients/4.svg',
         backgroundColor: '#8B5A9F' // Brand purple
     },
     {
@@ -114,8 +114,8 @@ export const mockTestimonials: Testimonial[] = [
         position: 'Senior Entrepreneur',
         company: 'Senior Entrepreneur',
         testimonial: 'Again with like this it\'s not comfortable just learning via zoom at school.',
-        personImage: '/images/clients/james-son-4.jpg',
-        backgroundImage: '/images/clients/bg-orange.jpg',
+        personImage: '/images/head/5.jpg',
+        backgroundImage: '/images/clients/5.svg',
         backgroundColor: '#EF4444' // Brand red
     }
 ];
