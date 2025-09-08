@@ -1,4 +1,4 @@
-import { Project, Testimonial, FAQ } from './types';
+import { Project, Testimonial, FAQ, AboutCard } from './types';
 
 export const mockProjects: Project[] = [
     {
@@ -124,21 +124,61 @@ export const mockFAQs: FAQ[] = [
     {
         id: '1',
         question: 'Why is Design important for my business?',
-        answer: 'Design allows businesses to reach and engage with a wider audience, generate leads, drive website traffic, and increase brand visibility. It provides measurable results, allows for targeted marketing efforts, and enables businesses to adapt and optimize their strategies based on data and insights.'
+        answer: 'Design allows businesses to reach and engage with a wider audience, generate leads, drive website traffic, and increase brand visibility. It provides measurable results, allows for targeted marketing efforts, and enables businesses to adapt and optimize their strategies based on data and insights.',
+        imageUrl: '/images/covers/1.jpg',
+        backgroundColor: 'bg-blue',
+        character: 'W'
     },
     {
         id: '2',
         question: 'How can Design help improve my website\'s visibility?',
-        answer: 'Design improves website visibility through strategic visual hierarchy, user-friendly navigation, responsive layouts, and compelling visual elements that enhance user experience and encourage longer site engagement.'
+        answer: 'Design improves website visibility through strategic visual hierarchy, user-friendly navigation, responsive layouts, and compelling visual elements that enhance user experience and encourage longer site engagement.',
+        imageUrl: '/images/covers/2.jpg',
+        backgroundColor: 'bg-orange-50',
+        character: 'H'
     },
     {
         id: '3',
         question: 'How long does it take to see results from Design efforts?',
-        answer: 'Design results can be seen immediately in terms of user engagement and brand perception. However, measurable business impact typically becomes evident within 3-6 months of implementing a comprehensive design strategy.'
+        answer: 'Design results can be seen immediately in terms of user engagement and brand perception. However, measurable business impact typically becomes evident within 3-6 months of implementing a comprehensive design strategy.',
+        imageUrl: '/images/covers/3.jpg',
+        backgroundColor: 'bg-green',
+        character: 'O'
+    }
+];
+
+export const mockAboutCards: AboutCard[] = [
+    {
+        id: '1',
+        question: 'Who are we?',
+        answer: 'We are a collective of passionate designers, artists, and creative minds who believe in the power of visual storytelling. Our diverse backgrounds in branding, digital design, and creative strategy allow us to bring unique perspectives to every project we undertake.',
+        imageUrl: '/images/covers/1.jpg',
+        cardBackgroundColor: 'bg-blue',
+        sidebarBackgroundColor: 'bg-blue-soft',
+        sidebarCharacterColor: 'bg-blue-40',
+        characters: ['W', 'H', 'O'],
+        gridOpacity: 0.3
     },
     {
-        id: '4',
-        question: 'How do you measure the success of Design campaigns?',
-        answer: 'We measure design success through various metrics including user engagement rates, conversion rates, brand recognition surveys, website analytics, customer feedback, and overall business growth indicators.'
+        id: '2',
+        question: 'How do we approach creative challenges?',
+        answer: 'We keep it smart, fast, and fresh. Strategy first — we learn what makes your brand tick. Then design and editing take over — sharp cuts, bold colors, and visuals that speak louder than words. Finally, we deliver it where it matters most: TikTok, Insta, YouTube, or wherever your audience hangs out. We blend professional craft with youthful energy, so the end result feels less like “content” and more like culture.',
+        imageUrl: '/images/covers/2.jpg',
+        cardBackgroundColor: 'bg-orange-50',
+        sidebarBackgroundColor: 'bg-red-50',
+        sidebarCharacterColor: 'bg-orange-30',
+        characters: ['H', 'O', 'W'],
+        gridOpacity: 0.25
+    },
+    {
+        id: '3',
+        question: 'Why working with us?',
+        answer: 'Because attention is the new currency. People don’t just want content, they want a vibe — something that makes them stop scrolling and actually feel. Our goal is to give brands that spark. We believe good visuals can turn a small idea into a big movement. That’s why we care about every frame, every color, every caption. Our mission isn’t just to make things look good; it’s to make them unforgettable.',
+        imageUrl: '/images/covers/3.jpg',
+        cardBackgroundColor: 'bg-green',
+        sidebarBackgroundColor: 'bg-green-soft',
+        sidebarCharacterColor: 'bg-green-40',
+        characters: ['W', 'H', 'Y'],
+        gridOpacity: 0.35
     }
 ];

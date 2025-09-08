@@ -62,7 +62,9 @@ const config: Config = {
                 'stroke-gradient': 'linear-gradient(to right, rgba(77, 77, 77, 0.1) 0%, rgba(77, 77, 77, 0.5) 35%, rgba(77, 77, 77, 0.1) 68%, rgba(77, 77, 77, 0.5) 100%)',
             },
             animation: {
-                'scroll': 'scroll 100s linear infinite',
+                'scroll': 'scroll 40s linear infinite',
+                'scroll-mobile': 'scroll 40s linear infinite',
+                'scroll-desktop': 'scroll 30s linear infinite',
             },
             keyframes: {
                 'scroll': {

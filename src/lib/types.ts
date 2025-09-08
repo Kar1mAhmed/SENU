@@ -35,4 +35,19 @@ export type FAQ = {
   id: string;
   question: string;
   answer: string;
+  imageUrl: string;
+  backgroundColor: string;
+  character: string;
+};
+
+export type AboutCard = {
+  id: string;
+  question: string;
+  answer: string;
+  imageUrl: string;
+  cardBackgroundColor: string;
+  sidebarBackgroundColor: string;
+  sidebarCharacterColor: string;
+  characters: string[];
+  gridOpacity: number;
 };

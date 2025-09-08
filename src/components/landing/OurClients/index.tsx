@@ -24,7 +24,7 @@ const OurClients: React.FC = () => {
                 </h2>
                 <div className="mt-8 relative w-full h-[90px] md:h-[142px] bg-glass-fill-clients backdrop-blur-md md:rounded-2xl overflow-hidden">
                     <div className="absolute inset-0 flex items-center">
-                        <div className="flex animate-scroll">
+                        <div className="flex animate-scroll-mobile md:animate-scroll-desktop">
                             {[...clientLogos, ...clientLogos].map((logo, index) => (
                                 <div key={index} className="flex-shrink-0 mx-10 w-24 h-24 flex items-center justify-center">
                                     <img src={logo.src} alt={logo.name} className="max-h-full max-w-full object-contain" />
