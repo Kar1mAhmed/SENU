@@ -13,6 +13,9 @@ const Navbar = () => {
   useEffect(() => {
     console.log('🧭 Navbar scroll detection activated - playing hide and seek with the footer!');
 
+    // Only run on client side
+    if (typeof window === 'undefined') return;
+
     const handleScroll = () => {
       const footer = document.querySelector('footer');
       if (footer) {
@@ -20,7 +23,7 @@ const Navbar = () => {
         const viewportHeight = window.innerHeight;
 
         // Hide navbar when footer is 200px from top of viewport
-        const shouldHide = footerRect.top <= viewportHeight - 200;
+        const shouldHide = footerRect.top <= viewportHeight - 100;
         setIsVisible(!shouldHide);
       }
     };

@@ -20,6 +20,8 @@ export default function ClientsSection({ className = '' }: ClientsSectionProps) 
 
     // Card dimensions
     const getCardWidth = () => {
+        // Default to mobile width during SSR, will be corrected on client
+        if (typeof window === 'undefined') return 286;
         return window.innerWidth >= 1024 ? 360 : 286;
     };
 
