@@ -17,7 +17,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ card, index }) => {
       {/* Desktop Layout */}
       <div className="hidden md:block relative">
         <div 
-          className={`w-full aspect-[1240/500] ${card.cardBackgroundColor}  mb-8 overflow-hidden`}
+          className={`w-full aspect-[1240/500] ${card.cardBackgroundColor}  mb-24 overflow-hidden`}
         >
           {/* Grid Background */}
           <div className="absolute inset-0 opacity-20">
@@ -130,7 +130,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ card, index }) => {
             </div>
 
             {/* Question */}
-            <h3 className="font-new-black text-xl sm:text-2xl text-white font-bold mb-4 leading-tight">
+            <h3 className="font-new-black text-2xl sm:text-4xl text-white font-bold mb-4 leading-tight">
               {card.question}
             </h3>
 

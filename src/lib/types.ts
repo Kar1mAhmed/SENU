@@ -51,3 +51,12 @@ export type AboutCard = {
   characters: string[];
   gridOpacity: number;
 };
+
+export type TeamMember = {
+  id: string;
+  name: string;
+  position: string;
+  description: string;
+  imageUrl: string;
+  characters: string[];
+};

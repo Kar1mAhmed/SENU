@@ -8,7 +8,7 @@ const WhoWeAre = () => {
     <section className="w-full px-4 lg:px-0 mb-24">
       <div className="max-w-[1280px] mx-auto">
         <h1 className="font-new-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl text-white font-semibold text-center mb-4">
-          OUR TEAM
+          ABOUT US
         </h1>
       </div>
     </section>

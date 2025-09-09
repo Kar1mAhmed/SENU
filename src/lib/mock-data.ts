@@ -1,4 +1,4 @@
-import { Project, Testimonial, FAQ, AboutCard } from './types';
+import { Project, Testimonial, FAQ, AboutCard, Service, TeamMember } from './types';
 
 export const mockProjects: Project[] = [
     {
@@ -147,6 +147,76 @@ export const mockFAQs: FAQ[] = [
     }
 ];
 
+export const mockServices: Service[] = [
+    {
+        id: '1',
+        title: 'Branding',
+        description: 'We craft compelling brand identities that resonate with audiences and stand the test of time.',
+        imageSrc: '/Icons/crown.svg',
+        projectsCount: 12,
+        accentColor: 'bg-blue'
+    },
+    {
+        id: '2',
+        title: 'Logo design',
+        description: "Our logos are more than just marks; they are strategic assets that define your brand's essence.",
+        imageSrc: '/Icons/pen.svg',
+        projectsCount: 24,
+        accentColor: 'bg-orange-50'
+    },
+    {
+        id: '3',
+        title: 'UI/UX',
+        description: 'We design intuitive and engaging user experiences that drive user satisfaction and retention.',
+        imageSrc: '/Icons/columns.svg',
+        projectsCount: 18,
+        accentColor: 'bg-green'
+    },
+    {
+        id: '4',
+        title: 'Products',
+        description: 'From concept to launch, we create innovative products that solve real-world problems.',
+        imageSrc: '/Icons/bird.svg',
+        projectsCount: 8,
+        accentColor: 'bg-red-50'
+    }
+];
+
+export const mockTeamMembers: TeamMember[] = [
+    {
+        id: '1',
+        name: 'Alex Johnson',
+        position: 'Creative Director',
+        description: 'Leading our creative vision with over 8 years of experience in brand strategy and visual storytelling. Passionate about creating meaningful connections through design.',
+        imageUrl: '/images/head/1.jpg',
+        characters: ['A', 'L', 'E', 'X', 'J', 'O', 'H', 'N']
+    },
+    {
+        id: '2',
+        name: 'Sarah Chen',
+        position: 'Senior Designer',
+        description: 'Specializing in UI/UX design and motion graphics. Sarah brings innovative solutions to complex design challenges with her keen eye for detail.',
+        imageUrl: '/images/head/2.jpg',
+        characters: ['S', 'A', 'R', 'A', 'C', 'H', 'E', 'N']
+    },
+    {
+        id: '3',
+        name: 'Marcus Rivera',
+        position: 'Brand Strategist',
+        description: 'Expert in brand development and market positioning. Marcus helps clients discover their unique voice and translate it into compelling visual narratives.',
+        imageUrl: '/images/head/3.jpg',
+        characters: ['M', 'A', 'R', 'C', 'R', 'I', 'V', 'E']
+    },
+    {
+        id: '4',
+        name: 'Emma Thompson',
+        position: 'Art Director',
+        description: 'Creative powerhouse with expertise in photography direction and visual campaigns. Emma ensures every project tells a captivating story.',
+        imageUrl: '/images/head/4.jpg',
+        characters: ['E', 'M', 'M', 'A', 'T', 'H', 'O', 'M']
+    }
+];
+
 export const mockAboutCards: AboutCard[] = [
     {
         id: '1',
@@ -157,7 +227,7 @@ export const mockAboutCards: AboutCard[] = [
         sidebarBackgroundColor: 'bg-blue-soft',
         sidebarCharacterColor: 'bg-blue-40',
         characters: ['W', 'H', 'O'],
-        gridOpacity: 0.3
+        gridOpacity: 0.4
     },
     {
         id: '2',
@@ -168,7 +238,7 @@ export const mockAboutCards: AboutCard[] = [
         sidebarBackgroundColor: 'bg-red-50',
         sidebarCharacterColor: 'bg-orange-30',
         characters: ['H', 'O', 'W'],
-        gridOpacity: 0.25
+        gridOpacity: 0.75
     },
     {
         id: '3',
@@ -179,6 +249,6 @@ export const mockAboutCards: AboutCard[] = [
         sidebarBackgroundColor: 'bg-green-soft',
         sidebarCharacterColor: 'bg-green-40',
         characters: ['W', 'H', 'Y'],
-        gridOpacity: 0.35
+        gridOpacity: 0.45
     }
 ];

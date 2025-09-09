@@ -6,7 +6,7 @@ import OurClients from '@/components/landing/OurClients';
 import ProjectHighlight from '@/components/landing/ProjectHighlight';
 import MetricsSection from '@/components/landing/MetricsSection';
 import SingleRibbon from '@/components/main/SingleRibbon';
-import ClientsSection from '@/components/landing/ClientsSection';
+import ClientsSection from '@/components/landing/Testimonial';
 import FAQSection from '@/components/landing/FAQSection';
 import Footer from '@/components/main/Footer';
 
