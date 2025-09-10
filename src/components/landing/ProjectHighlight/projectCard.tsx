@@ -23,7 +23,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, isLeft }) => 
     const colors = colorVariations[index % 4];
 
     return (
-        <div className="w-full bg-transparent flex flex-col">
+        <div className="w-full bg-transparent flex flex-col mb-8 ">
             {/* Image Section with responsive dimensions - smaller on tablet/laptop */}
             <div className="relative w-full aspect-[560/620] max-w-full md:max-w-[450px] lg:max-w-[480px] xl:max-w-[560px]">
                 <Image

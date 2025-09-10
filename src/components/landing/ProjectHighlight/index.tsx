@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { mockProjects } from '@/lib/mock-data';
-import ProjectCard from '../ProjectCard/indexx';
+import ProjectCard from './projectCard';
 
 const categories = [
     'All',

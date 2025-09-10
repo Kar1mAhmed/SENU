@@ -13,10 +13,11 @@ export default function TestimonialCard({ testimonial, className = '', style }: 
 
     return (
         <div
-            className={`relative overflow-hidden flex flex-col justify-between bg-glass-fill backdrop-blur-md  rounded-xl p-8 backdrop-blur-sm mx-4 text-white flex-shrink-0 w-[286px] h-[276px] lg:w-[360px] lg:h-[348px] ${className}`}
+            className={`relative overflow-hidden flex flex-col justify-between bg-glass-fill backdrop-blur-md rounded-xl p-8 backdrop-blur-sm mx-4 text-white flex-shrink-0 h-[276px] lg:h-[348px] ${className}`}
+            style={style}
         >
             {/* Background Image */}
-            <div className="absolute inset-0 opacity-20">
+            <div className="absolute inset-0 opacity-5">
                 <Image
                     src={testimonial.backgroundImage}
                     alt=""

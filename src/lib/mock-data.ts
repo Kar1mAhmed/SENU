@@ -213,7 +213,7 @@ export const mockTeamMembers: TeamMember[] = [
         position: 'Art Director',
         description: 'Creative powerhouse with expertise in photography direction and visual campaigns. Emma ensures every project tells a captivating story.',
         imageUrl: '/images/head/4.jpg',
-        characters: ['E', 'M', 'M', 'A', 'T', 'H', 'O', 'M']
+        characters: ['E', 'M', 'M', 'A', "", 'T', 'H', 'O', 'M']
     }
 ];
 
@@ -232,7 +232,7 @@ export const mockAboutCards: AboutCard[] = [
     {
         id: '2',
         question: 'How do we approach creative challenges?',
-        answer: 'We keep it smart, fast, and fresh. Strategy first — we learn what makes your brand tick. Then design and editing take over — sharp cuts, bold colors, and visuals that speak louder than words. Finally, we deliver it where it matters most: TikTok, Insta, YouTube, or wherever your audience hangs out. We blend professional craft with youthful energy, so the end result feels less like “content” and more like culture.',
+        answer: 'We keep it smart, fast, and fresh. Strategy first — we learn what makes your brand tick. Then design and editing take over — and visuals that speak louder than words. we deliver it where it matters most: TikTok, Insta, YouTube, or wherever your audience hangs out. We blend professional craft with youthful energy',
         imageUrl: '/images/covers/2.jpg',
         cardBackgroundColor: 'bg-orange-50',
         sidebarBackgroundColor: 'bg-red-50',

@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
-import CharacterSidebar from '../CharacterSidebar';
+import CharacterSidebar from './CharacterSidebar';
 import { AboutCard } from '@/lib/types';
 
 interface QuestionCardProps {
@@ -17,7 +17,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ card, index }) => {
       {/* Desktop Layout */}
       <div className="hidden md:block relative">
         <div 
-          className={`w-full aspect-[1240/500] ${card.cardBackgroundColor}  mb-24 overflow-hidden`}
+          className={`w-full aspect-[1240/500] ${card.cardBackgroundColor} mb-24 overflow-hidden`}
         >
           {/* Grid Background */}
           <div className="absolute inset-0 opacity-20">
@@ -49,7 +49,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ card, index }) => {
 
                 {/* Right Side - Image (400x400) */}
                 <div className="flex justify-center items-center pr-8 lg:pr-12">
-                  <div className="w-[400px] h-[400px] relative rounded-lg overflow-hidden">
+                  <div className="w-[250px] h-[250px] xl:w-[400px] xl:h-[400px] relative rounded-lg overflow-hidden">
                     <Image
                       src={card.imageUrl}
                       alt={card.question}
@@ -64,7 +64,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ card, index }) => {
               <>
                 {/* Left Side - Image (400x400) */}
                 <div className="flex justify-center items-center pl-8 lg:pl-12">
-                  <div className="w-[400px] h-[400px] relative rounded-lg overflow-hidden">
+                  <div className="w-[250px] h-[250px] xl:w-[400px] xl:h-[400px] relative rounded-lg overflow-hidden">
                     <Image
                       src={card.imageUrl}
                       alt={card.question}
@@ -119,12 +119,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ card, index }) => {
 
           <div className="relative z-10">
             {/* Image */}
-            <div className="w-full aspect-[4/3] relative mb-6 rounded-lg overflow-hidden">
+            <div className="w-full aspect-[4/4] relative mb-6 rounded-lg overflow-hidden">
               <Image
                 src={card.imageUrl}
                 alt={card.question}
                 fill
-                className="object-cover"
+                className="object-cover"                                          
                 sizes="(max-width: 768px) 90vw, 400px"
               />
             </div>

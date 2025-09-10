@@ -21,7 +21,7 @@
 @layer base {
   @font-face {
     font-family: 'NewBlack';
-    src: url('/fonts/New-Black.otf') format('opentype');
+    src: url('/fonts/NewBlackTypeface-Bold.otf') format('opentype');
     font-weight: normal;
     font-style: normal;
   }

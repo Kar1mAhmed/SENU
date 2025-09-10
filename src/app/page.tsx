@@ -4,7 +4,7 @@ import Ribbon from '@/components/main/Ribbon';
 import WhatWeDo from '@/components/landing/WhatWeDo';
 import OurClients from '@/components/landing/OurClients';
 import ProjectHighlight from '@/components/landing/ProjectHighlight';
-import MetricsSection from '@/components/landing/MetricsSection';
+import MetricsSection from '@/components/landing/ImpactSection';
 import SingleRibbon from '@/components/main/SingleRibbon';
 import ClientsSection from '@/components/landing/Testimonial';
 import FAQSection from '@/components/landing/FAQSection';
