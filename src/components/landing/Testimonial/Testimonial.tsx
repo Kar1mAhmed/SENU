@@ -9,96 +9,48 @@ import { FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 interface ClientsSectionProps extends WithClassName { }
 
 export default function ClientsSection({ className = '' }: ClientsSectionProps) {
-    const [currentIndex, setCurrentIndex] = useState(mockTestimonials.length); // Start in middle for infinite scroll
+    const [currentIndex, setCurrentIndex] = useState(0);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const [touchStart, setTouchStart] = useState<number | null>(null);
     const [touchEnd, setTouchEnd] = useState<number | null>(null);
-    const [cardsPerScreen, setCardsPerScreen] = useState(4);
+    const [cardsPerScreen, setCardsPerScreen] = useState(1); // Start with 1 to avoid hydration mismatch
+    const [isClient, setIsClient] = useState(false);
 
     console.log('🎪 ClientsSection rendering with', mockTestimonials.length, 'testimonials, current index:', currentIndex);
 
-    // Create infinite array: [...original, ...original, ...original] for smooth infinite scrolling
-    const infiniteTestimonials = [...mockTestimonials, ...mockTestimonials, ...mockTestimonials];
-
     // Get number of cards to show per screen based on breakpoints
     const getCardsPerScreen = () => {
-        if (typeof window === 'undefined') return 4;
+        if (typeof window === 'undefined') return 1;
         if (window.innerWidth < 768) return 1; // Mobile: 1 card
         if (window.innerWidth < 1024) return 2; // Tablet: 2 cards  
         return 4; // Desktop: 4 cards
     };
 
-    // Get container width for smooth scrolling calculations
-    const getContainerWidth = () => {
-        if (typeof window === 'undefined') return 1280;
-        return window.innerWidth;
-    };
-
-    // Get testimonials for current page
-    const getCurrentPageTestimonials = () => {
-        const startIndex = currentIndex;
+    // Get testimonials for current view
+    const getCurrentTestimonials = () => {
         const testimonials = [];
-        
         for (let i = 0; i < cardsPerScreen; i++) {
-            const index = (startIndex + i) % infiniteTestimonials.length;
-            testimonials.push(infiniteTestimonials[index]);
+            const index = (currentIndex + i) % mockTestimonials.length;
+            testimonials.push(mockTestimonials[index]);
         }
-        
         return testimonials;
     };
 
-    // Create pages for smooth scrolling
-    const createInfinitePages = () => {
-        const pages = [];
-        const totalPages = Math.ceil(infiniteTestimonials.length / cardsPerScreen);
-        
-        for (let pageIndex = 0; pageIndex < totalPages; pageIndex++) {
-            const pageTestimonials = [];
-            for (let i = 0; i < cardsPerScreen; i++) {
-                const testimonialIndex = (pageIndex * cardsPerScreen + i) % infiniteTestimonials.length;
-                pageTestimonials.push(infiniteTestimonials[testimonialIndex]);
-            }
-            pages.push(pageTestimonials);
-        }
-        
-        return pages;
-    };
-
-    const infinitePages = createInfinitePages();
-    const currentPageIndex = Math.floor(currentIndex / cardsPerScreen);
-
+    // Initialize client-side state
     useEffect(() => {
+        setIsClient(true);
+        setCardsPerScreen(getCardsPerScreen());
+
         const updateCardsPerScreen = () => {
             setCardsPerScreen(getCardsPerScreen());
         };
 
-        updateCardsPerScreen();
         window.addEventListener('resize', updateCardsPerScreen);
         return () => window.removeEventListener('resize', updateCardsPerScreen);
     }, []);
 
-    useEffect(() => {
-        // Handle infinite scroll reset - smooth transition back to middle
-        const totalPages = infinitePages.length;
-        const middlePageStart = Math.floor(totalPages / 3);
-        
-        if (currentPageIndex <= 0) {
-            setTimeout(() => {
-                setIsTransitioning(true);
-                setCurrentIndex(middlePageStart * cardsPerScreen);
-                setTimeout(() => setIsTransitioning(false), 50);
-            }, 300);
-        } else if (currentPageIndex >= totalPages - 1) {
-            setTimeout(() => {
-                setIsTransitioning(true);
-                setCurrentIndex(middlePageStart * cardsPerScreen);
-                setTimeout(() => setIsTransitioning(false), 50);
-            }, 300);
-        }
-    }, [currentPageIndex, infinitePages.length, cardsPerScreen]);
-
-    // Touch handlers for smooth touch experience
+    // Touch handlers
     const minSwipeDistance = 50;
 
     const onTouchStart = (e: React.TouchEvent) => {
@@ -127,15 +79,55 @@ export default function ClientsSection({ className = '' }: ClientsSectionProps) 
 
     const handlePrevious = () => {
         if (isTransitioning) return;
-        console.log('⬅️ Previous page clicked');
-        setCurrentIndex(prev => prev - cardsPerScreen);
+        console.log('⬅️ Previous testimonial clicked');
+        setCurrentIndex(prev => {
+            const newIndex = prev - 1;
+            return newIndex < 0 ? mockTestimonials.length - 1 : newIndex;
+        });
     };
 
     const handleNext = () => {
         if (isTransitioning) return;
-        console.log('➡️ Next page clicked');
-        setCurrentIndex(prev => prev + cardsPerScreen);
+        console.log('➡️ Next testimonial clicked');
+        setCurrentIndex(prev => (prev + 1) % mockTestimonials.length);
     };
+
+    const currentTestimonials = getCurrentTestimonials();
+
+    // Don't render until client-side to avoid hydration mismatch
+    if (!isClient) {
+        return (
+            <section className={`py-16 ${className}`}>
+                {/* Header */}
+                <div className="flex justify-center w-full px-4 md:px-8 mb-12">
+                    <div className="w-full max-w-[1000px] lg:max-w-[1100px] xl:max-w-[1280px]">
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <h2 className="font-new-black text-3xl md:text-5xl lg:text-6xl font-light text-white">
+                                    WHAT OUR{' '}
+                                    <br />
+                                    <span className="text-yellow-400">CLIENTS</span>{' '}
+                                    SAY
+                                </h2>
+                            </div>
+                            <div className="flex gap-4">
+                                <button className="w-8 h-8 lg:w-12 lg:h-12 rounded-full bg-yellow-400 flex items-center justify-center">
+                                    <FaArrowLeft />
+                                </button>
+                                <button className="w-8 h-8 lg:w-12 lg:h-12 rounded-full bg-yellow-400 flex items-center justify-center">
+                                    <FaArrowRight />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {/* Loading placeholder */}
+                <div className="w-full h-80 flex items-center justify-center">
+                    <div className="text-white/50">Loading testimonials...</div>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section className={`py-16 ${className}`}>
@@ -177,63 +169,44 @@ export default function ClientsSection({ className = '' }: ClientsSectionProps) 
                 </div>
             </div>
 
-            {/* Testimonial Cards - Smooth Scrolling Container */}
+            {/* Testimonial Cards - Grid Layout like Impact Section */}
             <div 
-                className="w-full overflow-hidden"
+                className="w-full"
                 onTouchStart={onTouchStart}
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}
             >
-                <div 
-                    ref={containerRef}
-                    className={`flex ${isTransitioning ? '' : 'transition-transform duration-500 ease-out'}`}
-                    style={{
-                        transform: `translateX(-${currentPageIndex * getContainerWidth()}px)`,
-                        width: `${infinitePages.length * getContainerWidth()}px`
-                    }}
-                >
-                    {infinitePages.map((pageTestimonials, pageIndex) => (
-                        <div 
-                            key={pageIndex}
-                            className="w-full flex-shrink-0"
-                            style={{ width: `${getContainerWidth()}px` }}
-                        >
-                            {/* Grid Layout - Aligned with BackgroundGrid like Impact Section */}
-                            <div className="w-full h-full">
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-8 md:gap-y-0 h-full w-full">
-                                    {pageTestimonials.map((testimonial, cardIndex) => (
-                                        <div
-                                            key={`${testimonial.id}-${pageIndex}-${cardIndex}`}
-                                            className="flex justify-center items-center px-3 md:px-4 lg:px-6"
-                                        >
-                                            <TestimonialCard
-                                                testimonial={testimonial}
-                                                className="w-full max-w-[260px] md:max-w-[300px] lg:max-w-[360px]"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
+                <div className="w-full h-full">
+                    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-8 md:gap-y-0 h-full w-full transition-all duration-500 ease-in-out`}>
+                        {currentTestimonials.map((testimonial, index) => (
+                            <div
+                                key={`${testimonial.id}-${currentIndex}-${index}`}
+                                className="flex justify-center items-center px-3 md:px-4 lg:px-6"
+                            >
+                                <TestimonialCard
+                                    testimonial={testimonial}
+                                    className="w-full max-w-[260px] md:max-w-[300px] lg:max-w-[360px]"
+                                />
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
 
-            {/* Pagination Dots (Optional) */}
+            {/* Pagination Dots */}
             <div className="flex justify-center mt-8 gap-2">
-                {Array.from({ length: Math.ceil(mockTestimonials.length / cardsPerScreen) }).map((_, index) => {
-                    const actualPageIndex = (currentPageIndex % Math.ceil(mockTestimonials.length / cardsPerScreen));
-                    const isActive = index === actualPageIndex;
+                {Array.from({ length: mockTestimonials.length }).map((_, index) => {
+                    const isActive = index === currentIndex;
                     return (
                         <button
                             key={index}
-                            onClick={() => setCurrentIndex(mockTestimonials.length + (index * cardsPerScreen))}
+                            onClick={() => setCurrentIndex(index)}
                             className={`w-2 h-2 rounded-full transition-all duration-300 ${
                                 isActive 
                                     ? 'bg-yellow-400 w-6' 
                                     : 'bg-white/30 hover:bg-white/50'
                             }`}
-                            aria-label={`Go to testimonial page ${index + 1}`}
+                            aria-label={`Go to testimonial ${index + 1}`}
                         />
                     );
                 })}

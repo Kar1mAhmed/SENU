@@ -69,9 +69,11 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({ className = '' }) => {
                         {metrics.map((metric, index) => (
                             <div
                                 key={metric.id}
-                                className="flex justify-center items-center px-3 md:px-4 lg:px-6"
+                                className="flex justify-center items-center px-3 md:px-4 lg:px-6 group"
                             >
-                                <div className="bg-black border-[#474747]/20 border rounded-lg mt-4 md:mt-2 p-4 md:p-6 lg:p-8 flex flex-col items-center justify-center text-center w-full max-w-[260px] md:max-w-[300px] lg:max-w-[360px] h-[200px] md:h-[240px] lg:h-[280px]">
+                                <div className="bg-black border-[#474747]/20 border rounded-lg mt-4 md:mt-2 p-4 md:p-6 lg:p-8 flex flex-col items-center justify-center text-center w-full max-w-[260px] md:max-w-[300px] lg:max-w-[360px] h-[200px] md:h-[240px] lg:h-[280px] 
+                                transition-transform duration-300 hover:scale-105">
+                                    
                                     {/* Icon/Accent */}
                                     <div className={`w-10 h-10 md:w-14 md:h-14 lg:w-16 lg:h-16 ${colorVariations[index].bg} rounded-full mb-3 md:mb-4 lg:mb-6 flex items-center justify-center`}>
                                         <Icon
