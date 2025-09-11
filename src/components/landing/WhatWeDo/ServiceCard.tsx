@@ -1,12 +1,11 @@
 "use client";
 import React from 'react';
 import type { Service, WithClassName } from '@/lib/types';
+import { FiArrowUpRight } from 'react-icons/fi';
 
 interface ServiceCardProps {
   service: Service;
 }
-
-import { FiArrowUpRight } from 'react-icons/fi';
 
 const ServiceCard: React.FC<WithClassName<ServiceCardProps>> = ({ service, className }) => {
   const { title, description, imageSrc, projectsCount, accentColor } = service;
@@ -14,11 +13,11 @@ const ServiceCard: React.FC<WithClassName<ServiceCardProps>> = ({ service, class
   const bigCount = projectsCount > 9 ? `${projectsCount}+` : projectsCount;
 
   return (
-    <div className={`flex-shrink-0 group ${className}`} style={{ transform: 'translateZ(0)' }}>
-      {/* Card shell */}
+    <div className={`w-full h-[260px] md:h-[280px] lg:h-[315px] group ${className}`} style={{ transform: 'translateZ(0)' }}>
+      {/* Card shell - Full width and height */}
       <div
-        className="relative w-full max-w-[280px] h-[260px] md:max-w-[360px] md:h-[315px] overflow-hidden transition-transform duration-300 group-hover:scale-105"
-        style={{ backgroundColor: accentColor }}
+        className="relative w-full h-full overflow-hidden transition-transform duration-300 group-hover:scale-105 rounded-lg"
+        style={{ backgroundColor: accentColor || '#4FAF78' }} // Default to green if no accent color
       >
         {/* Background media (transparent art) */}
         <div
@@ -46,9 +45,9 @@ const ServiceCard: React.FC<WithClassName<ServiceCardProps>> = ({ service, class
             <FiArrowUpRight size={24} className="text-white/80" />
           </div>
 
-          {/* Bottom: big 10+ and description */}
+          {/* Bottom: big count and description */}
           <div className="mt-auto overflow-hidden">
-            <div className="font-new-black font-extrabold text-[128px] leading-none">{bigCount}</div>
+            <div className="font-new-black font-extrabold text-[96px] md:text-[108px] lg:text-[128px] leading-none">{bigCount}</div>
             <p className="mt-2 text-white/80 text-sm max-w-[85%]">{description}</p>
           </div>
         </div>

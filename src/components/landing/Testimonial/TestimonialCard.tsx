@@ -13,7 +13,7 @@ export default function TestimonialCard({ testimonial, className = '', style }: 
 
     return (
         <div
-            className={`relative overflow-hidden flex flex-col justify-between bg-glass-fill backdrop-blur-md rounded-xl p-8 backdrop-blur-sm mx-4 text-white flex-shrink-0 h-[276px] lg:h-[348px] ${className}`}
+            className={`relative overflow-hidden flex flex-col justify-between bg-glass-fill backdrop-blur-md rounded-xl p-6 md:p-8 backdrop-blur-sm text-white w-full h-[260px] md:h-[300px] lg:h-[348px] ${className}`}
             style={style}
         >
             {/* Background Image */}
@@ -30,8 +30,8 @@ export default function TestimonialCard({ testimonial, className = '', style }: 
             {/* Content */}
             <div className="relative z-10 flex flex-col h-full">
                 {/* Person Info */}
-                <div className="flex items-center gap-4 mb-6">
-                    <div className="w-12 h-12 rounded-full overflow-hidden bg-white/20 flex-shrink-0">
+                <div className="flex items-center gap-4 mb-4 md:mb-6">
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden bg-white/20 flex-shrink-0">
                         <Image
                             src={testimonial.personImage}
                             alt={testimonial.name}
@@ -41,16 +41,15 @@ export default function TestimonialCard({ testimonial, className = '', style }: 
                             onError={() => console.log('🚨 Person image failed to load for:', testimonial.name)}
                         />
                     </div>
-                    <div>
-                        <h3 className="font-bold text-lg">{testimonial.name}</h3>
-                        <p className="text-sm opacity-90">{testimonial.position}</p>
-                        {/* <p className="text-xs opacity-75">{testimonial.company}</p> */}
+                    <div className="min-w-0">
+                        <h3 className="font-bold text-base md:text-lg truncate">{testimonial.name}</h3>
+                        <p className="text-xs md:text-sm opacity-90 truncate">{testimonial.position}</p>
                     </div>
                 </div>
 
                 {/* Testimonial Text */}
-                <div className="flex-1 flex flex-col justify-center">
-                    <p className="text-base leading-relaxed mb-6">
+                <div className="flex-1 flex flex-col justify-center mb-4 md:mb-6">
+                    <p className="text-sm md:text-base leading-relaxed line-clamp-4 md:line-clamp-5">
                         {testimonial.testimonial}
                     </p>
                 </div>

@@ -60,17 +60,17 @@ const ProjectHighlight: React.FC = () => {
                                         <ProjectCard 
                                             project={project} 
                                             index={index}
-                                            isLeft={index % 2 === 0} // Alternating for mobile sidebar positioning
+                                            isLeft={index % 2 === 0}
                                         />
                                     </div>
                                 ))}
                             </div>
                         </div>
 
-                        {/* Desktop: Two columns with offset */}
+                        {/* Desktop: Two columns with moderate spacing */}
                         <div className="hidden md:block">
-                            <div className="grid grid-cols-2 gap-x-6 md:gap-x-8 lg:gap-x-10 xl:gap-x-12">
-                                {/* Left Column */}
+                            <div className="grid grid-cols-2 gap-x-6 md:gap-x-8 lg:gap-x-12 xl:gap-x-16">
+                                {/* Left Column - Align right (towards center) */}
                                 <div className="flex flex-col items-end gap-10 md:gap-12">
                                     {filteredProjects
                                         .filter((_, index) => index % 2 === 0)
@@ -89,7 +89,7 @@ const ProjectHighlight: React.FC = () => {
                                     }
                                 </div>
 
-                                {/* Right Column - with top offset */}
+                                {/* Right Column - Align left (towards center) with top offset */}
                                 <div className="flex flex-col items-start gap-10 md:gap-12 mt-16 md:mt-20 lg:mt-24 xl:mt-32">
                                     {filteredProjects
                                         .filter((_, index) => index % 2 === 1)

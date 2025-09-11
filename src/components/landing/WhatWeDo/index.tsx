@@ -40,15 +40,27 @@ const services: Service[] = [
 
 const WhatWeDo: React.FC = () => {
     return (
-        <section className="w-full py-16 md:py-20 overflow-hidden">
-            <div className="max-w-10xl px-4 md:px-6">
-                <div className="text-center mb-16 md:mb-20">
-                    <h2 className="font-new-black text-white font-m text-4xl md:text-7xl">What We Do</h2>
-                </div>
-                <div className="flex flex-col lg:flex-row items-center justify-center gap-8 md:gap-4">
-                    {services.map((service) => (
-                        <ServiceCard key={service.id} service={service} />
-                    ))}
+        <section className="w-full py-16 md:py-20">
+            <div className="w-full">
+                {/* Title */}
+                <h2 className="font-new-black text-white font-m text-4xl md:text-7xl text-center mb-16 md:mb-20">
+                    What We Do
+                </h2>
+
+                {/* Services Grid - Aligned with BackgroundGrid like Impact Section */}
+                <div className="w-full h-full">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-rows-4 md:grid-rows-2 lg:grid-rows-1 gap-y-8 md:gap-y-8 lg:gap-y-0 h-full w-full">
+                        {services.map((service, index) => (
+                            <div
+                                key={service.id}
+                                className="flex justify-center items-center px-3 md:px-4 lg:px-6"
+                            >
+                                <div className="w-full max-w-[260px] md:max-w-[300px] lg:max-w-[360px]">
+                                    <ServiceCard service={service} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </section>
