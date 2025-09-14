@@ -7,7 +7,7 @@ export type Service = {
   accentColor: string;
 };
 
-export type WithClassName<T = {}> = T & {
+export type WithClassName<T = object> = T & {
   className?: string;
 };
 
@@ -59,4 +59,15 @@ export type TeamMember = {
   description: string;
   imageUrl: string;
   characters: string[];
+};
+
+export type ContactMethod = 'whatsapp' | 'email';
+
+export type ContactFormData = {
+  name: string;
+  contactMethod: ContactMethod;
+  countryCode?: string;
+  phoneNumber?: string;
+  email?: string;
+  message?: string;
 };

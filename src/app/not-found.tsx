@@ -1,6 +1,5 @@
 'use client';
 import React from 'react';
-import Navbar from '@/components/main/Navbar';
 import BackgroundGrid from '@/components/main/BackgroundGrid';
 import SingleRibbon from '@/components/main/SingleRibbon';
 
@@ -16,7 +15,6 @@ export default function GlobalNotFound() {
       `}</style>
       
       <div className="navbar-no-glow">
-        <Navbar />
       </div>
       <BackgroundGrid />
 

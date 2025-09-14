@@ -1,5 +1,4 @@
 import React from 'react';
-import Navbar from '@/components/main/Navbar';
 import WhoWeAre from '@/components/about/WhoWeAre';
 import ServiceSection from '@/components/about/ServiceSection';
 import TeamSection from '@/components/about/TeamSection';
@@ -12,7 +11,6 @@ const AboutPage = () => {
 
   return (
     <div className="min-h-screen text-white">
-      <Navbar />
       <main className="pt-12">
         <WhoWeAre />
         <QuestionsSection />
