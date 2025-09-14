@@ -9,6 +9,9 @@ const TeamSection = () => {
   
   const [currentIndex, setCurrentIndex] = useState(mockTeamMembers.length);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [cardWidth, setCardWidth] = useState(340);
+  const [gap, setGap] = useState(16);
   const containerRef = useRef<HTMLDivElement>(null);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
@@ -16,7 +19,7 @@ const TeamSection = () => {
   // Create infinite array
   const infiniteTeamMembers = [...mockTeamMembers, ...mockTeamMembers, ...mockTeamMembers];
 
-  // Card dimensions
+  // Card dimensions functions
   const getCardWidth = () => {
     if (typeof window === 'undefined') return 340;
     return window.innerWidth >= 1024 ? 770 : 340;
@@ -27,11 +30,20 @@ const TeamSection = () => {
     return window.innerWidth >= 1024 ? 32 : 16;
   };
 
-  const getOffset = () => {
-    if (typeof window === 'undefined') return 0;
-    // Show extra parts only on right, not left - remove left offset
-    return 0;
-  };
+  // Initialize client-side state
+  useEffect(() => {
+    setIsClient(true);
+    setCardWidth(getCardWidth());
+    setGap(getGap());
+
+    const updateDimensions = () => {
+      setCardWidth(getCardWidth());
+      setGap(getGap());
+    };
+
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
 
   // Touch handlers
   const minSwipeDistance = 50;
@@ -61,6 +73,8 @@ const TeamSection = () => {
   };
 
   useEffect(() => {
+    if (!isClient) return;
+    
     // Reset position when reaching boundaries
     if (currentIndex <= 0) {
       setIsTransitioning(true);
@@ -75,7 +89,7 @@ const TeamSection = () => {
         setIsTransitioning(false);
       }, 0);
     }
-  }, [currentIndex, infiniteTeamMembers.length]);
+  }, [currentIndex, infiniteTeamMembers.length, isClient]);
 
   const handlePrevious = () => {
     if (isTransitioning) return;
@@ -86,6 +100,39 @@ const TeamSection = () => {
     if (isTransitioning) return;
     setCurrentIndex(prev => prev + 1);
   };
+
+  // Don't render until client-side to avoid hydration mismatch
+  if (!isClient) {
+    return (
+      <section className="w-full px-4 lg:px-0 mb-32">
+        <div className="max-w-[1280px] mx-auto mt-4 md:mt-32">
+          {/* Header */}
+          <div className="flex justify-between items-center mb-12">
+            <h2 className="font-new-black text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white font-bold">
+              THE <span className="text-blue">CREATIVE MINDS</span> THAT POWER OUR{' '}
+              <span className="text-blue">PROJECTS</span>
+            </h2>
+            
+            {/* Navigation Arrows */}
+            <div className="flex items-center gap-4 mt-32">
+              <button className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
+                <FaArrowLeft className="text-blue" />
+              </button>
+              
+              <button className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
+                <FaArrowRight className="text-blue" />
+              </button>
+            </div>
+          </div>
+
+          {/* Loading placeholder */}
+          <div className="w-full h-80 flex items-center justify-center">
+            <div className="text-white/50">Loading team members...</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="w-full px-4 lg:px-0 mb-32">
@@ -126,8 +173,8 @@ const TeamSection = () => {
           <div
             className={`flex gap-4 lg:gap-8 ${isTransitioning ? '' : 'transition-transform duration-500 ease-in-out'}`}
             style={{
-              transform: `translateX(-${currentIndex * (getCardWidth() + getGap()) - getOffset()}px)`,
-              width: `${infiniteTeamMembers.length * (getCardWidth() + getGap())}px`
+              transform: `translateX(-${currentIndex * (cardWidth + gap)}px)`,
+              width: `${infiniteTeamMembers.length * (cardWidth + gap)}px`
             }}
           >
             {infiniteTeamMembers.map((member, index) => {
@@ -137,7 +184,11 @@ const TeamSection = () => {
               return (
                 <div
                   key={`${member.id}-${index}`}
-                  className={`relative ${cardColor} rounded-lg overflow-hidden flex-shrink-0 w-[340px] h-[305px] lg:w-[770px] lg:h-[460px] `}
+                  className={`relative ${cardColor} rounded-lg overflow-hidden flex-shrink-0`}
+                  style={{
+                    width: `${cardWidth}px`,
+                    height: cardWidth >= 770 ? '460px' : '305px'
+                  }}
                 >
                   <div className="grid grid-cols-2 h-full">
                     {/* Left Section - Image */}
@@ -177,7 +228,7 @@ const TeamSection = () => {
 
                     {/* Character Sidebar - Between sections */}
                     <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
-                      <div className="w-4 lg:w-8 xl:w-10 h-auto  bg-blue-soft rounded-full flex flex-col items-center justify-center gap-1 lg:gap-2 bg-opacity-90">
+                      <div className="w-4 lg:w-8 xl:w-10 h-auto bg-blue-soft rounded-full flex flex-col items-center justify-center gap-1 lg:gap-2 bg-opacity-90">
                         {member.characters.map((char, i) => (
                           <div
                             key={i}

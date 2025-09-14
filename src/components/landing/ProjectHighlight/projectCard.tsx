@@ -41,7 +41,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project, index, isLeft }) => 
                     {/* Icons Sidebar - Mobile positioning (alternating left/right) */}
                     <div className={`absolute sm:hidden ${
                         index % 2 === 0 ? 'left-[-10px] top-16' : 'right-[-10px] bottom-16'
-                    } w-[7%] bg-opacity-90 ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%]
+                    } w-[10%] bg-opacity-90 ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%]
                     transition-all duration-500 ease-out
                     aspect-[1/4] group-hover:aspect-[1/5]`}>
                         {icons.map((icon, iconIndex) => (

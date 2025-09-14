@@ -14,7 +14,7 @@ export default function ClientsSection({ className = '' }: ClientsSectionProps) 
     const containerRef = useRef<HTMLDivElement>(null);
     const [touchStart, setTouchStart] = useState<number | null>(null);
     const [touchEnd, setTouchEnd] = useState<number | null>(null);
-    const [cardsPerScreen, setCardsPerScreen] = useState(1); // Start with 1 to avoid hydration mismatch
+    const [cardsPerScreen, setCardsPerScreen] = useState(1);
     const [isClient, setIsClient] = useState(false);
 
     console.log('🎪 ClientsSection rendering with', mockTestimonials.length, 'testimonials, current index:', currentIndex);
@@ -80,16 +80,22 @@ export default function ClientsSection({ className = '' }: ClientsSectionProps) 
     const handlePrevious = () => {
         if (isTransitioning) return;
         console.log('⬅️ Previous testimonial clicked');
+        setIsTransitioning(true);
         setCurrentIndex(prev => {
             const newIndex = prev - 1;
             return newIndex < 0 ? mockTestimonials.length - 1 : newIndex;
         });
+        // Reset transition state after animation completes
+        setTimeout(() => setIsTransitioning(false), 500);
     };
 
     const handleNext = () => {
         if (isTransitioning) return;
         console.log('➡️ Next testimonial clicked');
+        setIsTransitioning(true);
         setCurrentIndex(prev => (prev + 1) % mockTestimonials.length);
+        // Reset transition state after animation completes
+        setTimeout(() => setIsTransitioning(false), 500);
     };
 
     const currentTestimonials = getCurrentTestimonials();
@@ -169,27 +175,35 @@ export default function ClientsSection({ className = '' }: ClientsSectionProps) 
                 </div>
             </div>
 
-            {/* Testimonial Cards - Grid Layout like Impact Section */}
+            {/* Testimonial Cards - Smooth Scrolling Carousel */}
             <div 
-                className="w-full"
+                className="w-full overflow-hidden"
                 onTouchStart={onTouchStart}
                 onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}
             >
-                <div className="w-full h-full">
-                    <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-8 md:gap-y-0 h-full w-full transition-all duration-500 ease-in-out`}>
-                        {currentTestimonials.map((testimonial, index) => (
-                            <div
-                                key={`${testimonial.id}-${currentIndex}-${index}`}
-                                className="flex justify-center items-center px-3 md:px-4 lg:px-6"
-                            >
-                                <TestimonialCard
-                                    testimonial={testimonial}
-                                    className="w-full max-w-[260px] md:max-w-[300px] lg:max-w-[360px]"
-                                />
-                            </div>
-                        ))}
-                    </div>
+                <div 
+                    ref={containerRef}
+                    className="flex transition-transform duration-500 ease-in-out"
+                    style={{
+                        transform: `translateX(-${(currentIndex * 100) / cardsPerScreen}%)`
+                    }}
+                >
+                    {/* Render all testimonials in a continuous row */}
+                    {mockTestimonials.map((testimonial, index) => (
+                        <div
+                            key={testimonial.id}
+                            className="flex-shrink-0 flex justify-center items-center px-3 md:px-4 lg:px-6"
+                            style={{
+                                width: `${100 / cardsPerScreen}%`
+                            }}
+                        >
+                            <TestimonialCard
+                                testimonial={testimonial}
+                                className="w-full max-w-[260px] md:max-w-[300px] lg:max-w-[360px]"
+                            />
+                        </div>
+                    ))}
                 </div>
             </div>
 
@@ -200,7 +214,13 @@ export default function ClientsSection({ className = '' }: ClientsSectionProps) 
                     return (
                         <button
                             key={index}
-                            onClick={() => setCurrentIndex(index)}
+                            onClick={() => {
+                                if (!isTransitioning) {
+                                    setIsTransitioning(true);
+                                    setCurrentIndex(index);
+                                    setTimeout(() => setIsTransitioning(false), 500);
+                                }
+                            }}
                             className={`w-2 h-2 rounded-full transition-all duration-300 ${
                                 isActive 
                                     ? 'bg-yellow-400 w-6' 
