@@ -61,7 +61,7 @@ export type TeamMember = {
   characters: string[];
 };
 
-export type ContactMethod = 'whatsapp' | 'email';
+export type ContactMethod = 'whatsapp' | 'email' | 'phone';
 
 export type ContactFormData = {
   name: string;

@@ -52,6 +52,11 @@ const countryCodes = [
   { code: '+972', country: 'IL' },
 ];
 
+const contactMethods = [
+  { value: 'email', label: 'EMAIL' },
+  { value: 'whatsapp', label: 'WHATSAPP' }
+];
+
 export default function GetInTouchSection() {
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
@@ -64,6 +69,8 @@ export default function GetInTouchSection() {
 
   const [errors, setErrors] = useState<Partial<ContactFormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isContactMethodOpen, setIsContactMethodOpen] = useState(false);
+  const [isCountryCodeOpen, setIsCountryCodeOpen] = useState(false);
 
   console.log('🚀 GetInTouchSection rendered with formData:', {
     ...formData,
@@ -108,6 +115,13 @@ export default function GetInTouchSection() {
       phoneNumber: undefined,
       countryCode: undefined
     }));
+    
+    setIsContactMethodOpen(false);
+  };
+
+  const handleCountryCodeChange = (code: string) => {
+    handleInputChange('countryCode', code);
+    setIsCountryCodeOpen(false);
   };
 
   const validateForm = (): boolean => {
@@ -177,8 +191,11 @@ export default function GetInTouchSection() {
     }
   };
 
+  const currentContactMethod = contactMethods.find(method => method.value === formData.contactMethod);
+  const currentCountryCode = countryCodes.find(country => country.code === formData.countryCode);
+
   return (
-    <section className="relative min-h-screen  flex items-center justify-center p-4 md:p-8">
+    <section className="relative min-h-screen flex items-center justify-center p-4 md:p-8">
       {/* Background Grid */}
       <div className="absolute inset-0 opacity-20">
         <div className="h-full w-full" style={{
@@ -249,19 +266,40 @@ export default function GetInTouchSection() {
                     YOUR PREFERRED PLATFORM TO CONTACT *
                   </label>
                   <div className="relative">
-                    <select
-                      value={formData.contactMethod}
-                      onChange={(e) => handleContactMethodChange(e.target.value as ContactMethod)}
-                      className="w-full bg-gray-800/50 border border-gray-600 text-white py-3 px-4 rounded-lg focus:outline-none focus:border-blue transition-colors font-alexandria appearance-none cursor-pointer"
+                    <button
+                      type="button"
+                      onClick={() => setIsContactMethodOpen(!isContactMethodOpen)}
+                      className="w-full bg-transparent border-b border-gray-600 text-white py-3 px-0 focus:outline-none focus:border-blue transition-colors font-alexandria text-left flex justify-between items-center"
                     >
-                      <option value="email">EMAIL</option>
-                      <option value="whatsapp">WHATSAPP</option>
-                    </select>
-                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <span>{currentContactMethod?.label}</span>
+                      <svg 
+                        className={`w-5 h-5 text-gray-400 transition-transform ${isContactMethodOpen ? 'rotate-180' : ''}`} 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                       </svg>
-                    </div>
+                    </button>
+                    
+                    {isContactMethodOpen && (
+                      <div className="absolute top-full left-0 w-full mt-2 bg-glass-fill backdrop-blur-md border border-white/10 rounded-xl z-50 overflow-hidden">
+                        {contactMethods.map((method, index) => (
+                          <div key={method.value}>
+                            <button
+                              type="button"
+                              onClick={() => handleContactMethodChange(method.value as ContactMethod)}
+                              className="w-full text-left px-4 py-3 text-white hover:bg-white/10 transition-colors font-alexandria text-sm uppercase"
+                            >
+                              {method.label}
+                            </button>
+                            {index < contactMethods.length - 1 && (
+                              <div className="border-b border-white/10" />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -288,17 +326,43 @@ export default function GetInTouchSection() {
                       <label className="block text-white text-sm font-alexandria mb-2">
                         CODE
                       </label>
-                      <select
-                        value={formData.countryCode}
-                        onChange={(e) => handleInputChange('countryCode', e.target.value)}
-                        className="w-full bg-gray-800/50 border border-gray-600 text-white py-3 px-2 rounded-lg focus:outline-none focus:border-blue transition-colors font-alexandria text-sm"
-                      >
-                        {countryCodes.map((country) => (
-                          <option key={country.code} value={country.code}>
-                            {country.code}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => setIsCountryCodeOpen(!isCountryCodeOpen)}
+                          className="w-full bg-transparent border-b border-gray-600 text-white py-3 px-0 focus:outline-none focus:border-blue transition-colors font-alexandria text-left flex justify-between items-center"
+                        >
+                          <span>{formData.countryCode}</span>
+                          <svg 
+                            className={`w-4 h-4 text-gray-400 transition-transform ${isCountryCodeOpen ? 'rotate-180' : ''}`} 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                        
+                        {isCountryCodeOpen && (
+                          <div className="absolute top-full left-0 w-48 mt-2 bg-glass-fill backdrop-blur-md border border-white/10 rounded-xl z-50 max-h-48 overflow-y-auto">
+                            {countryCodes.map((country, index) => (
+                              <div key={country.code}>
+                                <button
+                                  type="button"
+                                  onClick={() => handleCountryCodeChange(country.code)}
+                                  className="w-full text-left px-4 py-2 text-white hover:bg-white/10 transition-colors font-alexandria text-sm flex justify-between"
+                                >
+                                  <span>{country.code}</span>
+                                  <span className="text-gray-400">{country.country}</span>
+                                </button>
+                                {index < countryCodes.length - 1 && (
+                                  <div className="border-b border-white/10" />
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <div className="col-span-2">
                       <label className="block text-white text-sm font-alexandria mb-2">
@@ -345,6 +409,17 @@ export default function GetInTouchSection() {
           </div>
         </div>
       </div>
+
+      {/* Click outside handler */}
+      {(isContactMethodOpen || isCountryCodeOpen) && (
+        <div 
+          className="fixed inset-0 z-40" 
+          onClick={() => {
+            setIsContactMethodOpen(false);
+            setIsCountryCodeOpen(false);
+          }}
+        />
+      )}
     </section>
   );
 }
