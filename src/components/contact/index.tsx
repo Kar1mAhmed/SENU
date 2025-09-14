@@ -2,59 +2,55 @@
 
 import { useState } from 'react';
 import { ContactFormData, ContactMethod } from '@/lib/types';
+import { FiCopy, FiCheck, FiChevronDown } from 'react-icons/fi';
 
 const countryCodes = [
-  { code: '+1', country: 'US' },
-  { code: '+44', country: 'UK' },
-  { code: '+49', country: 'DE' },
-  { code: '+33', country: 'FR' },
-  { code: '+39', country: 'IT' },
-  { code: '+34', country: 'ES' },
-  { code: '+31', country: 'NL' },
-  { code: '+46', country: 'SE' },
-  { code: '+47', country: 'NO' },
-  { code: '+45', country: 'DK' },
-  { code: '+41', country: 'CH' },
-  { code: '+43', country: 'AT' },
-  { code: '+32', country: 'BE' },
-  { code: '+351', country: 'PT' },
-  { code: '+353', country: 'IE' },
-  { code: '+358', country: 'FI' },
-  { code: '+420', country: 'CZ' },
-  { code: '+48', country: 'PL' },
-  { code: '+36', country: 'HU' },
-  { code: '+30', country: 'GR' },
-  { code: '+90', country: 'TR' },
-  { code: '+7', country: 'RU' },
-  { code: '+86', country: 'CN' },
-  { code: '+81', country: 'JP' },
-  { code: '+82', country: 'KR' },
-  { code: '+91', country: 'IN' },
-  { code: '+61', country: 'AU' },
-  { code: '+64', country: 'NZ' },
-  { code: '+55', country: 'BR' },
-  { code: '+52', country: 'MX' },
-  { code: '+54', country: 'AR' },
-  { code: '+56', country: 'CL' },
-  { code: '+57', country: 'CO' },
-  { code: '+51', country: 'PE' },
-  { code: '+58', country: 'VE' },
-  { code: '+27', country: 'ZA' },
-  { code: '+20', country: 'EG' },
-  { code: '+971', country: 'AE' },
-  { code: '+966', country: 'SA' },
-  { code: '+965', country: 'KW' },
-  { code: '+974', country: 'QA' },
-  { code: '+973', country: 'BH' },
-  { code: '+968', country: 'OM' },
-  { code: '+962', country: 'JO' },
-  { code: '+961', country: 'LB' },
-  { code: '+972', country: 'IL' },
-];
-
-const contactMethods = [
-  { value: 'email', label: 'EMAIL' },
-  { value: 'whatsapp', label: 'WHATSAPP' }
+  { code: '+1', country: 'US', name: 'United States' },
+  { code: '+44', country: 'GB', name: 'United Kingdom' },
+  { code: '+49', country: 'DE', name: 'Germany' },
+  { code: '+33', country: 'FR', name: 'France' },
+  { code: '+39', country: 'IT', name: 'Italy' },
+  { code: '+34', country: 'ES', name: 'Spain' },
+  { code: '+31', country: 'NL', name: 'Netherlands' },
+  { code: '+46', country: 'SE', name: 'Sweden' },
+  { code: '+47', country: 'NO', name: 'Norway' },
+  { code: '+45', country: 'DK', name: 'Denmark' },
+  { code: '+41', country: 'CH', name: 'Switzerland' },
+  { code: '+43', country: 'AT', name: 'Austria' },
+  { code: '+32', country: 'BE', name: 'Belgium' },
+  { code: '+351', country: 'PT', name: 'Portugal' },
+  { code: '+353', country: 'IE', name: 'Ireland' },
+  { code: '+358', country: 'FI', name: 'Finland' },
+  { code: '+420', country: 'CZ', name: 'Czech Republic' },
+  { code: '+48', country: 'PL', name: 'Poland' },
+  { code: '+36', country: 'HU', name: 'Hungary' },
+  { code: '+30', country: 'GR', name: 'Greece' },
+  { code: '+90', country: 'TR', name: 'Turkey' },
+  { code: '+7', country: 'RU', name: 'Russia' },
+  { code: '+86', country: 'CN', name: 'China' },
+  { code: '+81', country: 'JP', name: 'Japan' },
+  { code: '+82', country: 'KR', name: 'South Korea' },
+  { code: '+91', country: 'IN', name: 'India' },
+  { code: '+61', country: 'AU', name: 'Australia' },
+  { code: '+64', country: 'NZ', name: 'New Zealand' },
+  { code: '+55', country: 'BR', name: 'Brazil' },
+  { code: '+52', country: 'MX', name: 'Mexico' },
+  { code: '+54', country: 'AR', name: 'Argentina' },
+  { code: '+56', country: 'CL', name: 'Chile' },
+  { code: '+57', country: 'CO', name: 'Colombia' },
+  { code: '+51', country: 'PE', name: 'Peru' },
+  { code: '+58', country: 'VE', name: 'Venezuela' },
+  { code: '+27', country: 'ZA', name: 'South Africa' },
+  { code: '+20', country: 'EG', name: 'Egypt' },
+  { code: '+971', country: 'AE', name: 'UAE' },
+  { code: '+966', country: 'SA', name: 'Saudi Arabia' },
+  { code: '+965', country: 'KW', name: 'Kuwait' },
+  { code: '+974', country: 'QA', name: 'Qatar' },
+  { code: '+973', country: 'BH', name: 'Bahrain' },
+  { code: '+968', country: 'OM', name: 'Oman' },
+  { code: '+962', country: 'JO', name: 'Jordan' },
+  { code: '+961', country: 'LB', name: 'Lebanon' },
+  { code: '+972', country: 'IL', name: 'Israel' },
 ];
 
 export default function GetInTouchSection() {
@@ -69,14 +65,11 @@ export default function GetInTouchSection() {
 
   const [errors, setErrors] = useState<Partial<ContactFormData>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isContactMethodOpen, setIsContactMethodOpen] = useState(false);
-  const [isCountryCodeOpen, setIsCountryCodeOpen] = useState(false);
+  const [isEmailCopied, setIsEmailCopied] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
 
-  console.log('🚀 GetInTouchSection rendered with formData:', {
-    ...formData,
-    email: formData.email ? `${formData.email.substring(0, 10)}...` : '',
-    phoneNumber: formData.phoneNumber ? `***${formData.phoneNumber.slice(-4)}` : ''
-  });
+  console.log('🚀 GetInTouchSection rendered with new design');
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -116,12 +109,18 @@ export default function GetInTouchSection() {
       countryCode: undefined
     }));
     
-    setIsContactMethodOpen(false);
+    setIsDropdownOpen(false);
   };
 
-  const handleCountryCodeChange = (code: string) => {
-    handleInputChange('countryCode', code);
-    setIsCountryCodeOpen(false);
+  const copyEmailToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText('hello@senu.design');
+      setIsEmailCopied(true);
+      setTimeout(() => setIsEmailCopied(false), 2000);
+      console.log('📋 Email copied to clipboard successfully!');
+    } catch (err) {
+      console.error('Failed to copy email:', err);
+    }
   };
 
   const validateForm = (): boolean => {
@@ -137,7 +136,7 @@ export default function GetInTouchSection() {
       } else if (!validateEmail(formData.email)) {
         newErrors.email = 'Please enter a valid email address';
       }
-    } else {
+    } else if (formData.contactMethod === 'phone' || formData.contactMethod === 'whatsapp') {
       if (!formData.phoneNumber?.trim()) {
         newErrors.phoneNumber = 'Phone number is required';
       } else if (!validatePhoneNumber(formData.phoneNumber)) {
@@ -173,7 +172,7 @@ export default function GetInTouchSection() {
       // Reset form
       setFormData({
         name: '',
-        contactMethod: 'whatsapp',
+        contactMethod: 'email',
         countryCode: '+1',
         phoneNumber: '',
         email: '',
@@ -191,11 +190,37 @@ export default function GetInTouchSection() {
     }
   };
 
-  const currentContactMethod = contactMethods.find(method => method.value === formData.contactMethod);
-  const currentCountryCode = countryCodes.find(country => country.code === formData.countryCode);
-
   return (
-    <section className="relative min-h-screen flex items-center justify-center p-4 md:p-8">
+    <>
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: 3px;
+          transition: background 0.2s ease;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
+        .custom-scrollbar::-webkit-scrollbar-button {
+          display: none;
+          width: 0;
+          height: 0;
+        }
+        .custom-scrollbar::-webkit-scrollbar-button:start:decrement,
+        .custom-scrollbar::-webkit-scrollbar-button:end:increment {
+          display: none;
+        }
+        .custom-scrollbar::-webkit-scrollbar-corner {
+          background: transparent;
+        }
+      `}</style>
+      <section className="relative min-h-screen flex items-center justify-center p-4 md:p-8 my-12 mb-24 md:my-2 md:mb-2">
       {/* Background Grid */}
       <div className="absolute inset-0 opacity-20">
         <div className="h-full w-full" style={{
@@ -224,202 +249,186 @@ export default function GetInTouchSection() {
 
           {/* Right Side - Contact Form */}
           <div className="relative">
-            {/* Glass morphism container */}
-            <div className="bg-glass-fill backdrop-blur-md border border-gray-700/30 rounded-2xl p-8 md:p-10">
-              
-              {/* Contact Info Header */}
-              <div className="mb-8">
-                <p className="text-yellow text-sm font-alexandria uppercase tracking-wider mb-2">
+            {/* Header with Email and Actions */}
+            <div className="mb-8">
+              <div className="flex justify-between items-start mb-4">
+                <p className="text-gray-400 text-sm font-alexandria uppercase tracking-wider">
                   DROP A LINE
                 </p>
-                <h3 className="text-yellow text-2xl md:text-3xl font-new-black">
-                  hello@senu.design
-                </h3>
-                <button className="text-gray-400 text-sm mt-2 hover:text-white transition-colors">
-                  COPY EMAIL 📋
+                <button 
+                  onClick={copyEmailToClipboard}
+                  className={`flex items-center gap-2 text-sm font-alexandria transition-colors ${
+                    isEmailCopied ? 'text-green-400' : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  COPY EMAIL 
+                  {isEmailCopied ? (
+                    <FiCheck className="w-4 h-4" />
+                  ) : (
+                    <FiCopy className="w-4 h-4" />
+                  )}
                 </button>
               </div>
+              <h3 className="text-yellow text-4xl md:text-5xl lg:text-6xl font-new-black font-light">
+                senu@senu.studio
+              </h3>
+            </div>
 
-              {/* Contact Form */}
-              <form onSubmit={handleSubmit} className="space-y-6">
-                
+            {/* Contact Form - No Background */}
+            <form onSubmit={handleSubmit} className="space-y-8">
+              
+              {/* Row 1: Name and Email */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Name Field */}
                 <div>
-                  <label className="block text-white text-sm font-alexandria mb-2">
-                    NAME *
-                  </label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    className="w-full bg-transparent border-b border-gray-600 text-white placeholder-gray-500 py-3 px-0 focus:outline-none focus:border-blue transition-colors font-alexandria"
-                    placeholder="Your name"
+                    className="w-full bg-transparent border-b border-[#8E8E8E] text-white placeholder-gray-500 py-3 px-0 focus:outline-none focus:border-blue transition-colors font-alexandria"
+                    placeholder="NAME *"
                   />
                   {errors.name && (
                     <p className="text-red text-sm mt-1">{errors.name}</p>
                   )}
                 </div>
 
-                {/* Contact Method Selector */}
+                {/* Email Field */}
                 <div>
-                  <label className="block text-white text-sm font-alexandria mb-3">
-                    YOUR PREFERRED PLATFORM TO CONTACT *
-                  </label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    className="w-full bg-transparent border-b border-[#8E8E8E] text-white placeholder-gray-500 py-3 px-0 focus:outline-none focus:border-blue transition-colors font-alexandria"
+                    placeholder="EMAIL *"
+                  />
+                  {errors.email && (
+                    <p className="text-red text-sm mt-1">{errors.email}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Row 2: Contact Method Dropdown */}
+              <div>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="w-full bg-transparent border-b border-[#8E8E8E] text-gray-400 py-3 px-0 focus:outline-none focus:border-blue transition-colors font-alexandria text-left flex justify-between items-center"
+                  >
+                    <span className="uppercase">
+                      {formData.contactMethod === 'phone' ? 'PHONE CALL' : 
+                       formData.contactMethod === 'whatsapp' ? 'WHATSAPP' : 'EMAIL'}
+                    </span>
+                    <FiChevronDown className={`w-5 h-5 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {isDropdownOpen && (
+                    <div className="absolute top-full left-0 w-full mt-1 bg-glass-fill backdrop-blur-md border border-white/10 rounded-lg z-50 overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => handleContactMethodChange('phone')}
+                        className="w-full text-left px-6 py-4 text-white hover:bg-white/10 transition-colors font-alexandria uppercase border-b border-white/10"
+                      >
+                        PHONE CALL
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleContactMethodChange('whatsapp')}
+                        className="w-full text-left px-6 py-4 text-white hover:bg-white/10 transition-colors font-alexandria uppercase border-b border-white/10"
+                      >
+                        WHATSAPP
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleContactMethodChange('email')}
+                        className="w-full text-left px-6 py-4 text-white hover:bg-white/10 transition-colors font-alexandria uppercase"
+                      >
+                        EMAIL
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Row 3: Phone */}
+              <div>
+                <div className="flex gap-2">
+                  {/* Country Code Dropdown */}
                   <div className="relative">
                     <button
                       type="button"
-                      onClick={() => setIsContactMethodOpen(!isContactMethodOpen)}
-                      className="w-full bg-transparent border-b border-gray-600 text-white py-3 px-0 focus:outline-none focus:border-blue transition-colors font-alexandria text-left flex justify-between items-center"
+                      onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
+                      className="bg-transparent border-b border-[#8E8E8E] text-white py-3 px-0 pr-8 focus:outline-none focus:border-blue transition-colors font-alexandria text-left min-w-[80px]"
                     >
-                      <span>{currentContactMethod?.label}</span>
-                      <svg 
-                        className={`w-5 h-5 text-gray-400 transition-transform ${isContactMethodOpen ? 'rotate-180' : ''}`} 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
+                      {formData.countryCode}
+                      <FiChevronDown className={`w-4 h-4 absolute right-0 top-1/2 -translate-y-1/2 transition-transform ${isCountryDropdownOpen ? 'rotate-180' : ''}`} />
                     </button>
                     
-                    {isContactMethodOpen && (
-                      <div className="absolute top-full left-0 w-full mt-2 bg-glass-fill backdrop-blur-md border border-white/10 rounded-xl z-50 overflow-hidden">
-                        {contactMethods.map((method, index) => (
-                          <div key={method.value}>
-                            <button
-                              type="button"
-                              onClick={() => handleContactMethodChange(method.value as ContactMethod)}
-                              className="w-full text-left px-4 py-3 text-white hover:bg-white/10 transition-colors font-alexandria text-sm uppercase"
-                            >
-                              {method.label}
-                            </button>
-                            {index < contactMethods.length - 1 && (
-                              <div className="border-b border-white/10" />
-                            )}
-                          </div>
+                    {isCountryDropdownOpen && (
+                      <div 
+                        className="absolute top-full left-0 w-64 mt-1 bg-glass-fill backdrop-blur-md border border-white/10 rounded-lg z-50 max-h-60 overflow-y-auto custom-scrollbar"
+                        style={{
+                          scrollbarWidth: 'thin',
+                          scrollbarColor: 'rgba(255, 255, 255, 0.2) transparent'
+                        }}
+                      >
+                        {countryCodes.map((country, index) => (
+                          <button
+                            key={country.code}
+                            type="button"
+                            onClick={() => {
+                              handleInputChange('countryCode', country.code);
+                              setIsCountryDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-6 py-3 text-white hover:bg-white/10 transition-colors font-alexandria text-sm ${
+                              index < countryCodes.length - 1 ? 'border-b border-white/10' : ''
+                            }`}
+                          >
+                            {country.code} {country.name}
+                          </button>
                         ))}
                       </div>
                     )}
                   </div>
-                </div>
-
-                {/* Conditional Fields */}
-                {formData.contactMethod === 'email' ? (
-                  <div>
-                    <label className="block text-white text-sm font-alexandria mb-2">
-                      EMAIL *
-                    </label>
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
-                      className="w-full bg-transparent border-b border-gray-600 text-white placeholder-gray-500 py-3 px-0 focus:outline-none focus:border-blue transition-colors font-alexandria"
-                      placeholder="your.email@example.com"
-                    />
-                    {errors.email && (
-                      <p className="text-red text-sm mt-1">{errors.email}</p>
-                    )}
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-white text-sm font-alexandria mb-2">
-                        CODE
-                      </label>
-                      <div className="relative">
-                        <button
-                          type="button"
-                          onClick={() => setIsCountryCodeOpen(!isCountryCodeOpen)}
-                          className="w-full bg-transparent border-b border-gray-600 text-white py-3 px-0 focus:outline-none focus:border-blue transition-colors font-alexandria text-left flex justify-between items-center"
-                        >
-                          <span>{formData.countryCode}</span>
-                          <svg 
-                            className={`w-4 h-4 text-gray-400 transition-transform ${isCountryCodeOpen ? 'rotate-180' : ''}`} 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-                        
-                        {isCountryCodeOpen && (
-                          <div className="absolute top-full left-0 w-48 mt-2 bg-glass-fill backdrop-blur-md border border-white/10 rounded-xl z-50 max-h-48 overflow-y-auto">
-                            {countryCodes.map((country, index) => (
-                              <div key={country.code}>
-                                <button
-                                  type="button"
-                                  onClick={() => handleCountryCodeChange(country.code)}
-                                  className="w-full text-left px-4 py-2 text-white hover:bg-white/10 transition-colors font-alexandria text-sm flex justify-between"
-                                >
-                                  <span>{country.code}</span>
-                                  <span className="text-gray-400">{country.country}</span>
-                                </button>
-                                {index < countryCodes.length - 1 && (
-                                  <div className="border-b border-white/10" />
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="col-span-2">
-                      <label className="block text-white text-sm font-alexandria mb-2">
-                        PHONE *
-                      </label>
-                      <input
-                        type="tel"
-                        value={formData.phoneNumber}
-                        onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-                        className="w-full bg-transparent border-b border-gray-600 text-white placeholder-gray-500 py-3 px-0 focus:outline-none focus:border-blue transition-colors font-alexandria"
-                        placeholder="123456789"
-                      />
-                    </div>
-                    {errors.phoneNumber && (
-                      <p className="text-red text-sm mt-1 col-span-3">{errors.phoneNumber}</p>
-                    )}
-                  </div>
-                )}
-
-                {/* Message Field */}
-                <div>
-                  <label className="block text-white text-sm font-alexandria mb-2">
-                    MESSAGE
-                  </label>
-                  <textarea
-                    value={formData.message}
-                    onChange={(e) => handleInputChange('message', e.target.value)}
-                    rows={4}
-                    className="w-full bg-transparent border border-gray-600 text-white placeholder-gray-500 py-3 px-4 rounded-lg focus:outline-none focus:border-blue transition-colors font-alexandria resize-none"
-                    placeholder="Tell us about your project..."
+                  
+                  <input
+                    type="tel"
+                    value={formData.phoneNumber}
+                    onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+                    className="flex-1 bg-transparent border-b border-[#8E8E8E] text-white placeholder-gray-500 py-3 px-0 focus:outline-none focus:border-blue transition-colors font-alexandria"
+                    placeholder="PHONE *"
                   />
                 </div>
+                {errors.phoneNumber && (
+                  <p className="text-red text-sm mt-1">{errors.phoneNumber}</p>
+                )}
+              </div>
 
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-blue hover:bg-blue/80 text-white font-alexandria font-semibold py-4 px-6 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSubmitting ? 'SENDING...' : 'HIT US'}
-                </button>
-              </form>
-            </div>
+              {/* Row 4: Message Field (Single Line) */}
+              <div>
+                <input
+                  type="text"
+                  value={formData.message}
+                  onChange={(e) => handleInputChange('message', e.target.value)}
+                  className="w-full bg-transparent border-b border-[#8E8E8E] text-white placeholder-gray-500 py-3 px-0 focus:outline-none focus:border-blue transition-colors font-alexandria"
+                  placeholder="MESSAGE"
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-blue hover:bg-blue/80 text-white font-alexandria font-semibold py-4 px-6 rounded-full transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
+              >
+                {isSubmitting ? 'SENDING...' : 'HIT US'}
+              </button>
+            </form>
           </div>
         </div>
       </div>
-
-      {/* Click outside handler */}
-      {(isContactMethodOpen || isCountryCodeOpen) && (
-        <div 
-          className="fixed inset-0 z-40" 
-          onClick={() => {
-            setIsContactMethodOpen(false);
-            setIsCountryCodeOpen(false);
-          }}
-        />
-      )}
     </section>
+    </>
   );
 }
