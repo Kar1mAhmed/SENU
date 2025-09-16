@@ -1,0 +1,467 @@
+'use client';
+import React, { useState, useRef } from 'react';
+import Image from 'next/image';
+import Icon from '../Icon';
+import { Project } from '@/lib/types';
+
+interface ProjectCardProps {
+    project: Project;
+    index: number;
+    isLeft?: boolean;
+}
+
+const ProjectCard: React.FC<ProjectCardProps> = ({ 
+    project, 
+    index, 
+    isLeft = false
+}) => {
+    console.log('🎨 Rendering ProjectCard:', project.name, 'type:', project.type, 'category:', project.category);
+    
+    const [isPlaying, setIsPlaying] = useState(false);
+    const videoRef = useRef<HTMLVideoElement>(null);
+    
+    const icons = ['/Icons/bird.svg', '/Icons/eye.svg', '/Icons/crown.svg'];
+
+    const togglePlayPause = () => {
+        console.log('🎬 Video control clicked - current state:', isPlaying ? 'playing' : 'paused');
+        if (videoRef.current) {
+            if (isPlaying) {
+                videoRef.current.pause();
+                setIsPlaying(false);
+            } else {
+                videoRef.current.play();
+                setIsPlaying(true);
+            }
+        }
+    };
+
+    // Color variations cycle through different themes
+    const colorVariations = [
+        { bg: 'bg-green', iconColor: 'bg-green-40' },
+        { bg: 'bg-red-50', iconColor: 'bg-red-20' },
+        { bg: 'bg-blue', iconColor: 'bg-blue-40' },
+        { bg: 'bg-orange-50', iconColor: 'bg-orange-30' },
+    ];
+    const colors = colorVariations[index % 4];
+
+    // Render different layouts based on project type
+    const renderImageProject = () => (
+        <div className="w-full bg-transparent flex flex-col mb-8 group">
+            {/* Outer container with space for sidebars */}
+            <div className="relative w-full px-6">
+                {/* Image Section with responsive dimensions */}
+                <div className="relative w-full aspect-[560/620] max-w-full md:max-w-[450px] lg:max-w-[480px] xl:max-w-[560px] mx-auto">
+                    <div className="absolute inset-0 rounded-lg overflow-hidden">
+                        <Image
+                            src={project.imageUrl}
+                            alt={project.name}
+                            fill
+                            className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                            sizes="(max-width: 768px) 90vw, (max-width: 1024px) 450px, (max-width: 1280px) 480px, 560px"
+                        />
+                    </div>
+                    
+                    {/* Icons Sidebar - Mobile positioning (alternating left/right) */}
+                    <div className={`absolute sm:hidden ${
+                        index % 2 === 0 ? 'left-[-10px] top-16' : 'right-[-10px] bottom-16'
+                    } w-[10%] bg-opacity-90 ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%]
+                    transition-all duration-500 ease-out
+                    aspect-[1/4] group-hover:aspect-[1/5]`}>
+                        {icons.map((icon, iconIndex) => (
+                            <Icon 
+                                key={iconIndex} 
+                                src={icon} 
+                                colorClass={colors.iconColor} 
+                                className="w-[50%] h-[50%] max-w-[16px] max-h-[16px] transition-all duration-300 ease-out group-hover:scale-110" 
+                            />
+                        ))}
+                    </div>
+                    
+                    {/* Icons Sidebar - Tablet and Desktop positioning */}
+                    <div className={`absolute hidden sm:flex ${
+                        isLeft 
+                            ? 'left-0 -translate-x-1/2' 
+                            : 'right-0 translate-x-1/2'
+                    } ${
+                        isLeft 
+                            ? 'top-[10%]' 
+                            : 'bottom-[10%]'
+                    } w-[7%] min-w-[30px] max-w-[40px] ${colors.bg} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90
+                    transition-all duration-500 ease-out
+                    aspect-[1/5] min-h-[90px] max-h-[180px]
+                    group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[240px]`}>
+                        {icons.map((icon, iconIndex) => (
+                            <Icon 
+                                key={iconIndex} 
+                                src={icon} 
+                                colorClass={colors.iconColor} 
+                                className="w-[60%] h-[60%] min-w-[12px] min-h-[12px] max-w-[26px] max-h-[26px] transition-all duration-300 ease-out group-hover:scale-110" 
+                            />
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Details Section */}
+            <div className="flex-grow flex flex-col justify-between mt-4 px-6">
+                <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                        <h3 className="text-xl sm:text-2xl md:text-xl lg:text-2xl xl:text-3xl text-white font-light leading-tight">
+                            {project.name}
+                        </h3>
+                        <div className="mt-3 md:mt-4">
+                            <p className="text-gray-400 text-xs sm:text-sm md:text-xs lg:text-sm xl:text-base">
+                                <span className="font-semibold">Client:</span> {project.client}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1 flex-wrap">
+                                <p className="text-gray-400 font-semibold text-xs sm:text-sm md:text-xs lg:text-sm xl:text-base">Work:</p>
+                                {project.work.map((tag, tagIndex) => (
+                                    <span key={tagIndex} className="text-gray-300 text-xs sm:text-sm md:text-xs lg:text-sm xl:text-base">
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                            {project.description && (
+                                <p className="text-gray-400 text-xs sm:text-sm md:text-xs lg:text-sm xl:text-base mt-2">
+                                    {project.description}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 md:gap-2 lg:gap-3 xl:gap-4 ml-4">
+                        <Image 
+                            src="/Icons/columns.svg" 
+                            alt="details" 
+                            width={16} 
+                            height={16}
+                            className="sm:w-[16px] sm:h-[16px] md:w-[14px] md:h-[14px] lg:w-5 lg:h-5 xl:w-6 xl:h-6"
+                        />
+                        <svg 
+                            width="16" 
+                            height="16" 
+                            viewBox="0 0 24 24" 
+                            fill="none" 
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="sm:w-[16px] sm:h-[16px] md:w-[14px] md:h-[14px] lg:w-6 lg:h-6 xl:w-8 xl:h-8 transition-transform duration-300 ease-out hover:scale-125 cursor-pointer"
+                        >
+                            <path 
+                                d="M15 3H21M21 3V9M21 3L14 10" 
+                                stroke="white" 
+                                strokeWidth="1.5" 
+                                strokeLinecap="round" 
+                                strokeLinejoin="round" 
+                            />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderVerticalProject = () => (
+        <div className="w-full bg-transparent flex flex-col mb-8 group">
+            {/* Outer container with space for sidebars */}
+            <div className="relative w-full px-6">
+                {/* Vertical video container - bigger size */}
+                <div className="relative w-full aspect-[9/16] max-w-full md:max-w-[350px] lg:max-w-[380px] xl:max-w-[420px] mx-auto">
+                    <div className="absolute inset-0 rounded-lg overflow-hidden bg-black">
+                        {project.videoUrl ? (
+                            <>
+                                <video
+                                    ref={videoRef}
+                                    src={project.videoUrl}
+                                    poster={project.imageUrl} // Use imageUrl as thumbnail
+                                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                                    muted
+                                    loop
+                                    playsInline
+                                    onPlay={() => setIsPlaying(true)}
+                                    onPause={() => setIsPlaying(false)}
+                                />
+                                {/* Play/Pause Button */}
+                                <button
+                                    onClick={togglePlayPause}
+                                    className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                >
+                                    <div className="w-12 h-12 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-300">
+                                        {isPlaying ? (
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <rect x="6" y="4" width="4" height="16" fill="white"/>
+                                                <rect x="14" y="4" width="4" height="16" fill="white"/>
+                                            </svg>
+                                        ) : (
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <polygon points="8,5 19,12 8,19" fill="white"/>
+                                            </svg>
+                                        )}
+                                    </div>
+                                </button>
+                            </>
+                        ) : (
+                            <Image
+                                src={project.imageUrl}
+                                alt={project.name}
+                                fill
+                                className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                                sizes="(max-width: 768px) 90vw, (max-width: 1024px) 400px, (max-width: 1280px) 450px, 500px"
+                            />
+                        )}
+                    </div>
+                    
+                    {/* Icons Sidebar - Mobile positioning (alternating left/right) */}
+                    <div className={`absolute sm:hidden ${
+                        index % 2 === 0 ? 'left-[-10px] top-16' : 'right-[-10px] bottom-16'
+                    } w-[10%] bg-opacity-90 ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%]
+                    transition-all duration-500 ease-out
+                    aspect-[1/4] group-hover:aspect-[1/5]`}>
+                        {icons.map((icon, iconIndex) => (
+                            <Icon 
+                                key={iconIndex} 
+                                src={icon} 
+                                colorClass={colors.iconColor} 
+                                className="w-[50%] h-[50%] max-w-[16px] max-h-[16px] transition-all duration-300 ease-out group-hover:scale-110" 
+                            />
+                        ))}
+                    </div>
+                    
+                    {/* Icons Sidebar - Tablet and Desktop positioning */}
+                    <div className={`absolute hidden sm:flex ${
+                        isLeft 
+                            ? 'left-0 -translate-x-1/2' 
+                            : 'right-0 translate-x-1/2'
+                    } ${
+                        isLeft 
+                            ? 'top-[10%]' 
+                            : 'bottom-[10%]'
+                    } w-[7%] min-w-[30px] max-w-[40px] ${colors.bg} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90
+                    transition-all duration-500 ease-out
+                    aspect-[1/5] min-h-[90px] max-h-[180px]
+                    group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[240px]`}>
+                        {icons.map((icon, iconIndex) => (
+                            <Icon 
+                                key={iconIndex} 
+                                src={icon} 
+                                colorClass={colors.iconColor} 
+                                className="w-[60%] h-[60%] min-w-[12px] min-h-[12px] max-w-[26px] max-h-[26px] transition-all duration-300 ease-out group-hover:scale-110" 
+                            />
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Details Section - aligned with video container */}
+            <div className="flex-grow flex flex-col justify-between mt-4 px-6">
+                <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                        <h3 className="text-xl sm:text-2xl md:text-xl lg:text-2xl xl:text-3xl text-white font-light leading-tight">
+                            {project.name}
+                        </h3>
+                        <div className="mt-3 md:mt-4">
+                            <p className="text-gray-400 text-xs sm:text-sm md:text-xs lg:text-sm xl:text-base">
+                                <span className="font-semibold">Client:</span> {project.client}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1 flex-wrap">
+                                <p className="text-gray-400 font-semibold text-xs sm:text-sm md:text-xs lg:text-sm xl:text-base">Work:</p>
+                                {project.work.map((tag, tagIndex) => (
+                                    <span key={tagIndex} className="text-gray-300 text-xs sm:text-sm md:text-xs lg:text-sm xl:text-base">
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                            {project.description && (
+                                <p className="text-gray-400 text-xs sm:text-sm md:text-xs lg:text-sm xl:text-base mt-2">
+                                    {project.description}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 md:gap-2 lg:gap-3 xl:gap-4 ml-4">
+                        <Image 
+                            src="/Icons/columns.svg" 
+                            alt="details" 
+                            width={16} 
+                            height={16}
+                            className="sm:w-[16px] sm:h-[16px] md:w-[14px] md:h-[14px] lg:w-5 lg:h-5 xl:w-6 xl:h-6"
+                        />
+                        <svg 
+                            width="16" 
+                            height="16" 
+                            viewBox="0 0 24 24" 
+                            fill="none" 
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="sm:w-[16px] sm:h-[16px] md:w-[14px] md:h-[14px] lg:w-6 lg:h-6 xl:w-8 xl:h-8 transition-transform duration-300 ease-out hover:scale-125 cursor-pointer"
+                        >
+                            <path 
+                                d="M15 3H21M21 3V9M21 3L14 10" 
+                                stroke="white" 
+                                strokeWidth="1.5" 
+                                strokeLinecap="round" 
+                                strokeLinejoin="round" 
+                            />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderHorizontalProject = () => (
+        <div className="w-full bg-transparent flex flex-col mb-8 group">
+            {/* Outer container with space for sidebars */}
+            <div className="relative w-full px-6">
+                {/* Horizontal video container with same styling as image projects */}
+                <div className="relative w-full aspect-[16/9] max-w-full md:max-w-[450px] lg:max-w-[480px] xl:max-w-[560px] mx-auto">
+                    <div className="absolute inset-0 rounded-lg overflow-hidden bg-black">
+                        {project.videoUrl ? (
+                            <>
+                                <video
+                                    ref={videoRef}
+                                    src={project.videoUrl}
+                                    poster={project.imageUrl} // Use imageUrl as thumbnail
+                                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                                    muted
+                                    loop
+                                    playsInline
+                                    onPlay={() => setIsPlaying(true)}
+                                    onPause={() => setIsPlaying(false)}
+                                />
+                                {/* Play/Pause Button */}
+                                <button
+                                    onClick={togglePlayPause}
+                                    className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                >
+                                    <div className="w-16 h-16 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-300">
+                                        {isPlaying ? (
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <rect x="6" y="4" width="4" height="16" fill="white"/>
+                                                <rect x="14" y="4" width="4" height="16" fill="white"/>
+                                            </svg>
+                                        ) : (
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <polygon points="8,5 19,12 8,19" fill="white"/>
+                                            </svg>
+                                        )}
+                                    </div>
+                                </button>
+                            </>
+                        ) : (
+                            <Image
+                                src={project.imageUrl}
+                                alt={project.name}
+                                fill
+                                className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                                sizes="(max-width: 768px) 90vw, (max-width: 1024px) 450px, (max-width: 1280px) 480px, 560px"
+                            />
+                        )}
+                    </div>
+                    
+                    {/* Icons Sidebar - Mobile positioning (alternating left/right) */}
+                    <div className={`absolute sm:hidden ${
+                        index % 2 === 0 ? 'left-[-10px] top-16' : 'right-[-10px] bottom-16'
+                    } w-[10%] bg-opacity-90 ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%]
+                    transition-all duration-500 ease-out
+                    aspect-[1/4] group-hover:aspect-[1/5]`}>
+                        {icons.map((icon, iconIndex) => (
+                            <Icon 
+                                key={iconIndex} 
+                                src={icon} 
+                                colorClass={colors.iconColor} 
+                                className="w-[50%] h-[50%] max-w-[16px] max-h-[16px] transition-all duration-300 ease-out group-hover:scale-110" 
+                            />
+                        ))}
+                    </div>
+                    
+                    {/* Icons Sidebar - Tablet and Desktop positioning */}
+                    <div className={`absolute hidden sm:flex ${
+                        isLeft 
+                            ? 'left-0 -translate-x-1/2' 
+                            : 'right-0 translate-x-1/2'
+                    } ${
+                        isLeft 
+                            ? 'top-[10%]' 
+                            : 'bottom-[10%]'
+                    } w-[7%] min-w-[30px] max-w-[40px] ${colors.bg} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90
+                    transition-all duration-500 ease-out
+                    aspect-[1/5] min-h-[90px] max-h-[180px]
+                    group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[240px]`}>
+                        {icons.map((icon, iconIndex) => (
+                            <Icon 
+                                key={iconIndex} 
+                                src={icon} 
+                                colorClass={colors.iconColor} 
+                                className="w-[60%] h-[60%] min-w-[12px] min-h-[12px] max-w-[26px] max-h-[26px] transition-all duration-300 ease-out group-hover:scale-110" 
+                            />
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Details Section - same as image projects */}
+            <div className="flex-grow flex flex-col justify-between mt-4 px-6">
+                <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                        <h3 className="text-xl sm:text-2xl md:text-xl lg:text-2xl xl:text-3xl text-white font-light leading-tight">
+                            {project.name}
+                        </h3>
+                        <div className="mt-3 md:mt-4">
+                            <p className="text-gray-400 text-xs sm:text-sm md:text-xs lg:text-sm xl:text-base">
+                                <span className="font-semibold">Client:</span> {project.client}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1 flex-wrap">
+                                <p className="text-gray-400 font-semibold text-xs sm:text-sm md:text-xs lg:text-sm xl:text-base">Work:</p>
+                                {project.work.map((tag, tagIndex) => (
+                                    <span key={tagIndex} className="text-gray-300 text-xs sm:text-sm md:text-xs lg:text-sm xl:text-base">
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                            {project.description && (
+                                <p className="text-gray-400 text-xs sm:text-sm md:text-xs lg:text-sm xl:text-base mt-2">
+                                    {project.description}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 md:gap-2 lg:gap-3 xl:gap-4 ml-4">
+                        <Image 
+                            src="/Icons/columns.svg" 
+                            alt="details" 
+                            width={16} 
+                            height={16}
+                            className="sm:w-[16px] sm:h-[16px] md:w-[14px] md:h-[14px] lg:w-5 lg:h-5 xl:w-6 xl:h-6"
+                        />
+                        <svg 
+                            width="16" 
+                            height="16" 
+                            viewBox="0 0 24 24" 
+                            fill="none" 
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="sm:w-[16px] sm:h-[16px] md:w-[14px] md:h-[14px] lg:w-6 lg:h-6 xl:w-8 xl:h-8 transition-transform duration-300 ease-out hover:scale-125 cursor-pointer"
+                        >
+                            <path 
+                                d="M15 3H21M21 3V9M21 3L14 10" 
+                                stroke="white" 
+                                strokeWidth="1.5" 
+                                strokeLinecap="round" 
+                                strokeLinejoin="round" 
+                            />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    // Return appropriate layout based on project type
+    switch (project.type) {
+        case 'vertical':
+            return renderVerticalProject();
+        case 'horizontal':
+            return renderHorizontalProject();
+        case 'image':
+        default:
+            return renderImageProject();
+    }
+};
+
+export default ProjectCard;

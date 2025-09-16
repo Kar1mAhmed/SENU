@@ -5,6 +5,7 @@ import Button from '@/components/main/Button';
 import { FaInstagram, FaBehance, FaVimeo } from 'react-icons/fa';
 import { SiX } from 'react-icons/si';
 import { FiMenu, FiX } from 'react-icons/fi';
+import Link from "next/link";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,9 +41,9 @@ const Navbar = () => {
           <nav className="relative flex items-center justify-between w-full">
             {/* Left: Logo */}
             <div className="flex-shrink-0">
-              <a href="/">
+              <Link href="/">
                 <img src="/logo.svg" alt="Senu Logo" className="w-[45px] h-[45px] lg:w-[55px] lg:h-[55px] mx-8 lg:mx-12" />
-              </a>
+              </Link>
             </div>
 
             {/* Center: Nav Links (Desktop) */}

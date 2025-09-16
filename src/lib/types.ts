@@ -17,6 +17,9 @@ export type Project = {
   client: string;
   work: string[];
   imageUrl: string;
+  videoUrl?: string;
+  description?: string;
+  type: 'image' | 'horizontal' | 'vertical';
   category: 'Branding' | 'Logo design' | 'UI/UX' | 'Products' | 'Prints' | 'Motions' | 'Shorts';
 };
 
