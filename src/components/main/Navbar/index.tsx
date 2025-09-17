@@ -50,7 +50,9 @@ const Navbar = () => {
             <div className="hidden lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <div className="flex items-center gap-x-8 font-alexandria text-xs uppercase font-normal text-neutral-300">
                 <a href="/about" className="hover:text-white transition-colors">About</a>
-                <a href="/service" className="hover:text-white transition-colors">Service</a>
+                <Link href="/">
+                  <p className="hover:text-white transition-colors">Home</p>
+                </Link>
                 <a href="/portfolio" className="hover:text-white transition-colors">Portfolio</a>
               </div>
             </div>
@@ -63,7 +65,9 @@ const Navbar = () => {
                 <a href="https://vimeo.com/user148650237?fl=pp&fe=sh" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><FaVimeo /></a>
                 <a href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><SiX /></a>
               </div>
-              <Button>Get in touch</Button>
+              <Link href="/contact">
+                <Button>Get in touch</Button>
+              </Link>
             </div>
 
             {/* Mobile Menu Button */}
@@ -93,7 +97,9 @@ const Navbar = () => {
                 <a href="https://vimeo.com/user148650237?fl=pp&fe=sh" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><FaVimeo /></a>
                 <a href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><SiX /></a>
               </div>
-              <Button className="w-full h-[48px]">Get in touch</Button>
+              <Link href="/contact">
+                <Button className="w-full h-[48px]"></Button>
+              </Link>
             </div>
           </div>
         </div>

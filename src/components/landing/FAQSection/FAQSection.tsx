@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { FAQ, WithClassName } from '@/lib/types';
 import { mockFAQs } from '@/lib/mock-data';
+import Link from "next/link";
 
 interface FAQItemProps {
     faq: FAQ;
@@ -95,9 +96,13 @@ const FAQSection: React.FC<FAQSectionProps> = ({
                             <button className="mx-4 lg:mx-0 border border-gray-600 hover:border-gray-400 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 gap-2">
                                 More Questions
                             </button>
-                            <button className="mx-4 lg:mx-0 bg-blue hover:bg-blue-700 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 hover:scale-105  hover:shadow-lg hover:shadow-blue-600/25">
-                                Get In touch
-                            </button>
+                            <Link href="/contact">
+
+                                <button className="mx-4 lg:mx-0 bg-blue hover:bg-blue-700 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 hover:scale-105  hover:shadow-lg hover:shadow-blue-600/25">
+                                    Ask Us
+                                </button>
+                            </Link>
+
                         </div>
                     </div>
                 </div>

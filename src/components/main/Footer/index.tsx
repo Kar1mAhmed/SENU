@@ -5,6 +5,7 @@ import Button from '@/components/main/Button';
 import { FaInstagram, FaBehance, FaVimeo } from 'react-icons/fa';
 import { SiX } from 'react-icons/si';
 import { WithClassName } from '@/lib/types';
+import Link from "next/link";
 
 const Footer: React.FC<WithClassName> = ({ className }) => {
   console.log('ðŸ¦¶ Footer component rendering - time to put our best foot forward!');
@@ -25,21 +26,23 @@ const Footer: React.FC<WithClassName> = ({ className }) => {
             backgroundSize: '60px 60px, 60px 60px, 120px 120px, 120px 120px',
             animation: 'pulse 3s ease-in-out infinite'
           }}></div>
-          
+
           {/* Glowing dots at grid intersections */}
-      
+
         </div>
-        
+
         <div className="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
           <div className="text-center">
             <h2 className="font-new-black text-4xl lg:text-6xl xl:text-8xl leading-tight mb-16 transition-transform duration-300">
-              <span className="text-orange animate-pulse">LET'S CREATE</span>
+              <span className="text-orange animate-pulse">LET'S Boost</span>
               <br />
-              <span className="text-white">YOUR NEW BRAND</span>
+              <span className="text-white">YOUR BRAND</span>
             </h2>
             <div className="flex justify-center">
               <div className="transform hover:scale-110 transition-transform duration-300">
-                <Button className="w-auto px-16 py-4  font-bold shadow-2xl hover:shadow-orange/20 !text-[13px] h-auto">Get in touch</Button>
+                <Link href="/contact">
+                  <Button className="w-auto px-16 py-4  font-bold shadow-2xl hover:shadow-orange/20 !text-[13px] h-auto">Let's Create</Button>
+                </Link>
               </div>
             </div>
           </div>
@@ -49,52 +52,52 @@ const Footer: React.FC<WithClassName> = ({ className }) => {
       {/* Footer Navigation */}
       <div className="bg-black border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12 lg:py-16">
-          
+
           {/* Mobile Layout - Stacked and Centered */}
           <div className="block lg:hidden">
             {/* Logo - Centered using flexbox */}
             <div className="w-full flex justify-center mb-8">
               <img src="/logo.svg" alt="Senu Logo" className="w-32 h-auto mb-6 transform transition-transform duration-300" />
             </div>
-            
+
             {/* Social Media - Centered using flexbox */}
             <div className="w-full flex justify-center mb-8">
               <div className="flex items-center gap-5 text-neutral-300 text-[18px]">
-                <a 
-                  href="https://www.behance.net/senustudio" 
-                  className="hover:text-white transition-colors transform hover:scale-110 duration-300" 
-                  target="_blank" 
+                <a
+                  href="https://www.behance.net/senustudio"
+                  className="hover:text-white transition-colors transform hover:scale-110 duration-300"
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   <FaBehance />
                 </a>
-                <a 
-                  href="https://www.instagram.com/senustudio?igsh=MWlwYXVsNzhjaGl4OQ==" 
-                  className="hover:text-white transition-colors transform hover:scale-110 duration-300" 
-                  target="_blank" 
+                <a
+                  href="https://www.instagram.com/senustudio?igsh=MWlwYXVsNzhjaGl4OQ=="
+                  className="hover:text-white transition-colors transform hover:scale-110 duration-300"
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   <FaInstagram />
                 </a>
-                <a 
-                  href="https://vimeo.com/user148650237?fl=pp&fe=sh" 
-                  className="hover:text-white transition-colors transform hover:scale-110 duration-300" 
-                  target="_blank" 
+                <a
+                  href="https://vimeo.com/user148650237?fl=pp&fe=sh"
+                  className="hover:text-white transition-colors transform hover:scale-110 duration-300"
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   <FaVimeo />
                 </a>
-                <a 
-                  href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09" 
-                  className="hover:text-white transition-colors transform hover:scale-110 duration-300" 
-                  target="_blank" 
+                <a
+                  href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09"
+                  className="hover:text-white transition-colors transform hover:scale-110 duration-300"
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   <SiX />
                 </a>
               </div>
             </div>
-            
+
             {/* Navigation Links - Two Columns */}
             <div className="grid grid-cols-2 gap-8">
               {/* Home Page Links */}
@@ -150,42 +153,42 @@ const Footer: React.FC<WithClassName> = ({ className }) => {
 
           {/* Desktop Layout - Original Grid */}
           <div className="hidden lg:grid lg:grid-cols-4 gap-8 lg:gap-12">
-            
+
             {/* Logo and Social Media */}
             <div className="lg:col-span-2">
               <div className="mb-8">
                 <img src="/logo.svg" alt="Senu Logo" className="w-32 h-auto mb-6 transform transition-transform duration-300" />
               </div>
-              
+
               <div className="flex items-center gap-5 text-neutral-300 text-[18px]">
-                <a 
-                  href="https://www.behance.net/senustudio" 
-                  className="hover:text-white transition-colors transform hover:scale-110 duration-300" 
-                  target="_blank" 
+                <a
+                  href="https://www.behance.net/senustudio"
+                  className="hover:text-white transition-colors transform hover:scale-110 duration-300"
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   <FaBehance />
                 </a>
-                <a 
-                  href="https://www.instagram.com/senustudio?igsh=MWlwYXVsNzhjaGl4OQ==" 
-                  className="hover:text-white transition-colors transform hover:scale-110 duration-300" 
-                  target="_blank" 
+                <a
+                  href="https://www.instagram.com/senustudio?igsh=MWlwYXVsNzhjaGl4OQ=="
+                  className="hover:text-white transition-colors transform hover:scale-110 duration-300"
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   <FaInstagram />
                 </a>
-                <a 
-                  href="https://vimeo.com/user148650237?fl=pp&fe=sh" 
-                  className="hover:text-white transition-colors transform hover:scale-110 duration-300" 
-                  target="_blank" 
+                <a
+                  href="https://vimeo.com/user148650237?fl=pp&fe=sh"
+                  className="hover:text-white transition-colors transform hover:scale-110 duration-300"
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   <FaVimeo />
                 </a>
-                <a 
-                  href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09" 
-                  className="hover:text-white transition-colors transform hover:scale-110 duration-300" 
-                  target="_blank" 
+                <a
+                  href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09"
+                  className="hover:text-white transition-colors transform hover:scale-110 duration-300"
+                  target="_blank"
                   rel="noopener noreferrer"
                 >
                   <SiX />
