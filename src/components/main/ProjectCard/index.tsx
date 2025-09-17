@@ -272,7 +272,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         </button>
 
                         {/* Time Display */}
-                        <div className="text-white text-xs font-mono flex-shrink-0">
+                        <div className="text-white text-xs font-new-black flex-shrink-0 ">
                             {formatTime(currentTime)} / {formatTime(duration || 0)}
                         </div>
 
