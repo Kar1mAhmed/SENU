@@ -66,7 +66,7 @@ const Navbar = () => {
                 <a href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><SiX /></a>
               </div>
               <Link href="/contact">
-                <Button>Get in touch</Button>
+                <Button >Get in touch</Button>
               </Link>
             </div>
 
@@ -98,7 +98,7 @@ const Navbar = () => {
                 <a href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><SiX /></a>
               </div>
               <Link href="/contact">
-                <Button className="w-full h-[48px]"></Button>
+                <Button className="w-full h-[48px]">Get in touch</Button>
               </Link>
             </div>
           </div>

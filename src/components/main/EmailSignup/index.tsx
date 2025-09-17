@@ -11,7 +11,7 @@ const EmailSignup = () => {
           className="bg-transparent text-white/50 placeholder:text-white/50 focus:outline-none focus:ring-0 text-xs md:text-sm px-2 py-2 flex-grow min-w-0"
         />
         <div className="flex-shrink-0">
-          <Button className="w-[90px] h-[32px] md:w-[139px] md:h-[39px] font-light tracking-normal ">Get in touch</Button>
+          <Button className="w-[90px] h-[32px] md:w-[139px] md:h-[39px] font-light tracking-normal ">Message us</Button>
         </div>
       </div>
     </div>
