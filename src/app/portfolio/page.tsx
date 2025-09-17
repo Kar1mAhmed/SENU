@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { mockProjects } from '@/lib/mock-data';
 import ProjectGridLayout from '@/components/main/ProjectGridLayout';
 import CategoryFilter from '@/components/main/CategoryFilter';
+import SingleRibbon from '@/components/main/SingleRibbon';
+import Footer from '@/components/main/Footer';
 
 const categories = [
     'All',
@@ -50,6 +52,8 @@ const Portfolio: React.FC = () => {
                     />
                 </div>
             </section>
+            <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]"/>
+            <Footer />
         </div>
     );
 };

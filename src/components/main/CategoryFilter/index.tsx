@@ -25,7 +25,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
                         className={`px-6 w-[143px] h-[39px] py-2 rounded-full text-sm font-medium transition-colors duration-300 whitespace-nowrap ${
                             activeCategory === category
                                 ? 'bg-blue-600 text-white'
-                                : 'bg-[#474747]/20 border-[2px] border-[#474747]/80 bg-opacity-50 text-[#8E8E8E] hover:text-white'
+                                : 'bg-[#474747]/20 border-[1px] border-[#474747]/80 bg-opacity-50 text-[#8E8E8E] hover:text-white'
                         }`}
                     >
                         {category}

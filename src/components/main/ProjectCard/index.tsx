@@ -12,17 +12,17 @@ interface ProjectCardProps {
     layout?: 'zigzag' | 'fullwidth';
 }
 
-const ProjectCard: React.FC<ProjectCardProps> = ({ 
-    project, 
-    index, 
+const ProjectCard: React.FC<ProjectCardProps> = ({
+    project,
+    index,
     isLeft = false,
     layout = 'zigzag'
 }) => {
     console.log('🎨 Rendering ProjectCard:', project.name, 'type:', project.type, 'category:', project.category);
-    
+
     const [isPlaying, setIsPlaying] = useState(false);
     const videoRef = useRef<HTMLVideoElement>(null);
-    
+
     const icons = ['/Icons/bird.svg', '/Icons/eye.svg', '/Icons/crown.svg'];
 
     const togglePlayPause = () => {
@@ -61,36 +61,33 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                             sizes="(max-width: 768px) 90vw, (max-width: 1024px) 450px, (max-width: 1280px) 480px, 560px"
                         />
                     </div>
-                    
+
                     {/* Icons Sidebar - Mobile */}
-                    <div className={`absolute sm:hidden ${
-                        index % 2 === 0 ? 'left-[-10px] top-16' : 'right-[-10px] bottom-16'
-                    } w-[10%] bg-opacity-90 ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%]
+                    <div className={`absolute sm:hidden ${index % 2 === 0 ? 'left-[-10px] top-16' : 'right-[-10px] bottom-16'
+                        } w-[10%] bg-opacity-90 ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%]
                     transition-all duration-500 ease-out aspect-[1/4] group-hover:aspect-[1/5]`}>
                         {icons.map((icon, iconIndex) => (
-                            <Icon 
-                                key={iconIndex} 
-                                src={icon} 
-                                colorClass={colors.iconColor} 
-                                className="w-[50%] h-[50%] max-w-[16px] max-h-[16px] transition-all duration-300 ease-out group-hover:scale-110" 
+                            <Icon
+                                key={iconIndex}
+                                src={icon}
+                                colorClass={colors.iconColor}
+                                className="w-[50%] h-[50%] max-w-[16px] max-h-[16px] transition-all duration-300 ease-out group-hover:scale-110"
                             />
                         ))}
                     </div>
-                    
+
                     {/* Icons Sidebar - Desktop */}
-                    <div className={`absolute hidden sm:flex ${
-                        isLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
-                    } ${
-                        isLeft ? 'top-[10%]' : 'bottom-[10%]'
-                    } w-[7%] min-w-[30px] max-w-[40px] ${colors.bg} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90
+                    <div className={`absolute hidden sm:flex ${isLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
+                        } ${isLeft ? 'top-[10%]' : 'bottom-[10%]'
+                        } w-[7%] min-w-[30px] max-w-[40px] ${colors.bg} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90
                     transition-all duration-500 ease-out aspect-[1/5] min-h-[90px] max-h-[180px]
                     group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[240px]`}>
                         {icons.map((icon, iconIndex) => (
-                            <Icon 
-                                key={iconIndex} 
-                                src={icon} 
-                                colorClass={colors.iconColor} 
-                                className="w-[60%] h-[60%] min-w-[12px] min-h-[12px] max-w-[26px] max-h-[26px] transition-all duration-300 ease-out group-hover:scale-110" 
+                            <Icon
+                                key={iconIndex}
+                                src={icon}
+                                colorClass={colors.iconColor}
+                                className="w-[60%] h-[60%] min-w-[12px] min-h-[12px] max-w-[26px] max-h-[26px] transition-all duration-300 ease-out group-hover:scale-110"
                             />
                         ))}
                     </div>
@@ -123,19 +120,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                                 {/* Always visible play button when paused or on hover */}
                                 <button
                                     onClick={togglePlayPause}
-                                    className={`absolute inset-0 flex items-center justify-center bg-black transition-opacity duration-300 ${
-                                        !isPlaying ? 'bg-opacity-30 opacity-100' : 'bg-opacity-30 opacity-0 group-hover:opacity-100'
-                                    }`}
+                                    className={`absolute inset-0 flex items-center justify-center bg-black transition-opacity duration-300 ${!isPlaying ? 'bg-opacity-30 opacity-100' : 'bg-opacity-30 opacity-0 group-hover:opacity-100'
+                                        }`}
                                 >
                                     <div className="w-12 h-12 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-300">
                                         {isPlaying ? (
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <rect x="6" y="4" width="4" height="16" fill="white"/>
-                                                <rect x="14" y="4" width="4" height="16" fill="white"/>
+                                                <rect x="6" y="4" width="4" height="16" fill="white" />
+                                                <rect x="14" y="4" width="4" height="16" fill="white" />
                                             </svg>
                                         ) : (
                                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <polygon points="8,5 19,12 8,19" fill="white"/>
+                                                <polygon points="8,5 19,12 8,19" fill="white" />
                                             </svg>
                                         )}
                                     </div>
@@ -151,36 +147,33 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                             />
                         )}
                     </div>
-                    
+
                     {/* Icons Sidebar - Mobile */}
-                    <div className={`absolute sm:hidden ${
-                        index % 2 === 0 ? 'left-[-10px] top-16' : 'right-[-10px] bottom-16'
-                    } w-[10%] bg-opacity-90 ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%]
+                    <div className={`absolute sm:hidden ${index % 2 === 0 ? 'left-[-10px] top-16' : 'right-[-10px] bottom-16'
+                        } w-[10%] bg-opacity-90 ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%]
                     transition-all duration-500 ease-out aspect-[1/4] group-hover:aspect-[1/5]`}>
                         {icons.map((icon, iconIndex) => (
-                            <Icon 
-                                key={iconIndex} 
-                                src={icon} 
-                                colorClass={colors.iconColor} 
-                                className="w-[50%] h-[50%] max-w-[16px] max-h-[16px] transition-all duration-300 ease-out group-hover:scale-110" 
+                            <Icon
+                                key={iconIndex}
+                                src={icon}
+                                colorClass={colors.iconColor}
+                                className="w-[50%] h-[50%] max-w-[16px] max-h-[16px] transition-all duration-300 ease-out group-hover:scale-110"
                             />
                         ))}
                     </div>
-                    
+
                     {/* Icons Sidebar - Desktop */}
-                    <div className={`absolute hidden sm:flex ${
-                        isLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
-                    } ${
-                        isLeft ? 'top-[10%]' : 'bottom-[10%]'
-                    } w-[7%] min-w-[30px] max-w-[40px] ${colors.bg} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90
+                    <div className={`absolute hidden sm:flex ${isLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
+                        } ${isLeft ? 'top-[10%]' : 'bottom-[10%]'
+                        } w-[7%] min-w-[30px] max-w-[40px] ${colors.bg} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90
                     transition-all duration-500 ease-out aspect-[1/5] min-h-[90px] max-h-[180px]
                     group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[240px]`}>
                         {icons.map((icon, iconIndex) => (
-                            <Icon 
-                                key={iconIndex} 
-                                src={icon} 
-                                colorClass={colors.iconColor} 
-                                className="w-[60%] h-[60%] min-w-[12px] min-h-[12px] max-w-[26px] max-h-[26px] transition-all duration-300 ease-out group-hover:scale-110" 
+                            <Icon
+                                key={iconIndex}
+                                src={icon}
+                                colorClass={colors.iconColor}
+                                className="w-[60%] h-[60%] min-w-[12px] min-h-[12px] max-w-[26px] max-h-[26px] transition-all duration-300 ease-out group-hover:scale-110"
                             />
                         ))}
                     </div>
@@ -193,7 +186,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     // Render horizontal video project (full width with alternating text position)
     const renderHorizontalProject = () => {
         const shouldTextBeOnLeft = index % 2 === 0;
-        
+
         return (
             <div className="w-full bg-transparent flex flex-col mb-12 group">
                 {/* Mobile: Stacked layout */}
@@ -208,46 +201,44 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
                 {/* Desktop: Side by side layout with alternating positions */}
                 <div className="hidden lg:block px-6">
-                    <div className={`flex items-center gap-8 xl:gap-12 max-w-[1200px] mx-auto ${shouldTextBeOnLeft ? 'flex-row' : 'flex-row-reverse'}`}>
+                    <div className={`flex items-center gap-8 xl:gap-32 max-w-[1200px] mx-auto my-12 ${shouldTextBeOnLeft ? 'flex-row ' : 'flex-row-reverse'}`}>
                         {/* Video Section - Reasonable size */}
                         <div className="flex-1 max-w-[600px] xl:max-w-[650px] relative">
                             <div className="relative w-full aspect-[16/9]">
                                 {renderVideoPlayer()}
                             </div>
-                            
+
                             {/* Icons Sidebar for horizontal videos - Half on/half off like other projects */}
-                            <div className={`absolute ${
-                                shouldTextBeOnLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
-                            } ${
-                                shouldTextBeOnLeft ? 'top-[15%]' : 'bottom-[15%]'
-                            } w-[7%] min-w-[30px] max-w-[40px] ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%] bg-opacity-90
+                            <div className={`absolute ${shouldTextBeOnLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
+                                } ${shouldTextBeOnLeft ? 'top-[15%]' : 'bottom-[15%]'
+                                } w-[6%] min-w-[30px] max-w-[40px] ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%] bg-opacity-90
                             transition-all duration-500 ease-out aspect-[1/5] min-h-[90px] max-h-[160px]
                             group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[200px]`}>
                                 {icons.map((icon, iconIndex) => (
-                                    <Icon 
-                                        key={iconIndex} 
-                                        src={icon} 
-                                        colorClass={colors.iconColor} 
-                                        className="w-[60%] h-[60%] min-w-[12px] min-h-[12px] max-w-[26px] max-h-[26px] transition-all duration-300 ease-out group-hover:scale-110" 
+                                    <Icon
+                                        key={iconIndex}
+                                        src={icon}
+                                        colorClass={colors.iconColor}
+                                        className="w-[60%] h-[60%] min-w-[12px] min-h-[12px] max-w-[26px] max-h-[26px] transition-all duration-300 ease-out group-hover:scale-110"
                                     />
                                 ))}
                             </div>
                         </div>
 
                         {/* Text Section */}
-                        <div className="flex-1 max-w-[400px]">
+                        <div className="flex-1 max-w-[450px]">
                             <div className="flex flex-col">
-                                <h3 className="text-2xl lg:text-3xl xl:text-4xl text-white font-light leading-tight mb-4">
+                                <h3 className="text-2xl lg:text-3xl xl:text-6xl text-white font-light leading-tight mb-6 font-new-black-light">
                                     {project.name}
                                 </h3>
                                 <div className="space-y-3">
-                                    <p className="text-gray-400 text-sm lg:text-base">
-                                        <span className="font-semibold">Client:</span> {project.client}
+                                    <p className="text-gray-400 text-sm lg:text-base text-white">
+                                        <span className="font-semibold text-gray-400">Client:</span> {project.client}
                                     </p>
                                     <div className="flex items-center gap-2 flex-wrap">
                                         <p className="text-gray-400 font-semibold text-sm lg:text-base">Work:</p>
                                         {project.work.map((tag, tagIndex) => (
-                                            <span key={tagIndex} className="text-gray-300 text-sm lg:text-base">
+                                            <span key={tagIndex} className="text-white text-sm lg:text-base">
                                                 {tag}
                                             </span>
                                         ))}
@@ -258,16 +249,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                                         </p>
                                     )}
                                 </div>
-                                
+
                                 {/* Action buttons */}
-                                <div className="flex items-center gap-4 mt-6">
-                                    <Image 
-                                        src="/Icons/columns.svg" 
-                                        alt="details" 
-                                        width={20} 
-                                        height={20}
-                                        className="lg:w-6 lg:h-6"
-                                    />
+                                {/* <div className="flex items-center gap-4 mt-6">
+                    
                                     <svg 
                                         width="20" 
                                         height="20" 
@@ -284,7 +269,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                                             strokeLinejoin="round" 
                                         />
                                     </svg>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
@@ -312,19 +297,18 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     {/* Always visible play button when paused or on hover */}
                     <button
                         onClick={togglePlayPause}
-                        className={`absolute inset-0 flex items-center justify-center bg-black transition-opacity duration-300 ${
-                            !isPlaying ? 'bg-opacity-30 opacity-100' : 'bg-opacity-30 opacity-0 group-hover:opacity-100'
-                        }`}
+                        className={`absolute inset-0 flex items-center justify-center bg-black transition-opacity duration-300 ${!isPlaying ? 'bg-opacity-30 opacity-100' : 'bg-opacity-30 opacity-0 group-hover:opacity-100'
+                            }`}
                     >
                         <div className="w-16 h-16 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all duration-300">
                             {isPlaying ? (
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="6" y="4" width="4" height="16" fill="white"/>
-                                    <rect x="14" y="4" width="4" height="16" fill="white"/>
+                                    <rect x="6" y="4" width="4" height="16" fill="white" />
+                                    <rect x="14" y="4" width="4" height="16" fill="white" />
                                 </svg>
                             ) : (
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <polygon points="8,5 19,12 8,19" fill="white"/>
+                                    <polygon points="8,5 19,12 8,19" fill="white" />
                                 </svg>
                             )}
                         </div>
@@ -374,27 +358,21 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 md:gap-2 lg:gap-3 xl:gap-4 ml-4">
-                                <Image 
-                                    src="/Icons/columns.svg" 
-                                    alt="details" 
-                                    width={16} 
-                                    height={16}
-                                    className="sm:w-[16px] sm:h-[16px] md:w-[14px] md:h-[14px] lg:w-5 lg:h-5 xl:w-6 xl:h-6"
-                                />
-                                <svg 
-                                    width="16" 
-                                    height="16" 
-                                    viewBox="0 0 24 24" 
-                                    fill="none" 
+
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
                                     xmlns="http://www.w3.org/2000/svg"
                                     className="sm:w-[16px] sm:h-[16px] md:w-[14px] md:h-[14px] lg:w-6 lg:h-6 xl:w-8 xl:h-8 transition-transform duration-300 ease-out hover:scale-125 cursor-pointer"
                                 >
-                                    <path 
-                                        d="M15 3H21M21 3V9M21 3L14 10" 
-                                        stroke="white" 
-                                        strokeWidth="1.5" 
-                                        strokeLinecap="round" 
-                                        strokeLinejoin="round" 
+                                    <path
+                                        d="M15 3H21M21 3V9M21 3L14 10"
+                                        stroke="white"
+                                        strokeWidth="1.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
                                     />
                                 </svg>
                             </div>
@@ -427,27 +405,27 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         </div>
                     </div>
                     <div className="flex items-center gap-2 md:gap-2 lg:gap-3 xl:gap-4 ml-4">
-                        <Image 
-                            src="/Icons/columns.svg" 
-                            alt="details" 
-                            width={16} 
+                        <Image
+                            src="/Icons/columns.svg"
+                            alt="details"
+                            width={16}
                             height={16}
                             className="sm:w-[16px] sm:h-[16px] md:w-[14px] md:h-[14px] lg:w-5 lg:h-5 xl:w-6 xl:h-6"
                         />
-                        <svg 
-                            width="16" 
-                            height="16" 
-                            viewBox="0 0 24 24" 
-                            fill="none" 
+                        <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
                             xmlns="http://www.w3.org/2000/svg"
                             className="sm:w-[16px] sm:h-[16px] md:w-[14px] md:h-[14px] lg:w-6 lg:h-6 xl:w-8 xl:h-8 transition-transform duration-300 ease-out hover:scale-125 cursor-pointer"
                         >
-                            <path 
-                                d="M15 3H21M21 3V9M21 3L14 10" 
-                                stroke="white" 
-                                strokeWidth="1.5" 
-                                strokeLinecap="round" 
-                                strokeLinejoin="round" 
+                            <path
+                                d="M15 3H21M21 3V9M21 3L14 10"
+                                stroke="white"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                             />
                         </svg>
                     </div>

@@ -82,6 +82,7 @@ export const mockProjects: Project[] = [
         videoUrl: '/SHOWREEL.mp4',
         category: 'Motions',
         type: 'horizontal',
+        description: 'Dynamic brand animation and motion graphics for digital campaigns.',
     },
     {
         id: '10',
@@ -92,6 +93,7 @@ export const mockProjects: Project[] = [
         videoUrl: '/SHOWREEL.mp4',
         category: 'Motions',
         type: 'horizontal',
+        description: 'Engaging product launch video with cinematic storytelling.',
     },
     {
         id: '11',
@@ -102,6 +104,7 @@ export const mockProjects: Project[] = [
         videoUrl: '/SHOWREEL.mp4',
         category: 'Shorts',
         type: 'vertical',
+        description: 'Viral social media content optimized for mobile viewing.',
     },
     {
         id: '12',
@@ -112,6 +115,7 @@ export const mockProjects: Project[] = [
         videoUrl: '/SHOWREEL.mp4',
         category: 'Shorts',
         type: 'vertical',
+        description: 'Creative TikTok campaign with trending audio and effects.',
     },
 ];
 
