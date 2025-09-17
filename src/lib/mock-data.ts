@@ -9,7 +9,6 @@ export const mockProjects: Project[] = [
         imageUrl: '/images/covers/2.jpg',
         category: 'Branding',
         type: 'image',
-        description: 'Complete brand identity system with logo variations and brand guidelines.',
     },
     {
         id: '2',
@@ -19,7 +18,6 @@ export const mockProjects: Project[] = [
         imageUrl: '/images/covers/1.jpg',
         category: 'Branding',
         type: 'image',
-        description: 'Modern corporate identity design for tech industry leader.',
     },
     {
         id: '3',
@@ -29,7 +27,6 @@ export const mockProjects: Project[] = [
         imageUrl: '/images/covers/4.jpg',
         category: 'Logo design',
         type: 'image',
-        description: 'Versatile logo system with multiple variations and applications.',
     },
     {
         id: '4',
@@ -39,7 +36,6 @@ export const mockProjects: Project[] = [
         imageUrl: '/images/covers/3.jpg',
         category: 'Logo design',
         type: 'image',
-        description: 'Minimalist symbol design representing innovation and growth.',
     },
     {
         id: '5',
@@ -49,7 +45,6 @@ export const mockProjects: Project[] = [
         imageUrl: '/images/service-branding.jpg',
         category: 'UI/UX',
         type: 'image',
-        description: 'Clean and intuitive web application interface design.',
     },
     {
         id: '6',
@@ -59,7 +54,6 @@ export const mockProjects: Project[] = [
         imageUrl: '/images/service-branding.jpg',
         category: 'UI/UX',
         type: 'image',
-        description: 'User-centered mobile application experience design.',
     },
     {
         id: '7',
@@ -69,7 +63,6 @@ export const mockProjects: Project[] = [
         imageUrl: '/images/service-branding.jpg',
         category: 'Products',
         type: 'image',
-        description: 'Sustainable packaging design with eco-friendly materials.',
     },
     {
         id: '8',
@@ -79,7 +72,6 @@ export const mockProjects: Project[] = [
         imageUrl: '/images/service-branding.jpg',
         category: 'Products',
         type: 'image',
-        description: 'Innovative gadget design with focus on user experience.',
     },
     {
         id: '9',
@@ -90,7 +82,6 @@ export const mockProjects: Project[] = [
         videoUrl: '/SHOWREEL.mp4',
         category: 'Motions',
         type: 'horizontal',
-        description: 'Dynamic brand animation and motion graphics for digital campaigns.',
     },
     {
         id: '10',
@@ -101,7 +92,6 @@ export const mockProjects: Project[] = [
         videoUrl: '/SHOWREEL.mp4',
         category: 'Motions',
         type: 'horizontal',
-        description: 'Engaging product launch video with cinematic storytelling.',
     },
     {
         id: '11',
@@ -112,7 +102,6 @@ export const mockProjects: Project[] = [
         videoUrl: '/SHOWREEL.mp4',
         category: 'Shorts',
         type: 'vertical',
-        description: 'Viral social media content optimized for mobile viewing.',
     },
     {
         id: '12',
@@ -123,7 +112,6 @@ export const mockProjects: Project[] = [
         videoUrl: '/SHOWREEL.mp4',
         category: 'Shorts',
         type: 'vertical',
-        description: 'Creative TikTok campaign with trending audio and effects.',
     },
 ];
 
