@@ -85,11 +85,11 @@ export async function uploadFileToR2(
 
   console.log('🎉 File uploaded successfully to R2:', key);
 
-  // Return the public URL (you might need to adjust this based on your R2 setup)
-  const publicUrl = `https://your-r2-domain.com/${key}`;
+  // Return URL that points to our media serving endpoint
+  const mediaUrl = `/api/media/${key}`;
 
   return {
-    url: publicUrl,
+    url: mediaUrl,
     key: key,
     size: file.size,
     contentType: file.type
@@ -109,12 +109,19 @@ export async function deleteFileFromR2(r2: R2Bucket, key: string): Promise<void>
 }
 
 export function extractKeyFromUrl(url: string): string | null {
-  // Extract the key from a full R2 URL
-  // This assumes URLs are in format: https://your-r2-domain.com/uploads/...
+  // Extract the key from either R2 URL or our media endpoint URL
   try {
+    // Handle our media endpoint URLs: /api/media/uploads/file.jpg
+    if (url.startsWith('/api/media/')) {
+      const key = url.replace('/api/media/', '');
+      console.log('🔑 Extracted key from media endpoint:', key);
+      return key;
+    }
+    
+    // Handle full R2 URLs: https://your-r2-domain.com/uploads/...
     const urlObj = new URL(url);
     const key = urlObj.pathname.substring(1); // Remove leading slash
-    console.log('🔑 Extracted key from URL:', key);
+    console.log('🔑 Extracted key from R2 URL:', key);
     return key;
   } catch (error) {
     console.error('❌ Failed to extract key from URL:', url, error);
