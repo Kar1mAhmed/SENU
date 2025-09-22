@@ -1,11 +1,12 @@
 // src/app/portfolio/page.tsx
 'use client';
 import React, { useState } from 'react';
-import { mockProjects } from '@/lib/mock-data';
+import { useProjects } from '@/lib/hooks/useProjects';
 import ProjectGridLayout from '@/components/main/ProjectGridLayout';
 import CategoryFilter from '@/components/main/CategoryFilter';
 import SingleRibbon from '@/components/main/SingleRibbon';
 import Footer from '@/components/main/Footer';
+import { ProjectCategory } from '@/lib/types';
 
 const categories = [
     'All',
@@ -19,13 +20,14 @@ const categories = [
 ];
 
 const Portfolio: React.FC = () => {
-    const [activeCategory, setActiveCategory] = useState('All');
+    const [activeCategory, setActiveCategory] = useState<ProjectCategory | 'All'>('All');
 
     console.log('🎯 Portfolio page loaded with category:', activeCategory);
 
-    const filteredProjects = activeCategory === 'All'
-        ? mockProjects // Show all projects without limit
-        : mockProjects.filter(p => p.category === activeCategory);
+    // Fetch projects from backend
+    const { projects: filteredProjects, loading, error } = useProjects({ 
+        category: activeCategory 
+    });
 
     console.log('📊 Filtered projects count:', filteredProjects.length, 'for category:', activeCategory);
 
@@ -42,14 +44,31 @@ const Portfolio: React.FC = () => {
                     <CategoryFilter 
                         categories={categories}
                         activeCategory={activeCategory}
-                        onCategoryChange={setActiveCategory}
+                        onCategoryChange={(category) => setActiveCategory(category as ProjectCategory | 'All')}
                     />
 
+                    {/* Loading state */}
+                    {loading && (
+                        <div className="text-center py-12">
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                            <p className="text-gray-400">Loading projects...</p>
+                        </div>
+                    )}
+
+                    {/* Error state */}
+                    {error && (
+                        <div className="text-center py-12">
+                            <p className="text-red-400">Failed to load projects. Please try again later.</p>
+                        </div>
+                    )}
+
                     {/* Projects Grid */}
-                    <ProjectGridLayout 
-                        projects={filteredProjects}
-                        layout="portfolio"
-                    />
+                    {!loading && !error && (
+                        <ProjectGridLayout 
+                            projects={filteredProjects}
+                            layout="portfolio"
+                        />
+                    )}
                 </div>
             </section>
             <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]"/>

@@ -7,7 +7,8 @@
 	],
 	// PROD ENV (https://platform.castform.io)
 	"vars": { 
-
+		"DASHBOARD_USERNAME": "admin",
+		"DASHBOARD_PASSWORD": "senu2024"
 	},
 	"pages_build_output_dir": ".vercel/output/static",
 	// Prod KV Namespace (https://platform.castform.io)
@@ -20,6 +21,7 @@
 	// Prod D1 Database (https://platform.castform.io)
 	"d1_databases": [
 		{
+			"migrations_dir": "migrations",
 			"binding": "DB",
 			"database_name": "senu",
 			"database_id": "fef901ec-a399-4b96-a2bb-d52b09a46dac"

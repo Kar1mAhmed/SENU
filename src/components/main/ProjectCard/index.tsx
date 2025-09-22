@@ -556,11 +556,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                                             </span>
                                         ))}
                                     </div>
-                                    {project.description && (
+                                    {/* {project.description && (
                                         <p className="text-gray-400 text-sm lg:text-base leading-relaxed">
                                             {project.description}
                                         </p>
-                                    )}
+                                    )} */}
                                 </div>
                             </div>
                         </div>
@@ -594,11 +594,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                                             </span>
                                         ))}
                                     </div>
-                                    {project.description && (
+                                    {/* {project.description && (
                                         <p className="text-gray-400 text-xs sm:text-sm md:text-xs lg:text-sm xl:text-base mt-2">
                                             {project.description}
                                         </p>
-                                    )}
+                                    )} */}
                                 </div>
                             </div>
                             <div className="flex items-center gap-2 md:gap-2 lg:gap-3 xl:gap-4 ml-4">
@@ -640,11 +640,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                                     </span>
                                 ))}
                             </div>
-                            {project.description && (
+                            {/* {project.description && (
                                 <p className="text-gray-400 text-xs sm:text-sm md:text-xs lg:text-sm xl:text-base mt-2">
                                     {project.description}
                                 </p>
-                            )}
+                            )} */}
                         </div>
                     </div>
                     <div className="flex items-center gap-2 md:gap-2 lg:gap-3 xl:gap-4 ml-4">

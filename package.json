@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "migrations-local": "npx wrangler d1 migrations apply senu --local",
+		"migrations-prod": "npx wrangler d1 migrations apply senu --remote"
   },
   "dependencies": {
     "@cloudflare/next-on-pages": "^1.13.12",

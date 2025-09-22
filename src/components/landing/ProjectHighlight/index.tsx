@@ -1,7 +1,8 @@
 'use client';
 import React, { useState } from 'react';
-import { mockProjects } from '@/lib/mock-data';
+import { useProjects } from '@/lib/hooks/useProjects';
 import ProjectGridLayout from '../../main/ProjectGridLayout';
+import { ProjectCategory } from '@/lib/types';
 
 const categories = [
     'All',
@@ -15,11 +16,16 @@ const categories = [
 ];
 
 const ProjectHighlight: React.FC = () => {
-    const [activeCategory, setActiveCategory] = useState('All');
+    const [activeCategory, setActiveCategory] = useState<ProjectCategory | 'All'>('All');
 
-    const filteredProjects = activeCategory === 'All'
-        ? mockProjects.slice(0, 6) // Increased to show more projects including horizontal ones
-        : mockProjects.filter(p => p.category === activeCategory).slice(0, 6);
+    // Fetch projects from backend with limit of 6 for highlights
+    const { projects, loading, error } = useProjects({ 
+        category: activeCategory,
+        limit: 6 
+    });
+
+    // Take only first 6 projects for highlights
+    const filteredProjects = projects.slice(0, 6);
 
     return (
         <section className="py-16 md:py-20">
@@ -36,7 +42,7 @@ const ProjectHighlight: React.FC = () => {
                         {categories.map((category) => (
                             <button
                                 key={category}
-                                onClick={() => setActiveCategory(category)}
+                                onClick={() => setActiveCategory(category as ProjectCategory | 'All')}
                                 className={`px-6 w-[143px] h-[39px] py-2 rounded-full text-sm font-medium transition-colors duration-300 whitespace-nowrap ${
                                     activeCategory === category
                                         ? 'bg-blue-600 text-white'
@@ -48,11 +54,28 @@ const ProjectHighlight: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Loading state */}
+                {loading && (
+                    <div className="text-center py-12">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                        <p className="text-gray-400">Loading projects...</p>
+                    </div>
+                )}
+
+                {/* Error state */}
+                {error && (
+                    <div className="text-center py-12">
+                        <p className="text-red-400">Failed to load projects. Showing empty state.</p>
+                    </div>
+                )}
+
                 {/* Use the same ProjectGridLayout component as portfolio */}
-                <ProjectGridLayout 
-                    projects={filteredProjects}
-                    layout="highlight"
-                />
+                {!loading && !error && (
+                    <ProjectGridLayout 
+                        projects={filteredProjects}
+                        layout="highlight"
+                    />
+                )}
             </div>
         </section>
     );
