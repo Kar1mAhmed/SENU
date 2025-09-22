@@ -1,0 +1,37 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "senu",
+	"compatibility_date": "2025-07-15",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	// PROD ENV (https://platform.castform.io)
+	"vars": { 
+
+	},
+	"pages_build_output_dir": ".vercel/output/static",
+	// Prod KV Namespace (https://platform.castform.io)
+	"kv_namespaces": [
+		{
+			"binding": "CASTFORM_KV",
+			"id": "d151cbbe53dc45c88434c2ebb3ebb803",
+		}
+	],
+	// Prod D1 Database (https://platform.castform.io)
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "senu",
+			"database_id": "fef901ec-a399-4b96-a2bb-d52b09a46dac"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "R2",
+			"bucket_name": "senu",
+		}
+	],
+	"observability": {
+		"enabled": true
+	}
+}

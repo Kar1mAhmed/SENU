@@ -34,7 +34,7 @@ const Footer: React.FC<WithClassName> = ({ className }) => {
         <div className="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
           <div className="text-center">
             <h2 className="font-new-black text-4xl lg:text-6xl xl:text-8xl leading-tight mb-16 transition-transform duration-300">
-              <span className="text-orange animate-pulse">LET'S Boost</span>
+              <span className="text-orange animate-pulse">LET'S BOOST</span>
               <br />
               <span className="text-white">YOUR BRAND</span>
             </h2>

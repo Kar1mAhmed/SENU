@@ -114,7 +114,7 @@ export default function GetInTouchSection() {
 
   const copyEmailToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText('hello@senu.design');
+      await navigator.clipboard.writeText('senu@senu.studio');
       setIsEmailCopied(true);
       setTimeout(() => setIsEmailCopied(false), 2000);
       console.log('📋 Email copied to clipboard successfully!');
