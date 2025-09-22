@@ -6,6 +6,8 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { projectsAPI } from '@/lib/api-client';
 import { ProjectWithSlides, ProjectCategory, ProjectType } from '@/lib/types';
 
+export const runtime = 'edge';
+
 console.log('✏️ Edit project page loaded - ready to modify projects like a digital editor!');
 
 const categories: ProjectCategory[] = [
