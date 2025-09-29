@@ -2,7 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 import { SlideDB, dbSlideToSlide } from '@/lib/db-utils';
-import { uploadFileToR2, getSlideTypeFromFile } from '@/lib/file-utils';
+import { uploadMedia } from '@/lib/media';
+import { getSlideTypeFromFile } from '@/lib/file-utils';
 import { 
   CloudflareEnv, 
   APIResponse, 
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Upload media file if provided
-    let mediaUrl = '';
+    let mediaKey = '';
     let finalSlideType = slideType;
 
     if (mediaFile && mediaFile.size > 0) {
@@ -94,8 +95,7 @@ export async function POST(request: NextRequest) {
         finalSlideType = getSlideTypeFromFile(mediaFile);
       }
       
-      const uploadResult = await uploadFileToR2(env.R2, mediaFile, 'slides');
-      mediaUrl = uploadResult.url;
+      mediaKey = await uploadMedia(env.R2, mediaFile, 'slides');
     } else {
       throw new Error('Media file is required');
     }
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
       order,
       type: finalSlideType,
       text,
-      mediaUrl
+      mediaKey
     });
 
     // Convert to frontend format

@@ -1,29 +1,11 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
+import { keyToUrl } from '@/lib/media';
 import { ProjectSlide } from '@/lib/types';
 
 interface HorizontalSlidesProps {
   slides: ProjectSlide[];
-}
-
-console.log('🎬 HorizontalSlides component loaded - ready to showcase horizontal slides like motion graphics!');
-
-/**
- * Transform R2 URL to use our media serving endpoint
- */
-function transformMediaUrl(r2Url: string): string {
-  if (!r2Url) return r2Url;
-  
-  try {
-    // Extract the key from the R2 URL
-    const url = new URL(r2Url);
-    const key = url.pathname.substring(1); // Remove leading slash
-    return `/api/media/${key}`;
-  } catch (error) {
-    console.warn('⚠️ Failed to transform slide media URL:', r2Url, error);
-    return r2Url; // Return original if transformation fails
-  }
 }
 
 const HorizontalSlides: React.FC<HorizontalSlidesProps> = ({ slides }) => {
@@ -51,7 +33,7 @@ const HorizontalSlides: React.FC<HorizontalSlidesProps> = ({ slides }) => {
             <div key={slide.id} className="w-full">
               <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-gray-900">
                 <Image
-                  src={transformMediaUrl(slide.mediaUrl)}
+                  src={keyToUrl(slide.mediaKey) || ''}
                   alt={slide.text || `Horizontal slide ${index + 1}`}
                   fill
                   className="object-cover"

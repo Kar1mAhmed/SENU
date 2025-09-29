@@ -1,8 +1,8 @@
 // API endpoints for projects CRUD operations
 import { NextRequest, NextResponse } from 'next/server';
 import { getRequestContext } from '@cloudflare/next-on-pages';
-import { ProjectDB, SlideDB, dbProjectToProject } from '@/lib/db-utils';
-import { uploadFileToR2 } from '@/lib/file-utils';
+import { ProjectDB, SlideDB, dbProjectToProject, dbSlideToSlide } from '@/lib/db-utils';
+import { uploadMedia } from '@/lib/media';
 import {
     CloudflareEnv,
     APIResponse,
@@ -63,16 +63,7 @@ export async function GET(request: NextRequest) {
             projects.map(async (dbProject) => {
                 const project = dbProjectToProject(dbProject);
                 const slides = await slideDB.getByProjectId(dbProject.id);
-                project.slides = slides.map(slide => ({
-                    id: slide.id,
-                    projectId: slide.project_id,
-                    order: slide.slide_order,
-                    type: slide.slide_type,
-                    text: slide.slide_text,
-                    mediaUrl: slide.media_url,
-                    createdAt: new Date(slide.created_at),
-                    updatedAt: new Date(slide.updated_at)
-                }));
+                project.slides = slides.map(dbSlideToSlide);
                 return project;
             })
         );
@@ -161,19 +152,17 @@ export async function POST(request: NextRequest) {
         }
 
         // Upload client logo if provided
-        let clientLogoUrl: string | undefined;
+        let clientLogoKey: string | undefined;
         if (clientLogoFile && clientLogoFile.size > 0) {
             console.log('📸 Uploading client logo file:', clientLogoFile.name);
-            const uploadResult = await uploadFileToR2(env.R2, clientLogoFile, 'logos');
-            clientLogoUrl = uploadResult.url;
+            clientLogoKey = await uploadMedia(env.R2, clientLogoFile, 'logos');
         }
 
         // Upload thumbnail if provided
-        let thumbnailUrl = '';
+        let thumbnailKey: string | undefined;
         if (thumbnailFile && thumbnailFile.size > 0) {
             console.log('📸 Uploading thumbnail file:', thumbnailFile.name);
-            const uploadResult = await uploadFileToR2(env.R2, thumbnailFile, 'thumbnails');
-            thumbnailUrl = uploadResult.url;
+            thumbnailKey = await uploadMedia(env.R2, thumbnailFile, 'thumbnails');
         } else {
             throw new Error('Thumbnail file is required');
         }
@@ -185,13 +174,13 @@ export async function POST(request: NextRequest) {
             title,
             description,
             clientName,
-            clientLogo: clientLogoUrl,
+            clientLogoKey,
             tags,
             category,
             projectType,
             dateFinished,
             extraFields,
-            thumbnailUrl
+            thumbnailKey
         });
 
         // Convert to frontend format

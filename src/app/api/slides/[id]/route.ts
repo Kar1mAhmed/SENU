@@ -2,7 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 import { SlideDB, dbSlideToSlide } from '@/lib/db-utils';
-import { uploadFileToR2, deleteFileFromR2, extractKeyFromUrl, getSlideTypeFromFile } from '@/lib/file-utils';
+import { uploadMedia, deleteMedia } from '@/lib/media';
+import { getSlideTypeFromFile } from '@/lib/file-utils';
 import { 
   CloudflareEnv, 
   APIResponse, 
@@ -84,13 +85,10 @@ export async function PUT(
     let order: number | undefined;
     if (orderString) {
       order = parseInt(orderString);
-      if (isNaN(order)) {
-        throw new Error('Order must be a valid number');
-      }
     }
 
     // Handle media upload if new file provided
-    let mediaUrl: string | undefined;
+    let mediaKey: string | undefined;
     let finalSlideType = slideType;
 
     if (mediaFile && mediaFile.size > 0) {
@@ -99,10 +97,9 @@ export async function PUT(
       // Get current slide to delete old media
       try {
         const currentSlide = await slideDB.getById(id);
-        const oldKey = extractKeyFromUrl(currentSlide.media_url);
-        if (oldKey) {
-          await deleteFileFromR2(env.R2, oldKey);
-          console.log('🗑️ Deleted old media:', oldKey);
+        if (currentSlide.media_key) {
+          await deleteMedia(env.R2, currentSlide.media_key);
+          console.log('🗑️ Deleted old media:', currentSlide.media_key);
         }
       } catch (error) {
         console.warn('⚠️ Could not delete old media:', error);
@@ -114,17 +111,22 @@ export async function PUT(
       }
 
       // Upload new media
-      const uploadResult = await uploadFileToR2(env.R2, mediaFile, 'slides');
-      mediaUrl = uploadResult.url;
+      mediaKey = await uploadMedia(env.R2, mediaFile, 'slides');
     }
 
     // Update slide in database
-    const dbSlide = await slideDB.update(id, {
-      order,
-      type: finalSlideType,
-      text,
-      mediaUrl
-    });
+    const updateData: Partial<{
+      order: number;
+      type: SlideType;
+      text?: string;
+      mediaKey: string;
+    }> = {};
+    if (order !== undefined) updateData.order = order;
+    if (finalSlideType) updateData.type = finalSlideType;
+    if (text !== undefined) updateData.text = text;
+    if (mediaKey) updateData.mediaKey = mediaKey;
+
+    const dbSlide = await slideDB.update(id, updateData);
 
     // Convert to frontend format
     const slide = dbSlideToSlide(dbSlide);
@@ -172,9 +174,9 @@ export async function DELETE(
 
     // Delete media file from R2
     try {
-      const mediaKey = extractKeyFromUrl(dbSlide.media_url);
-      if (mediaKey) {
-        await deleteFileFromR2(env.R2, mediaKey);
+      if (dbSlide.media_key) {
+        await deleteMedia(env.R2, dbSlide.media_key);
+        console.log('🗑️ Deleted slide media:', dbSlide.media_key);
       }
     } catch (error) {
       console.warn('⚠️ Could not delete slide media:', error);

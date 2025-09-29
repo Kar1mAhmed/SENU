@@ -42,10 +42,10 @@ export async function GET(
     const env = getRequestContext().env as CloudflareEnv;
     
     // Await the params promise
-    const { path } = await params;
+    const resolvedParams = await params;
     
     // Join the path segments to get the full key
-    const key = path.join('/');
+    const key = resolvedParams.path.join('/');
     console.log('📂 Serving media file with key:', key);
 
     // Check if R2 is available (production/preview)

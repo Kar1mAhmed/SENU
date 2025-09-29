@@ -1,30 +1,13 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
+import { keyToUrl } from '@/lib/media';
 import { ProjectSlide } from '@/lib/types';
 
 interface VerticalSlidesProps {
   slides: ProjectSlide[];
 }
-
 console.log('📱 VerticalSlides component loaded - ready to showcase vertical slides like TikTok/Instagram!');
-
-/**
- * Transform R2 URL to use our media serving endpoint
- */
-function transformMediaUrl(r2Url: string): string {
-  if (!r2Url) return r2Url;
-  
-  try {
-    // Extract the key from the R2 URL
-    const url = new URL(r2Url);
-    const key = url.pathname.substring(1); // Remove leading slash
-    return `/api/media/${key}`;
-  } catch (error) {
-    console.warn('⚠️ Failed to transform slide media URL:', r2Url, error);
-    return r2Url; // Return original if transformation fails
-  }
-}
 
 const VerticalSlides: React.FC<VerticalSlidesProps> = ({ slides }) => {
   // Filter only vertical slides
@@ -51,7 +34,7 @@ const VerticalSlides: React.FC<VerticalSlidesProps> = ({ slides }) => {
             <div key={slide.id} className="w-full">
               <div className="relative w-full aspect-[9/16] rounded-lg overflow-hidden bg-gray-900">
                 <Image
-                  src={transformMediaUrl(slide.mediaUrl)}
+                  src={keyToUrl(slide.mediaKey) || ''}
                   alt={slide.text || `Vertical slide ${index + 1}`}
                   fill
                   className="object-cover"

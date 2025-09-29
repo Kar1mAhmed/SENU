@@ -2,12 +2,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 import { ProjectDB, SlideDB, dbProjectToProject, dbSlideToSlide } from '@/lib/db-utils';
-import { uploadFileToR2, deleteFileFromR2, extractKeyFromUrl } from '@/lib/file-utils';
+import { uploadMedia, deleteMedia } from '@/lib/media';
 import { 
   CloudflareEnv, 
   APIResponse, 
   ProjectWithSlides,
   ProjectCategory,
+  ProjectType,
+  ProjectExtraField,
   DBSlide
 } from '@/lib/types';
 
@@ -138,41 +140,73 @@ export async function PUT(
       console.log('📋 Extra fields being updated:', extraFields);
     }
 
+    // Handle client logo upload if new file provided
+    let clientLogoKey: string | undefined;
+    if (clientLogoFile && clientLogoFile.size > 0) {
+      console.log('📸 Uploading new client logo file:', clientLogoFile.name);
+      
+      // Get current project to delete old client logo
+      try {
+        const currentProject = await projectDB.getById(id);
+        if (currentProject.client_logo_key) {
+          await deleteMedia(env.R2, currentProject.client_logo_key);
+          console.log('🗑️ Deleted old client logo:', currentProject.client_logo_key);
+        }
+      } catch (error) {
+        console.warn('⚠️ Could not delete old client logo:', error);
+      }
+
+      // Upload new client logo
+      clientLogoKey = await uploadMedia(env.R2, clientLogoFile, 'logos');
+    }
+
     // Handle thumbnail upload if new file provided
-    let thumbnailUrl: string | undefined;
+    let thumbnailKey: string | undefined;
     if (thumbnailFile && thumbnailFile.size > 0) {
       console.log('📸 Uploading new thumbnail file:', thumbnailFile.name);
       
       // Get current project to delete old thumbnail
       try {
         const currentProject = await projectDB.getById(id);
-        const oldKey = extractKeyFromUrl(currentProject.thumbnail_url);
-        if (oldKey) {
-          await deleteFileFromR2(env.R2, oldKey);
-          console.log('🗑️ Deleted old thumbnail:', oldKey);
+        if (currentProject.thumbnail_key) {
+          await deleteMedia(env.R2, currentProject.thumbnail_key);
+          console.log('🗑️ Deleted old thumbnail:', currentProject.thumbnail_key);
         }
       } catch (error) {
         console.warn('⚠️ Could not delete old thumbnail:', error);
       }
 
       // Upload new thumbnail
-      const uploadResult = await uploadFileToR2(env.R2, thumbnailFile, 'thumbnails');
-      thumbnailUrl = uploadResult.url;
+      thumbnailKey = await uploadMedia(env.R2, thumbnailFile, 'thumbnails');
     }
 
     // Update project in database
-    const dbProject = await projectDB.update(id, {
-      name,
-      title,
-      description,
-      clientName,
-      tags,
-      category,
-      projectType,
-      dateFinished,
-      thumbnailUrl,
-      extraFields
-    });
+    const updateData: Partial<{
+      name: string;
+      title: string;
+      description?: string;
+      clientName: string;
+      clientLogoKey?: string;
+      tags: string[];
+      category: ProjectCategory;
+      projectType: ProjectType;
+      dateFinished?: string;
+      extraFields?: ProjectExtraField[];
+      thumbnailKey?: string;
+    }> = {};
+    if (name !== undefined) updateData.name = name;
+    if (title !== undefined) updateData.title = title;
+    if (description !== undefined) updateData.description = description;
+    if (clientName !== undefined) updateData.clientName = clientName;
+    if (clientLogoKey !== undefined) updateData.clientLogoKey = clientLogoKey;
+    if (tags !== undefined) updateData.tags = tags;
+    if (category !== undefined) updateData.category = category;
+    if (projectType !== undefined) updateData.projectType = projectType;
+    if (dateFinished !== undefined) updateData.dateFinished = dateFinished;
+    if (thumbnailKey !== undefined) updateData.thumbnailKey = thumbnailKey;
+    if (extraFields !== undefined) updateData.extraFields = extraFields;
+
+    const dbProject = await projectDB.update(id, updateData);
 
     // Get updated project with slides
     const slideDB = new SlideDB(env.DB);
@@ -237,9 +271,9 @@ export async function DELETE(
 
     // Delete thumbnail from R2
     try {
-      const thumbnailKey = extractKeyFromUrl(dbProject.thumbnail_url);
-      if (thumbnailKey) {
-        await deleteFileFromR2(env.R2, thumbnailKey);
+      if (dbProject.thumbnail_key) {
+        await deleteMedia(env.R2, dbProject.thumbnail_key);
+        console.log('🗑️ Deleted thumbnail:', dbProject.thumbnail_key);
       }
     } catch (error) {
       console.warn('⚠️ Could not delete thumbnail:', error);
@@ -248,9 +282,9 @@ export async function DELETE(
     // Delete slide media files from R2
     for (const slide of dbSlides) {
       try {
-        const mediaKey = extractKeyFromUrl(slide.media_url);
-        if (mediaKey) {
-          await deleteFileFromR2(env.R2, mediaKey);
+        if (slide.media_key) {
+          await deleteMedia(env.R2, slide.media_key);
+          console.log('🗑️ Deleted slide media:', slide.media_key);
         }
       } catch (error) {
         console.warn('⚠️ Could not delete slide media:', slide.id, error);

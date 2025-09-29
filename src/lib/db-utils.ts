@@ -32,12 +32,12 @@ export function dbProjectToProject(dbProject: DBProject): ProjectWithSlides {
         title: dbProject.title,
         description: dbProject.description,
         client: dbProject.client_name,
-        clientLogo: dbProject.client_logo,
+        clientLogoKey: dbProject.client_logo_key,
         tags: JSON.parse(dbProject.tags || '[]'),
         category: dbProject.category,
         type: dbProject.project_type,
         dateFinished: dbProject.date_finished ? new Date(dbProject.date_finished) : undefined,
-        thumbnailUrl: dbProject.thumbnail_url,
+        thumbnailKey: dbProject.thumbnail_key,
         extraFields,
         slides: [], // Will be populated separately
         createdAt: new Date(dbProject.created_at),
@@ -53,7 +53,7 @@ export function dbSlideToSlide(dbSlide: DBSlide): ProjectSlide {
         order: dbSlide.slide_order,
         type: dbSlide.slide_type,
         text: dbSlide.slide_text,
-        mediaUrl: dbSlide.media_url,
+        mediaKey: dbSlide.media_key,
         createdAt: new Date(dbSlide.created_at),
         updatedAt: new Date(dbSlide.updated_at)
     };
@@ -73,13 +73,13 @@ export class ProjectDB {
         title: string;
         description?: string;
         clientName: string;
-        clientLogo?: string;
+        clientLogoKey?: string;
         tags: string[];
         category: ProjectCategory;
         projectType: ProjectType;
         dateFinished?: string;
         extraFields?: ProjectExtraField[];
-        thumbnailUrl: string;
+        thumbnailKey?: string;
     }): Promise<DBProject> {
         console.log('🚀 Creating new project in DB:', data.name);
 
@@ -88,8 +88,8 @@ export class ProjectDB {
 
         const stmt = this.db.prepare(`
       INSERT INTO projects (
-        id, name, title, description, client_name, client_logo, tags, 
-        category, project_type, date_finished, extra_fields, thumbnail_url, 
+        id, name, title, description, client_name, client_logo_key, tags, 
+        category, project_type, date_finished, extra_fields, thumbnail_key, 
         created_at, updated_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
@@ -100,13 +100,13 @@ export class ProjectDB {
             data.title,
             data.description || null,
             data.clientName,
-            data.clientLogo || null,
+            data.clientLogoKey || null,
             JSON.stringify(data.tags),
             data.category,
             data.projectType,
             data.dateFinished || null,
             JSON.stringify(data.extraFields || []),
-            data.thumbnailUrl,
+            data.thumbnailKey || null,
             now,
             now
         ).run();
@@ -176,13 +176,13 @@ export class ProjectDB {
         title: string;
         description?: string;
         clientName: string;
-        clientLogo?: string;
+        clientLogoKey?: string;
         tags: string[];
         category: ProjectCategory;
         projectType: ProjectType;
         dateFinished?: string;
         extraFields?: ProjectExtraField[];
-        thumbnailUrl: string;
+        thumbnailKey?: string;
     }>): Promise<DBProject> {
         console.log('✏️ Updating project:', id, 'with data keys:', Object.keys(data).join(', '));
 
@@ -205,9 +205,9 @@ export class ProjectDB {
             updates.push('client_name = ?');
             bindings.push(data.clientName);
         }
-        if (data.clientLogo !== undefined) {
-            updates.push('client_logo = ?');
-            bindings.push(data.clientLogo);
+        if (data.clientLogoKey !== undefined) {
+            updates.push('client_logo_key = ?');
+            bindings.push(data.clientLogoKey);
         }
         if (data.tags !== undefined) {
             updates.push('tags = ?');
@@ -229,9 +229,9 @@ export class ProjectDB {
             updates.push('date_finished = ?');
             bindings.push(data.dateFinished);
         }
-        if (data.thumbnailUrl !== undefined) {
-            updates.push('thumbnail_url = ?');
-            bindings.push(data.thumbnailUrl);
+        if (data.thumbnailKey !== undefined) {
+            updates.push('thumbnail_key = ?');
+            bindings.push(data.thumbnailKey);
         }
 
         if (updates.length === 0) {
@@ -269,7 +269,7 @@ export class SlideDB {
         order: number;
         type: SlideType;
         text?: string;
-        mediaUrl: string;
+        mediaKey: string;
     }): Promise<DBSlide> {
         console.log('🎬 Creating new slide for project:', data.projectId);
 
@@ -278,7 +278,7 @@ export class SlideDB {
 
         const stmt = this.db.prepare(`
       INSERT INTO project_slides (
-        id, project_id, slide_order, slide_type, slide_text, media_url, created_at, updated_at
+        id, project_id, slide_order, slide_type, slide_text, media_key, created_at, updated_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
@@ -288,7 +288,7 @@ export class SlideDB {
             data.order,
             data.type,
             data.text || null,
-            data.mediaUrl,
+            data.mediaKey,
             now,
             now
         ).run();
@@ -324,7 +324,7 @@ export class SlideDB {
         order: number;
         type: SlideType;
         text?: string;
-        mediaUrl: string;
+        mediaKey: string;
     }>): Promise<DBSlide> {
         console.log('✏️ Updating slide:', id);
 
@@ -343,9 +343,9 @@ export class SlideDB {
             updates.push('slide_text = ?');
             bindings.push(data.text);
         }
-        if (data.mediaUrl !== undefined) {
-            updates.push('media_url = ?');
-            bindings.push(data.mediaUrl);
+        if (data.mediaKey !== undefined) {
+            updates.push('media_key = ?');
+            bindings.push(data.mediaKey);
         }
 
         if (updates.length === 0) {

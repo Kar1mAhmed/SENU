@@ -2,35 +2,13 @@
 import React from 'react';
 import Image from 'next/image';
 import { ProjectSlide } from '@/lib/types';
+import { keyToUrl } from '@/lib/media';
 
 interface ImageSlidesProps {
   slides: ProjectSlide[];
 }
 
 console.log('🖼️ ImageSlides component loaded - ready to showcase image slides like Behance!');
-
-/**
- * Transform R2 URL to use our media serving endpoint
- */
-function transformMediaUrl(r2Url: string): string {
-  if (!r2Url) return r2Url;
-  
-  try {
-    // Extract the key from the R2 URL
-    // R2 URLs typically look like: https://pub-xxx.r2.dev/folder/file.jpg
-    const url = new URL(r2Url);
-    const key = url.pathname.substring(1); // Remove leading slash
-    
-    // Convert to our media endpoint
-    const mediaUrl = `/api/media/${key}`;
-    console.log('🔄 Transformed slide media URL:', r2Url, '→', mediaUrl);
-    
-    return mediaUrl;
-  } catch (error) {
-    console.warn('⚠️ Failed to transform slide media URL:', r2Url, error);
-    return r2Url; // Return original if transformation fails
-  }
-}
 
 const ImageSlides: React.FC<ImageSlidesProps> = ({ slides }) => {
   // Filter only image slides
@@ -56,7 +34,7 @@ const ImageSlides: React.FC<ImageSlidesProps> = ({ slides }) => {
         {imageSlides.map((slide, index) => (
           <div key={slide.id} className="w-full block">
             <Image
-              src={transformMediaUrl(slide.mediaUrl)}
+              src={keyToUrl(slide.mediaKey) || ''}
               alt={slide.text || `Project slide ${index + 1}`}
               width={1920}
               height={1080}

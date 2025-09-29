@@ -66,8 +66,8 @@ const EditSlide: React.FC = () => {
         });
 
         // Set media preview if slide has media
-        if (slide.mediaUrl) {
-          setMediaPreview(slide.mediaUrl);
+        if (slide.mediaKey) {
+          setMediaPreview(`/api/media/${slide.mediaKey}`);
         }
 
         console.log('✅ Slide loaded successfully');

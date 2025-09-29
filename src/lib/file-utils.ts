@@ -1,7 +1,9 @@
-// File upload utilities for R2 storage
+// File upload utilities for R2 storage - DEPRECATED
+// Use /lib/media.ts for new implementations
 import { R2Bucket, FileUploadResponse } from './types';
+import { uploadMedia } from './media';
 
-console.log('📁 File utilities loaded - ready to handle uploads faster than your WiFi!');
+console.log('📁 File utilities loaded - migrating to centralized media system!');
 
 // Allowed file types
 export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
@@ -23,7 +25,6 @@ export function validateFile(file: File): { valid: boolean; error?: string } {
   }
 
   const isImage = ALLOWED_IMAGE_TYPES.includes(file.type);
-  const isVideo = ALLOWED_VIDEO_TYPES.includes(file.type);
   const maxSize = isImage ? MAX_IMAGE_SIZE : MAX_VIDEO_SIZE;
 
   if (file.size > maxSize) {
@@ -40,7 +41,6 @@ export function validateFile(file: File): { valid: boolean; error?: string } {
 export function generateFileKey(originalName: string, folder: string = 'uploads'): string {
   const timestamp = Date.now();
   const randomStr = Math.random().toString(36).substring(2, 8);
-  const extension = originalName.split('.').pop()?.toLowerCase() || '';
   const sanitizedName = originalName.replace(/[^a-zA-Z0-9.-]/g, '_');
 
   const key = `${folder}/${timestamp}-${randomStr}-${sanitizedName}`;
@@ -48,48 +48,26 @@ export function generateFileKey(originalName: string, folder: string = 'uploads'
   return key;
 }
 
+// DEPRECATED: Use uploadMedia from /lib/media.ts instead
 export async function uploadFileToR2(
   r2: R2Bucket,
   file: File,
   folder: string = 'uploads'
 ): Promise<FileUploadResponse> {
-  console.log('☁️ Starting R2 upload for:', file.name, 'to folder:', folder);
-
+  console.log('⚠️ DEPRECATED: uploadFileToR2 - use uploadMedia instead');
+  
   // Validate file
   const validation = validateFile(file);
   if (!validation.valid) {
     throw new Error(validation.error);
   }
 
-  // Generate unique key
-  const key = generateFileKey(file.name, folder);
-
-  // Convert File to ArrayBuffer
-  const arrayBuffer = await file.arrayBuffer();
-
-  // Upload to R2
-  const result = await r2.put(key, arrayBuffer, {
-    httpMetadata: {
-      contentType: file.type,
-      cacheControl: 'public, max-age=31536000', // 1 year cache
-    },
-    customMetadata: {
-      originalName: file.name,
-      uploadedAt: new Date().toISOString(),
-    }
-  });
-
-  if (!result) {
-    throw new Error('Failed to upload file to R2');
-  }
-
-  console.log('🎉 File uploaded successfully to R2:', key);
-
-  // Return the public URL (you might need to adjust this based on your R2 setup)
-  const publicUrl = `https://your-r2-domain.com/${key}`;
+  // Use new centralized upload
+  const key = await uploadMedia(r2, file, folder);
+  const mediaUrl = `/api/media/${key}`;
 
   return {
-    url: publicUrl,
+    url: mediaUrl,
     key: key,
     size: file.size,
     contentType: file.type

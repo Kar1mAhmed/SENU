@@ -1,30 +1,8 @@
 // Data transformation utilities for frontend compatibility
 import { ProjectWithSlides, Project } from './types';
+import { keyToUrl } from './media';
 
 console.log('🔄 Data transformation utilities loaded - ready to convert data like a digital translator!');
-
-/**
- * Transform R2 URL to use our media serving endpoint
- */
-function transformMediaUrl(r2Url: string): string {
-  if (!r2Url) return r2Url;
-  
-  try {
-    // Extract the key from the R2 URL
-    // R2 URLs typically look like: https://pub-xxx.r2.dev/folder/file.jpg
-    const url = new URL(r2Url);
-    const key = url.pathname.substring(1); // Remove leading slash
-    
-    // Convert to our media endpoint
-    const mediaUrl = `/api/media/${key}`;
-    console.log('🔄 Transformed media URL:', r2Url, '→', mediaUrl);
-    
-    return mediaUrl;
-  } catch (error) {
-    console.warn('⚠️ Failed to transform media URL:', r2Url, error);
-    return r2Url; // Return original if transformation fails
-  }
-}
 
 /**
  * Transform database project with slides to the format expected by existing frontend components
@@ -33,8 +11,8 @@ function transformMediaUrl(r2Url: string): string {
 export function transformProjectForFrontend(dbProject: ProjectWithSlides): Project {
   console.log('🔄 Transforming project for frontend:', dbProject.name);
 
-  // Find the primary media URL (first slide or thumbnail)
-  let imageUrl = transformMediaUrl(dbProject.thumbnailUrl);
+  // Get thumbnail URL from key
+  let imageUrl = keyToUrl(dbProject.thumbnailKey) || '';
   let videoUrl: string | undefined;
 
   if (dbProject.slides.length > 0) {
@@ -42,10 +20,10 @@ export function transformProjectForFrontend(dbProject: ProjectWithSlides): Proje
     const firstSlide = dbProject.slides.sort((a, b) => a.order - b.order)[0];
 
     if (firstSlide.type === 'image') {
-      imageUrl = transformMediaUrl(firstSlide.mediaUrl);
+      imageUrl = keyToUrl(firstSlide.mediaKey) || imageUrl;
     } else {
       // For video slides, use the slide media as videoUrl and keep thumbnail as imageUrl
-      videoUrl = transformMediaUrl(firstSlide.mediaUrl);
+      videoUrl = keyToUrl(firstSlide.mediaKey) || undefined;
     }
   }
 
@@ -53,13 +31,14 @@ export function transformProjectForFrontend(dbProject: ProjectWithSlides): Proje
     id: dbProject.id,
     name: dbProject.name,
     client: dbProject.client,
-    clientLogo: dbProject.clientLogo ? transformMediaUrl(dbProject.clientLogo) : undefined,
+    clientLogo: keyToUrl(dbProject.clientLogoKey) || undefined,
     work: dbProject.tags, // Tags become work array
     imageUrl,
     videoUrl,
     description: dbProject.description,
     type: dbProject.type,
-    category: dbProject.category
+    category: dbProject.category,
+    thumbnailUrl: keyToUrl(dbProject.thumbnailKey) || ''
   };
 
   console.log('✅ Project transformed:', {

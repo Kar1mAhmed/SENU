@@ -20,7 +20,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     layout = 'zigzag'
 }) => {
     const router = useRouter();
-    console.log('🎨 Rendering ProjectCard:', project.name, 'type:', project.type, 'category:', project.category);
+    console.log('🎨 Rendering ProjectCard:', project.name, 'type:', project.type, 'category:', project.category, 'thumbnailUrl:', project.thumbnailUrl);
 
     // Convert project name to URL-friendly format
     const getProjectUrl = (projectName: string) => {
@@ -33,7 +33,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         if ((e.target as HTMLElement).closest('.video-controls')) {
             return;
         }
-        
+
         const projectUrl = getProjectUrl(project.name);
         console.log('🔗 Navigating to project:', projectUrl);
         router.push(projectUrl);
@@ -198,10 +198,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <div
             ref={containerRef}
             className={`absolute inset-0 rounded-lg overflow-hidden bg-black group ${isFullscreen
-                    ? project.type === 'vertical'
-                        ? 'fixed inset-0 z-50 rounded-none flex items-center justify-center bg-black'
-                        : 'fixed inset-0 z-50 rounded-none'
-                    : ''
+                ? project.type === 'vertical'
+                    ? 'fixed inset-0 z-50 rounded-none flex items-center justify-center bg-black'
+                    : 'fixed inset-0 z-50 rounded-none'
+                : ''
                 }`}
             onMouseMove={() => {
                 if (isFullscreen) {
@@ -215,8 +215,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 src={project.videoUrl}
                 poster={project.imageUrl}
                 className={`${isFullscreen && project.type === 'vertical'
-                        ? 'h-full w-auto max-w-none'
-                        : 'w-full h-full'
+                    ? 'h-full w-auto max-w-none'
+                    : 'w-full h-full'
                     } object-cover transition-transform duration-700 ease-out group-hover:scale-110`}
                 muted={isMuted}
                 loop
@@ -393,13 +393,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             <div className="relative w-full px-6">
                 <div className="relative w-full aspect-[560/620] max-w-full md:max-w-[450px] lg:max-w-[480px] xl:max-w-[560px] mx-auto">
                     <div className="absolute inset-0 rounded-lg overflow-hidden">
-                        <Image
-                            src={project.imageUrl}
-                            alt={project.name}
-                            fill
-                            className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                            sizes="(max-width: 768px) 90vw, (max-width: 1024px) 450px, (max-width: 1280px) 480px, 560px"
-                        />
+                        {project.thumbnailUrl ? (
+                            <Image
+                                src={project.thumbnailUrl}
+                                alt={project.name}
+                                fill
+                                className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                                sizes="(max-width: 768px) 90vw, (max-width: 1024px) 450px, (max-width: 1280px) 480px, 560px"
+                            />
+                        ) : (
+                            <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                                <span className="text-gray-400 text-lg">No Image</span>
+                            </div>
+                        )}
                     </div>
 
                     {/* Icons Sidebar - Mobile */}
@@ -446,13 +452,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         renderEnhancedVideoPlayer()
                     ) : (
                         <div className="absolute inset-0 rounded-lg overflow-hidden bg-black">
-                            <Image
-                                src={project.imageUrl}
-                                alt={project.name}
-                                fill
-                                className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                                sizes="(max-width: 768px) 90vw, (max-width: 1024px) 280px, (max-width: 1280px) 300px, 320px"
-                            />
+                            {project.thumbnailUrl ? (
+                                <Image
+                                    src={project.thumbnailUrl}
+                                    alt={project.name}
+                                    fill
+                                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                                    sizes="(max-width: 768px) 90vw, (max-width: 1024px) 280px, (max-width: 1280px) 300px, 320px"
+                                />
+                            ) : (
+                                <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                                    <span className="text-gray-400 text-lg">No Image</span>
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -503,13 +515,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         <div className="relative w-full aspect-[16/9] mx-auto">
                             {project.videoUrl ? renderEnhancedVideoPlayer() : (
                                 <div className="absolute inset-0 rounded-lg overflow-hidden bg-black">
-                                    <Image
-                                        src={project.imageUrl}
-                                        alt={project.name}
-                                        fill
-                                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                                        sizes="(max-width: 1024px) 90vw, 800px"
-                                    />
+                                    {project.thumbnailUrl ? (
+                                        <Image
+                                            src={project.thumbnailUrl}
+                                            alt={project.name}
+                                            fill
+                                            className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                                            sizes="(max-width: 1024px) 90vw, 800px"
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                                            <span className="text-gray-400 text-lg">No Image</span>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -525,13 +543,19 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                             <div className="relative w-full aspect-[16/9]">
                                 {project.videoUrl ? renderEnhancedVideoPlayer() : (
                                     <div className="absolute inset-0 rounded-lg overflow-hidden bg-black">
-                                        <Image
-                                            src={project.imageUrl}
-                                            alt={project.name}
-                                            fill
-                                            className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                                            sizes="(max-width: 1024px) 90vw, 800px"
-                                        />
+                                        {project.thumbnailUrl ? (
+                                            <Image
+                                                src={project.thumbnailUrl}
+                                                alt={project.name}
+                                                fill
+                                                className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                                                sizes="(max-width: 1024px) 90vw, 800px"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                                                <span className="text-gray-400 text-lg">No Image</span>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>

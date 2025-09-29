@@ -2,7 +2,7 @@ import React from 'react';
 
 const HeroSection = () => {
   return (
-    <section className="h-[70vh] w-full relative flex items-center justify-center md:mt-12">
+    <section className="h-[70vh] w-full relative flex items-center justify-center md:mt-32">
       <video
         autoPlay
         loop

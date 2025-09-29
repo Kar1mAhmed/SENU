@@ -29,12 +29,12 @@ export type DBProject = {
   title: string;
   description?: string;
   client_name: string;
-  client_logo?: string;
+  client_logo_key?: string;
   tags: string; // JSON string in database
   category: ProjectCategory;
   project_type: ProjectType;
   date_finished?: string; // ISO date string
-  thumbnail_url: string;
+  thumbnail_key?: string;
   extra_fields?: string; // JSON string in database for extra fields
   created_at: string;
   updated_at: string;
@@ -47,7 +47,7 @@ export type DBSlide = {
   slide_order: number;
   slide_type: SlideType;
   slide_text?: string;
-  media_url: string;
+  media_key: string;
   created_at: string;
   updated_at: string;
 };
@@ -64,6 +64,7 @@ export type Project = {
   description?: string;
   type: ProjectType;
   category: ProjectCategory;
+  thumbnailUrl: string;
 };
 
 // Extended project type with slides for detailed view
@@ -73,12 +74,12 @@ export type ProjectWithSlides = {
   title: string;
   description?: string;
   client: string;
-  clientLogo?: string;
+  clientLogoKey?: string;
   tags: string[];
   category: ProjectCategory;
   type: ProjectType;
   dateFinished?: Date;
-  thumbnailUrl: string;
+  thumbnailKey?: string;
   extraFields: ProjectExtraField[];
   slides: ProjectSlide[];
   createdAt: Date;
@@ -92,7 +93,7 @@ export type ProjectSlide = {
   order: number;
   type: SlideType;
   text?: string;
-  mediaUrl: string;
+  mediaKey: string;
   createdAt: Date;
   updatedAt: Date;
 };

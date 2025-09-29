@@ -8,7 +8,7 @@ interface ProjectHeroProps {
 }
 
 const ProjectHero: React.FC<ProjectHeroProps> = ({ project }) => {
-  console.log('🦸 ProjectHero rendering for:', project.name);
+  console.log('🦸 ProjectHero rendering for:', project.name, 'using thumbnailUrl:', project.thumbnailUrl);
 
   return (
     <section className="w-full px-4 lg:px-0 py-16 md:py-20">
@@ -83,9 +83,9 @@ const ProjectHero: React.FC<ProjectHeroProps> = ({ project }) => {
             <div className="relative w-full max-w-sm mx-auto">
               {/* Project Cover Image */}
               <div className="relative w-full aspect-square rounded-xl overflow-hidden">
-                {project.imageUrl ? (
+                {project.thumbnailUrl ? (
                   <Image
-                    src={project.imageUrl}
+                    src={project.thumbnailUrl}
                     alt={project.name}
                     fill
                     className="object-cover"

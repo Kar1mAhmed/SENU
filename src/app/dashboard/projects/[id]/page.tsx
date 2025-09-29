@@ -2,6 +2,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { projectsAPI } from '@/lib/api-client';
 import { ProjectWithSlides, ProjectCategory, ProjectType, ProjectExtraField } from '@/lib/types';
@@ -98,9 +99,12 @@ const EditProject: React.FC<EditProjectProps> = ({ params }) => {
           extraFields: projectData.extraFields || [],
         });
         
-        setThumbnailPreview(projectData.thumbnailUrl);
-        if (projectData.clientLogo) {
-          setClientLogoPreview(projectData.clientLogo);
+        // Set image previews using keys
+        if (projectData.thumbnailKey) {
+          setThumbnailPreview(`/api/media/${projectData.thumbnailKey}`);
+        }
+        if (projectData.clientLogoKey) {
+          setClientLogoPreview(`/api/media/${projectData.clientLogoKey}`);
         }
         console.log('✅ Project loaded successfully:', projectData.name);
       } catch (error) {
@@ -556,9 +560,11 @@ const EditProject: React.FC<EditProjectProps> = ({ params }) => {
               {clientLogoPreview && (
                 <div className="mt-4">
                   <p className="text-sm text-gray-400 mb-2">Current client logo:</p>
-                  <img
+                  <Image
                     src={clientLogoPreview}
                     alt="Client logo preview"
+                    width={96}
+                    height={96}
                     className="max-w-24 max-h-24 rounded-lg border border-gray-600 object-contain"
                   />
                 </div>
@@ -583,9 +589,11 @@ const EditProject: React.FC<EditProjectProps> = ({ params }) => {
                   <p className="text-sm text-gray-400 mb-2">
                     {thumbnailFile ? 'New thumbnail preview:' : 'Current thumbnail:'}
                   </p>
-                  <img
+                  <Image
                     src={thumbnailPreview}
                     alt="Thumbnail preview"
+                    width={320}
+                    height={192}
                     className="max-w-xs max-h-48 rounded-lg border border-gray-600"
                   />
                 </div>
@@ -632,7 +640,7 @@ const EditProject: React.FC<EditProjectProps> = ({ params }) => {
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => router.push(`/dashboard/slides/${slide.id}`)}
+                        onClick={() => router.push(`/dashboard/projects/${projectId}/slides/${slide.id}`)}
                         className="flex-1 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded text-xs font-medium transition-colors duration-200"
                       >
                         Edit
