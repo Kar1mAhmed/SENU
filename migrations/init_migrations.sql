@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS projects (
     project_type TEXT NOT NULL CHECK (project_type IN ('image', 'vertical', 'horizontal')),
     date_finished DATE,
     thumbnail_url TEXT NOT NULL,
+    client_logo TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

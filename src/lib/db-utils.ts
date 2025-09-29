@@ -4,6 +4,7 @@ import {
     DBSlide,
     ProjectWithSlides,
     ProjectSlide,
+    ProjectExtraField,
     D1Database,
     ProjectCategory,
     ProjectType,
@@ -16,17 +17,28 @@ console.log('🗄️ Database utilities loaded - ready to handle data like a bos
 export function dbProjectToProject(dbProject: DBProject): ProjectWithSlides {
     console.log('🔄 Converting DB project to frontend format:', dbProject.name);
 
+    // Parse extra fields from JSON string
+    let extraFields: ProjectExtraField[] = [];
+    try {
+        extraFields = JSON.parse(dbProject.extra_fields || '[]');
+    } catch (error) {
+        console.log('⚠️ Failed to parse extra fields for project:', dbProject.name, error);
+        extraFields = [];
+    }
+
     return {
         id: dbProject.id,
         name: dbProject.name,
         title: dbProject.title,
         description: dbProject.description,
         client: dbProject.client_name,
+        clientLogo: dbProject.client_logo,
         tags: JSON.parse(dbProject.tags || '[]'),
         category: dbProject.category,
         type: dbProject.project_type,
         dateFinished: dbProject.date_finished ? new Date(dbProject.date_finished) : undefined,
         thumbnailUrl: dbProject.thumbnail_url,
+        extraFields,
         slides: [], // Will be populated separately
         createdAt: new Date(dbProject.created_at),
         updatedAt: new Date(dbProject.updated_at)
@@ -61,10 +73,12 @@ export class ProjectDB {
         title: string;
         description?: string;
         clientName: string;
+        clientLogo?: string;
         tags: string[];
         category: ProjectCategory;
         projectType: ProjectType;
         dateFinished?: string;
+        extraFields?: ProjectExtraField[];
         thumbnailUrl: string;
     }): Promise<DBProject> {
         console.log('🚀 Creating new project in DB:', data.name);
@@ -74,10 +88,10 @@ export class ProjectDB {
 
         const stmt = this.db.prepare(`
       INSERT INTO projects (
-        id, name, title, description, client_name, tags, 
-        category, project_type, date_finished, thumbnail_url, 
+        id, name, title, description, client_name, client_logo, tags, 
+        category, project_type, date_finished, extra_fields, thumbnail_url, 
         created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
         await stmt.bind(
@@ -86,10 +100,12 @@ export class ProjectDB {
             data.title,
             data.description || null,
             data.clientName,
+            data.clientLogo || null,
             JSON.stringify(data.tags),
             data.category,
             data.projectType,
             data.dateFinished || null,
+            JSON.stringify(data.extraFields || []),
             data.thumbnailUrl,
             now,
             now
@@ -160,10 +176,12 @@ export class ProjectDB {
         title: string;
         description?: string;
         clientName: string;
+        clientLogo?: string;
         tags: string[];
         category: ProjectCategory;
         projectType: ProjectType;
         dateFinished?: string;
+        extraFields?: ProjectExtraField[];
         thumbnailUrl: string;
     }>): Promise<DBProject> {
         console.log('✏️ Updating project:', id, 'with data keys:', Object.keys(data).join(', '));
@@ -187,9 +205,17 @@ export class ProjectDB {
             updates.push('client_name = ?');
             bindings.push(data.clientName);
         }
+        if (data.clientLogo !== undefined) {
+            updates.push('client_logo = ?');
+            bindings.push(data.clientLogo);
+        }
         if (data.tags !== undefined) {
             updates.push('tags = ?');
             bindings.push(JSON.stringify(data.tags));
+        }
+        if (data.extraFields !== undefined) {
+            updates.push('extra_fields = ?');
+            bindings.push(JSON.stringify(data.extraFields));
         }
         if (data.category !== undefined) {
             updates.push('category = ?');

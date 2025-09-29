@@ -7,7 +7,8 @@ import {
   CloudflareEnv, 
   APIResponse, 
   ProjectWithSlides,
-  ProjectCategory 
+  ProjectCategory,
+  DBSlide
 } from '@/lib/types';
 
 export const runtime = 'edge';
@@ -33,9 +34,16 @@ export async function GET(
     const dbProject = await projectDB.getById(id);
     const project = dbProjectToProject(dbProject);
 
-    // Get slides for the project
-    const dbSlides = await slideDB.getByProjectId(id);
-    project.slides = dbSlides.map(dbSlideToSlide);
+    // Get slides for the project with error handling
+    let dbSlides: DBSlide[] = [];
+    try {
+      dbSlides = await slideDB.getByProjectId(id);
+      project.slides = dbSlides.map(dbSlideToSlide);
+      console.log('✅ Successfully fetched', dbSlides.length, 'slides for project:', id);
+    } catch (slideError) {
+      console.warn('⚠️ Failed to fetch slides for project:', id, slideError);
+      project.slides = []; // Fallback to empty slides array
+    }
 
     const response: APIResponse<ProjectWithSlides> = {
       success: true,
@@ -65,10 +73,7 @@ export async function PUT(
   
   try {
     // Get Cloudflare bindings from request context
-    const env = process.env as unknown as CloudflareEnv;
-    if (!env.DB || !env.R2) {
-      throw new Error('Database or R2 storage not available');
-    }
+    const env = getRequestContext().env as CloudflareEnv;
 
     const formData = await request.formData();
     
@@ -77,15 +82,13 @@ export async function PUT(
     const title = formData.get('title') as string || undefined;
     const description = formData.get('description') as string || undefined;
     const clientName = formData.get('clientName') as string || undefined;
+    const clientLogoFile = formData.get('clientLogoFile') as File | null;
     const tagsString = formData.get('tags') as string || undefined;
+    const extraFieldsString = formData.get('extraFields') as string || undefined;
     const category = formData.get('category') as ProjectCategory || undefined;
     const projectType = formData.get('projectType') as 'image' | 'horizontal' | 'vertical' || undefined;
     const dateFinished = formData.get('dateFinished') as string || undefined;
     const thumbnailFile = formData.get('thumbnailFile') as File | null;
-
-    console.log('📝 Updating project with fields:', Object.keys({
-      name, title, description, clientName, category, projectType, dateFinished
-    }).filter(key => (formData.get(key) !== null && formData.get(key) !== undefined)).join(', '));
 
     const projectDB = new ProjectDB(env.DB);
 
@@ -97,6 +100,42 @@ export async function PUT(
       } catch {
         tags = tagsString.split(',').map(t => t.trim());
       }
+    }
+
+    // Parse extra fields if provided
+    let extraFields: { name: string; value: string }[] | undefined;
+    if (extraFieldsString) {
+      try {
+        const parsed = JSON.parse(extraFieldsString);
+        // Validate and limit to 4 fields
+        if (Array.isArray(parsed)) {
+          extraFields = parsed.slice(0, 4).filter(field => 
+            field && typeof field === 'object' && field.name && field.value
+          );
+          console.log('📋 Parsed extra fields:', extraFields.length, 'fields');
+        }
+      } catch (error) {
+        console.warn('⚠️ Failed to parse extra fields:', error);
+        extraFields = undefined;
+      }
+    }
+
+    // Log what fields are being updated
+    console.log('📝 Updating project with fields:', [
+      name && 'name',
+      title && 'title', 
+      description !== undefined && 'description',
+      clientName && 'clientName',
+      tags && 'tags',
+      extraFields && 'extraFields',
+      category && 'category',
+      projectType && 'projectType',
+      dateFinished !== undefined && 'dateFinished',
+      thumbnailFile && 'thumbnailFile'
+    ].filter(Boolean).join(', '));
+    
+    if (extraFields) {
+      console.log('📋 Extra fields being updated:', extraFields);
     }
 
     // Handle thumbnail upload if new file provided
@@ -131,14 +170,22 @@ export async function PUT(
       category,
       projectType,
       dateFinished,
-      thumbnailUrl
+      thumbnailUrl,
+      extraFields
     });
 
     // Get updated project with slides
     const slideDB = new SlideDB(env.DB);
     const project = dbProjectToProject(dbProject);
-    const dbSlides = await slideDB.getByProjectId(id);
-    project.slides = dbSlides.map(dbSlideToSlide);
+    
+    // Get slides with error handling
+    try {
+      const dbSlides = await slideDB.getByProjectId(id);
+      project.slides = dbSlides.map(dbSlideToSlide);
+    } catch (slideError) {
+      console.warn('⚠️ Failed to fetch slides for updated project:', id, slideError);
+      project.slides = []; // Fallback to empty slides array
+    }
 
     const response: APIResponse<ProjectWithSlides> = {
       success: true,
@@ -169,17 +216,22 @@ export async function DELETE(
   
   try {
     // Get Cloudflare bindings from request context
-    const env = process.env as unknown as CloudflareEnv;
-    if (!env.DB || !env.R2) {
-      throw new Error('Database or R2 storage not available');
-    }
+    const env = getRequestContext().env as CloudflareEnv;
 
     const projectDB = new ProjectDB(env.DB);
     const slideDB = new SlideDB(env.DB);
 
     // Get project and slides to delete associated files
     const dbProject = await projectDB.getById(id);
-    const dbSlides = await slideDB.getByProjectId(id);
+    let dbSlides: DBSlide[] = [];
+    
+    // Get slides with error handling
+    try {
+      dbSlides = await slideDB.getByProjectId(id);
+    } catch (slideError) {
+      console.warn('⚠️ Failed to fetch slides for deletion, continuing with project deletion:', id, slideError);
+      dbSlides = []; // Continue with empty slides array
+    }
 
     console.log('🧹 Cleaning up files for project:', dbProject.name, 'with', dbSlides.length, 'slides');
 

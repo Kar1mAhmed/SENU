@@ -1,57 +1,72 @@
-// API endpoint to serve media files from R2 storage
+// Media serving endpoint for R2 storage
 import { NextRequest, NextResponse } from 'next/server';
 import { getRequestContext } from '@cloudflare/next-on-pages';
-import { CloudflareEnv } from '@/lib/types';
 
-export const runtime = 'edge';
+console.log('📁 Media serving endpoint loaded - ready to serve files like a digital waiter!');
 
-console.log('🖼️ Media serving API loaded - ready to serve files like a digital waiter!');
-
-// GET /api/media/[...path] - Serve media files from R2
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ path: string[] }> }
+  { params }: { params: { path: string[] } }
 ) {
-  const { path } = await params;
-  const filePath = path.join('/');
-  
-  console.log('📁 Serving media file:', filePath);
-  
+  console.log('🖼️ GET /api/media - serving media file');
+
   try {
-    // Get Cloudflare bindings from request context with fallback
-    let env: CloudflareEnv;
-    try {
-      env = getRequestContext().env as CloudflareEnv;
-    } catch {
-      // Fallback for development - return placeholder
-      console.log('⚠️ Cloudflare context not available, returning placeholder image');
-      return new NextResponse('Development mode - media not available', { 
-        status: 404,
-        headers: { 'Content-Type': 'text/plain' }
-      });
+    // Get Cloudflare bindings from request context
+    const env = getRequestContext().env as CloudflareEnv;
+    
+    // Join the path segments to get the full key
+    const key = params.path.join('/');
+    console.log('📂 Serving media file with key:', key);
+
+    // Check if R2 is available (production/preview)
+    if (!env.R2) {
+      console.warn('⚠️ R2 not available, returning 404');
+      return new NextResponse('Media not available in development', { status: 404 });
     }
 
-    // Get file from R2
-    const object = await env.R2.get(filePath);
+    // Get the object from R2
+    const object = await env.R2.get(key);
     
     if (!object) {
-      console.log('❌ File not found in R2:', filePath);
-      return new NextResponse('File not found', { status: 404 });
+      console.log('❌ Media file not found:', key);
+      return new NextResponse('Media not found', { status: 404 });
     }
 
-    // Get file content and metadata
-    const data = await object.arrayBuffer();
-    const contentType = object.httpMetadata?.contentType || 'application/octet-stream';
-    
-    console.log('✅ Successfully served file:', filePath, 'type:', contentType, 'size:', data.byteLength);
+    // Get the content type based on file extension
+    const getContentType = (filename: string): string => {
+      const ext = filename.toLowerCase().split('.').pop();
+      switch (ext) {
+        case 'jpg':
+        case 'jpeg':
+          return 'image/jpeg';
+        case 'png':
+          return 'image/png';
+        case 'gif':
+          return 'image/gif';
+        case 'webp':
+          return 'image/webp';
+        case 'svg':
+          return 'image/svg+xml';
+        case 'mp4':
+          return 'video/mp4';
+        case 'webm':
+          return 'video/webm';
+        case 'mov':
+          return 'video/quicktime';
+        default:
+          return 'application/octet-stream';
+      }
+    };
 
-    // Return file with appropriate headers
-    return new NextResponse(data, {
-      status: 200,
+    const contentType = getContentType(key);
+    console.log('✅ Serving media file:', key, 'as', contentType);
+
+    // Return the file with appropriate headers
+    return new NextResponse(object.body, {
       headers: {
         'Content-Type': contentType,
         'Cache-Control': 'public, max-age=31536000, immutable', // Cache for 1 year
-        'Content-Length': data.byteLength.toString(),
+        'Content-Length': object.size.toString(),
       },
     });
 
@@ -59,4 +74,10 @@ export async function GET(
     console.error('❌ Error serving media file:', error);
     return new NextResponse('Internal server error', { status: 500 });
   }
+}
+
+// Define the CloudflareEnv interface
+interface CloudflareEnv {
+  R2: R2Bucket;
+  DB: D1Database;
 }

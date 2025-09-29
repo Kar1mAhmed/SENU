@@ -8,7 +8,6 @@ import {
     APIResponse,
     PaginatedResponse,
     ProjectWithSlides,
-    CreateProjectRequest,
     ProjectCategory
 } from '@/lib/types';
 
@@ -121,7 +120,9 @@ export async function POST(request: NextRequest) {
         const category = formData.get('category') as ProjectCategory;
         const projectType = formData.get('projectType') as 'image' | 'horizontal' | 'vertical';
         const dateFinished = formData.get('dateFinished') as string || undefined;
+        const extraFieldsString = formData.get('extraFields') as string || undefined;
         const thumbnailFile = formData.get('thumbnailFile') as File | null;
+        const clientLogoFile = formData.get('clientLogoFile') as File | null;
 
         console.log('📝 Creating project with data:', { name, title, clientName, category, projectType });
 
@@ -136,6 +137,25 @@ export async function POST(request: NextRequest) {
             tags = JSON.parse(tagsString || '[]');
         } catch {
             tags = tagsString ? tagsString.split(',').map(t => t.trim()) : [];
+        }
+
+        // Parse extra fields
+        let extraFields: { name: string; value: string }[] = [];
+        try {
+            extraFields = JSON.parse(extraFieldsString || '[]');
+            // Limit to 4 fields maximum
+            extraFields = extraFields.slice(0, 4);
+        } catch {
+            console.log('⚠️ Failed to parse extra fields, using empty array');
+            extraFields = [];
+        }
+
+        // Upload client logo if provided
+        let clientLogoUrl: string | undefined;
+        if (clientLogoFile && clientLogoFile.size > 0) {
+            console.log('🏢 Uploading client logo file:', clientLogoFile.name);
+            const uploadResult = await uploadFileToR2(env.R2, clientLogoFile, 'logos');
+            clientLogoUrl = uploadResult.url;
         }
 
         // Upload thumbnail if provided
@@ -155,10 +175,12 @@ export async function POST(request: NextRequest) {
             title,
             description,
             clientName,
+            clientLogo: clientLogoUrl,
             tags,
             category,
             projectType,
             dateFinished,
+            extraFields,
             thumbnailUrl
         });
 

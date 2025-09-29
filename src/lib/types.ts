@@ -16,6 +16,12 @@ export type ProjectType = 'image' | 'horizontal' | 'vertical';
 export type ProjectCategory = 'Branding' | 'Logo design' | 'UI/UX' | 'Products' | 'Prints' | 'Motions' | 'Shorts';
 export type SlideType = 'image' | 'vertical' | 'horizontal';
 
+// Extra field type for project information
+export type ProjectExtraField = {
+  name: string;
+  value: string;
+};
+
 // Database Project type (matches database schema)
 export type DBProject = {
   id: string;
@@ -23,11 +29,13 @@ export type DBProject = {
   title: string;
   description?: string;
   client_name: string;
+  client_logo?: string;
   tags: string; // JSON string in database
   category: ProjectCategory;
   project_type: ProjectType;
   date_finished?: string; // ISO date string
   thumbnail_url: string;
+  extra_fields?: string; // JSON string in database for extra fields
   created_at: string;
   updated_at: string;
 };
@@ -49,6 +57,7 @@ export type Project = {
   id: string;
   name: string;
   client: string;
+  clientLogo?: string;
   work: string[];
   imageUrl: string;
   videoUrl?: string;
@@ -64,11 +73,13 @@ export type ProjectWithSlides = {
   title: string;
   description?: string;
   client: string;
+  clientLogo?: string;
   tags: string[];
   category: ProjectCategory;
   type: ProjectType;
   dateFinished?: Date;
   thumbnailUrl: string;
+  extraFields: ProjectExtraField[];
   slides: ProjectSlide[];
   createdAt: Date;
   updatedAt: Date;
@@ -92,10 +103,12 @@ export type CreateProjectRequest = {
   title: string;
   description?: string;
   clientName: string;
+  clientLogoFile?: File;
   tags: string[];
   category: ProjectCategory;
   projectType: ProjectType;
   dateFinished?: string;
+  extraFields?: ProjectExtraField[];
   thumbnailFile?: File;
 };
 

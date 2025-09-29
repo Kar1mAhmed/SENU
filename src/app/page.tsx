@@ -9,11 +9,13 @@ import SingleRibbon from '@/components/main/SingleRibbon';
 import ClientsSection from '@/components/landing/Testimonial';
 import FAQSection from '@/components/landing/FAQSection';
 import Footer from '@/components/main/Footer';
+import Navbar from '@/components/main/Navbar';
 
 export default function Home() {
   return (
     <div className="min-h-screen w-full">
       <main>
+        <Navbar />
         <HeroSection />
         <EmailSignup />
         <Ribbon />

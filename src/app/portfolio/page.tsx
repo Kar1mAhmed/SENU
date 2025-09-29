@@ -6,6 +6,7 @@ import ProjectGridLayout from '@/components/main/ProjectGridLayout';
 import CategoryFilter from '@/components/main/CategoryFilter';
 import SingleRibbon from '@/components/main/SingleRibbon';
 import Footer from '@/components/main/Footer';
+import Navbar from '@/components/main/Navbar';
 import { ProjectCategory } from '@/lib/types';
 
 const categories = [
@@ -32,7 +33,9 @@ const Portfolio: React.FC = () => {
     console.log('📊 Filtered projects count:', filteredProjects.length, 'for category:', activeCategory);
 
     return (
-        <div className="min-h-screen text-white">
+        <>
+        <Navbar />
+        <div className="min-h-screen text-white mt-32">
             <section className="py-16 md:py-20">
                 <div className="w-full">
                     {/* Title */}
@@ -74,6 +77,7 @@ const Portfolio: React.FC = () => {
             <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]"/>
             <Footer />
         </div>
+        </>
     );
 };
 

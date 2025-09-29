@@ -2,6 +2,7 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import Icon from '../Icon';
 import { Project } from '@/lib/types';
 
@@ -18,7 +19,25 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     isLeft = false,
     layout = 'zigzag'
 }) => {
+    const router = useRouter();
     console.log('🎨 Rendering ProjectCard:', project.name, 'type:', project.type, 'category:', project.category);
+
+    // Convert project name to URL-friendly format
+    const getProjectUrl = (projectName: string) => {
+        return `/portfolio/${encodeURIComponent(projectName.toLowerCase().replace(/\s+/g, '-'))}`;
+    };
+
+    // Handle project card click (navigate to project detail)
+    const handleProjectClick = (e: React.MouseEvent) => {
+        // Don't navigate if clicking on video controls
+        if ((e.target as HTMLElement).closest('.video-controls')) {
+            return;
+        }
+        
+        const projectUrl = getProjectUrl(project.name);
+        console.log('🔗 Navigating to project:', projectUrl);
+        router.push(projectUrl);
+    };
 
     // Video control states
     const [isPlaying, setIsPlaying] = useState(false);
@@ -139,7 +158,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             const clickX = e.clientX - rect.left;
             const newProgress = (clickX / rect.width) * 100;
             const newTime = (newProgress / 100) * duration;
-            
+
             videoRef.current.currentTime = newTime;
             setProgress(newProgress);
             setCurrentTime(newTime);
@@ -152,7 +171,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             const dragX = e.clientX - rect.left;
             const newProgress = Math.max(0, Math.min(100, (dragX / rect.width) * 100));
             const newTime = (newProgress / 100) * duration;
-            
+
             setProgress(newProgress);
             setCurrentTime(newTime);
             videoRef.current.currentTime = newTime;
@@ -176,15 +195,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
     // Enhanced Video Player Component
     const renderEnhancedVideoPlayer = () => (
-        <div 
+        <div
             ref={containerRef}
-            className={`absolute inset-0 rounded-lg overflow-hidden bg-black group ${
-                isFullscreen 
-                    ? project.type === 'vertical' 
-                        ? 'fixed inset-0 z-50 rounded-none flex items-center justify-center bg-black' 
+            className={`absolute inset-0 rounded-lg overflow-hidden bg-black group ${isFullscreen
+                    ? project.type === 'vertical'
+                        ? 'fixed inset-0 z-50 rounded-none flex items-center justify-center bg-black'
                         : 'fixed inset-0 z-50 rounded-none'
                     : ''
-            }`}
+                }`}
             onMouseMove={() => {
                 if (isFullscreen) {
                     setShowControls(true);
@@ -196,11 +214,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                 ref={videoRef}
                 src={project.videoUrl}
                 poster={project.imageUrl}
-                className={`${
-                    isFullscreen && project.type === 'vertical' 
-                        ? 'h-full w-auto max-w-none' 
+                className={`${isFullscreen && project.type === 'vertical'
+                        ? 'h-full w-auto max-w-none'
                         : 'w-full h-full'
-                } object-cover transition-transform duration-700 ease-out group-hover:scale-110`}
+                    } object-cover transition-transform duration-700 ease-out group-hover:scale-110`}
                 muted={isMuted}
                 loop
                 playsInline
@@ -211,7 +228,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             />
 
             {/* Click overlay for play/pause */}
-            <div 
+            <div
                 className="absolute inset-0 cursor-pointer"
                 onClick={togglePlayPause}
             />
@@ -228,10 +245,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             )}
 
             {/* Video Controls - Single Row */}
-            <div 
-                className={`absolute bottom-0 left-0 right-0 transition-all duration-300 pointer-events-none ${
-                    showControls || !isFullscreen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full'
-                }`}
+            <div
+                className={`video-controls absolute bottom-0 left-0 right-0 transition-all duration-300 pointer-events-none ${showControls || !isFullscreen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full'
+                    }`}
             >
                 {/* Single Row Control Bar with Progress Bar Integrated */}
                 <div className="bg-gradient-to-r from-black/70 via-black/50 to-black/70 backdrop-blur-md border-t border-white/10 px-3 py-2 pointer-events-auto">
@@ -260,13 +276,13 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         >
                             {isMuted ? (
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                    <path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" strokeWidth="2" fill="none"/>
-                                    <path d="M23 9L17 15M17 9L23 15" stroke="currentColor" strokeWidth="2"/>
+                                    <path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" strokeWidth="2" fill="none" />
+                                    <path d="M23 9L17 15M17 9L23 15" stroke="currentColor" strokeWidth="2" />
                                 </svg>
                             ) : (
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                    <path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" strokeWidth="2" fill="none"/>
-                                    <path d="M19.07 4.93A10 10 0 0122 12A10 10 0 0119.07 19.07M15.54 8.46A5 5 0 0117 12A5 5 0 0115.54 15.54" stroke="currentColor" strokeWidth="2"/>
+                                    <path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" strokeWidth="2" fill="none" />
+                                    <path d="M19.07 4.93A10 10 0 0122 12A10 10 0 0119.07 19.07M15.54 8.46A5 5 0 0117 12A5 5 0 0115.54 15.54" stroke="currentColor" strokeWidth="2" />
                                 </svg>
                             )}
                         </button>
@@ -277,32 +293,32 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         </div>
 
                         {/* Progress Bar - Takes up remaining space */}
-                        <div 
+                        <div
                             ref={progressRef}
                             className="flex-1 h-1.5 bg-white/20 rounded-full cursor-pointer relative group mx-2"
                             onClick={handleProgressClick}
                             onMouseDown={(e) => {
                                 setIsDragging(true);
                                 handleProgressClick(e);
-                                
+
                                 const handleMouseMove = (e: MouseEvent) => handleProgressDrag(e);
                                 const handleMouseUp = () => {
                                     setIsDragging(false);
                                     document.removeEventListener('mousemove', handleMouseMove);
                                     document.removeEventListener('mouseup', handleMouseUp);
                                 };
-                                
+
                                 document.addEventListener('mousemove', handleMouseMove);
                                 document.addEventListener('mouseup', handleMouseUp);
                             }}
                         >
                             {/* Progress Fill */}
-                            <div 
+                            <div
                                 className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-150"
                                 style={{ width: `${progress}%` }}
                             />
                             {/* Progress Handle */}
-                            <div 
+                            <div
                                 className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
                                 style={{ left: `${progress}%`, transform: 'translateX(-50%) translateY(-50%)' }}
                             />
@@ -315,11 +331,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         >
                             {isFullscreen ? (
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                    <path d="M8 3V5H5V8H3V3H8ZM21 3V8H19V5H16V3H21ZM21 16V21H16V19H19V16H21ZM8 21H3V16H5V19H8V21Z" fill="currentColor"/>
+                                    <path d="M8 3V5H5V8H3V3H8ZM21 3V8H19V5H16V3H21ZM21 16V21H16V19H19V16H21ZM8 21H3V16H5V19H8V21Z" fill="currentColor" />
                                 </svg>
                             ) : (
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                                    <path d="M7 14H5V19H10V17H7V14ZM12 14H14V17H17V19H12V14ZM17 10V7H14V5H19V10H17ZM10 5V7H7V10H5V5H10Z" fill="currentColor"/>
+                                    <path d="M7 14H5V19H10V17H7V14ZM12 14H14V17H17V19H12V14ZM17 10V7H14V5H19V10H17ZM10 5V7H7V10H5V5H10Z" fill="currentColor" />
                                 </svg>
                             )}
                         </button>
@@ -329,10 +345,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
             {/* Project Info Overlay (in fullscreen) */}
             {isFullscreen && (
-                <div 
-                    className={`absolute top-0 left-0 right-0 transition-all duration-300 pointer-events-none ${
-                        showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
-                    }`}
+                <div
+                    className={`absolute top-0 left-0 right-0 transition-all duration-300 pointer-events-none ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
+                        }`}
                 >
                     <div className="bg-gradient-to-b from-black/70 via-black/40 to-transparent backdrop-blur-md p-6 pointer-events-auto">
                         <div className="flex items-start justify-between">
@@ -355,14 +370,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                                     </p>
                                 )} */}
                             </div>
-                            
+
                             {/* Close Fullscreen */}
                             <button
                                 onClick={toggleFullscreen}
                                 className="text-white hover:text-red-400 transition-colors p-2 flex-shrink-0"
                             >
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2"/>
+                                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" />
                                 </svg>
                             </button>
                         </div>
@@ -374,7 +389,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
     // Render image project (standard card)
     const renderImageProject = () => (
-        <div className="w-full bg-transparent flex flex-col mb-8 group">
+        <div className="w-full bg-transparent flex flex-col mb-8 group cursor-pointer" onClick={handleProjectClick}>
             <div className="relative w-full px-6">
                 <div className="relative w-full aspect-[560/620] max-w-full md:max-w-[450px] lg:max-w-[480px] xl:max-w-[560px] mx-auto">
                     <div className="absolute inset-0 rounded-lg overflow-hidden">
@@ -424,7 +439,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
 
     // Render vertical video project (shorts - smaller height)
     const renderVerticalProject = () => (
-        <div className="w-full bg-transparent flex flex-col mb-8 group">
+        <div className="w-full bg-transparent flex flex-col mb-8 group cursor-pointer" onClick={handleProjectClick}>
             <div className="relative w-full px-6">
                 <div className="relative w-full aspect-[9/16] max-w-full md:max-w-[260px] lg:max-w-[300px] xl:max-w-[360px] mx-auto">
                     {project.videoUrl ? (
@@ -481,7 +496,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         const shouldTextBeOnLeft = index % 2 === 0;
 
         return (
-            <div className="w-full bg-transparent flex flex-col mb-12 group">
+            <div className="w-full bg-transparent flex flex-col mb-12 group cursor-pointer" onClick={handleProjectClick}>
                 {/* Mobile: Stacked layout */}
                 <div className="block lg:hidden">
                     <div className="relative w-full px-6">

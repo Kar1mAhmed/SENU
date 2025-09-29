@@ -53,6 +53,7 @@ export function transformProjectForFrontend(dbProject: ProjectWithSlides): Proje
     id: dbProject.id,
     name: dbProject.name,
     client: dbProject.client,
+    clientLogo: dbProject.clientLogo ? transformMediaUrl(dbProject.clientLogo) : undefined,
     work: dbProject.tags, // Tags become work array
     imageUrl,
     videoUrl,

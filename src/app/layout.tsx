@@ -30,7 +30,6 @@ const newBlack = localFont({
 });
 
 import BackgroundGrid from '../components/main/BackgroundGrid';
-import Navbar from '@/components/main/Navbar';
 
 
 export default function RootLayout({
@@ -41,9 +40,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${newBlack.variable} ${alexandria.variable}`}>
       <body>
-        <Navbar />
         <BackgroundGrid />
-        <div className="pt-[120px]">
+        <div className="">
           <main className="relative z-10">{children}</main>
         </div>
       </body>

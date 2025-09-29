@@ -1,16 +1,16 @@
 // API client utilities for dashboard
-import { 
-  APIResponse, 
-  PaginatedResponse, 
-  ProjectWithSlides, 
-  ProjectSlide, 
-  CreateProjectRequest, 
-  UpdateProjectRequest, 
-  CreateSlideRequest, 
-  UpdateSlideRequest, 
-  FileUploadResponse, 
+import {
+  APIResponse,
+  PaginatedResponse,
+  ProjectWithSlides,
+  ProjectSlide,
+  CreateProjectRequest,
+  UpdateProjectRequest,
+  CreateSlideRequest,
+  UpdateSlideRequest,
+  FileUploadResponse,
   DashboardAuth,
-  ProjectCategory 
+  ProjectCategory
 } from './types';
 
 console.log('🌐 API client loaded - ready to communicate with backend like a diplomatic translator!');
@@ -19,11 +19,11 @@ const API_BASE = '/api';
 
 // Generic API call function
 async function apiCall<T>(
-  endpoint: string, 
+  endpoint: string,
   options: RequestInit = {}
 ): Promise<APIResponse<T>> {
   console.log('📡 API call:', options.method || 'GET', endpoint);
-  
+
   try {
     const response = await fetch(`${API_BASE}${endpoint}`, {
       headers: {
@@ -34,7 +34,7 @@ async function apiCall<T>(
     });
 
     const data = await response.json() as APIResponse<T>;
-    
+
     if (!response.ok) {
       console.error('❌ API error:', response.status, data.error);
       throw new Error(data.error || `HTTP ${response.status}`);
@@ -50,12 +50,12 @@ async function apiCall<T>(
 
 // Generic FormData API call function
 async function apiCallFormData<T>(
-  endpoint: string, 
+  endpoint: string,
   formData: FormData,
   method: 'POST' | 'PUT' = 'POST'
 ): Promise<APIResponse<T>> {
   console.log('📤 FormData API call:', method, endpoint);
-  
+
   try {
     const response = await fetch(`${API_BASE}${endpoint}`, {
       method,
@@ -63,7 +63,7 @@ async function apiCallFormData<T>(
     });
 
     const data = await response.json() as APIResponse<T>;
-    
+
     if (!response.ok) {
       console.error('❌ FormData API error:', response.status, data.error);
       throw new Error(data.error || `HTTP ${response.status}`);
@@ -109,7 +109,7 @@ export const projectsAPI = {
     if (params.category) searchParams.set('category', params.category);
     if (params.page) searchParams.set('page', params.page.toString());
     if (params.limit) searchParams.set('limit', params.limit.toString());
-    
+
     const endpoint = `/projects${searchParams.toString() ? `?${searchParams}` : ''}`;
     const response = await apiCall<PaginatedResponse<ProjectWithSlides>['data']>(endpoint);
     return response.data!;
@@ -126,10 +126,12 @@ export const projectsAPI = {
     formData.append('title', data.title);
     if (data.description) formData.append('description', data.description);
     formData.append('clientName', data.clientName);
+    if (data.clientLogoFile) formData.append('clientLogoFile', data.clientLogoFile);
     formData.append('tags', JSON.stringify(data.tags));
     formData.append('category', data.category);
     formData.append('projectType', data.projectType);
     if (data.dateFinished) formData.append('dateFinished', data.dateFinished);
+    if (data.extraFields) formData.append('extraFields', JSON.stringify(data.extraFields));
     if (data.thumbnailFile) formData.append('thumbnailFile', data.thumbnailFile);
 
     const response = await apiCallFormData<ProjectWithSlides>('/projects', formData, 'POST');
@@ -142,10 +144,12 @@ export const projectsAPI = {
     if (data.title) formData.append('title', data.title);
     if (data.description !== undefined) formData.append('description', data.description);
     if (data.clientName) formData.append('clientName', data.clientName);
+    if (data.clientLogoFile) formData.append('clientLogoFile', data.clientLogoFile);
     if (data.tags) formData.append('tags', JSON.stringify(data.tags));
     if (data.category) formData.append('category', data.category);
     if (data.projectType) formData.append('projectType', data.projectType);
     if (data.dateFinished !== undefined) formData.append('dateFinished', data.dateFinished);
+    if (data.extraFields) formData.append('extraFields', JSON.stringify(data.extraFields));
     if (data.thumbnailFile) formData.append('thumbnailFile', data.thumbnailFile);
 
     const response = await apiCallFormData<ProjectWithSlides>(`/projects/${id}`, formData, 'PUT');
