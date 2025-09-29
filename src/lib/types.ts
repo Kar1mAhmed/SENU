@@ -11,15 +11,15 @@ export type WithClassName<T = object> = T & {
   className?: string;
 };
 
-// Database types for projects and slides
 export type ProjectType = 'image' | 'horizontal' | 'vertical';
 export type ProjectCategory = 'Branding' | 'Logo design' | 'UI/UX' | 'Products' | 'Prints' | 'Motions' | 'Shorts';
 export type SlideType = 'image' | 'vertical' | 'horizontal';
 
 // Extra field type for project information
-export type ProjectExtraField = {
+export interface ProjectExtraField {
   name: string;
   value: string;
+  url?: string; // Optional URL to make the field clickable
 };
 
 // Database Project type (matches database schema)

@@ -140,11 +140,21 @@ export async function POST(request: NextRequest) {
         }
 
         // Parse extra fields
-        let extraFields: { name: string; value: string }[] = [];
+        let extraFields: { name: string; value: string; url?: string }[] = [];
         try {
             extraFields = JSON.parse(extraFieldsString || '[]');
-            // Limit to 4 fields maximum
-            extraFields = extraFields.slice(0, 4);
+            // Validate and limit to 4 fields
+            if (Array.isArray(extraFields)) {
+                extraFields = extraFields.slice(0, 4).filter(field => 
+                    field && typeof field === 'object' && field.name && field.value
+                ).map(field => ({
+                    name: field.name,
+                    value: field.value,
+                    url: field.url || undefined // Include URL if provided
+                }));
+            } else {
+                extraFields = [];
+            }
         } catch {
             console.log('⚠️ Failed to parse extra fields, using empty array');
             extraFields = [];
@@ -153,7 +163,7 @@ export async function POST(request: NextRequest) {
         // Upload client logo if provided
         let clientLogoUrl: string | undefined;
         if (clientLogoFile && clientLogoFile.size > 0) {
-            console.log('🏢 Uploading client logo file:', clientLogoFile.name);
+            console.log('📸 Uploading client logo file:', clientLogoFile.name);
             const uploadResult = await uploadFileToR2(env.R2, clientLogoFile, 'logos');
             clientLogoUrl = uploadResult.url;
         }

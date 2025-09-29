@@ -89,12 +89,12 @@ const NewProject: React.FC = () => {
     if (formData.extraFields.length < 4) {
       setFormData(prev => ({
         ...prev,
-        extraFields: [...prev.extraFields, { name: '', value: '' }]
+        extraFields: [...prev.extraFields, { name: '', value: '', url: '' }]
       }));
     }
   };
 
-  const updateExtraField = (index: number, field: 'name' | 'value', newValue: string) => {
+  const updateExtraField = (index: number, field: 'name' | 'value' | 'url', newValue: string) => {
     setFormData(prev => ({
       ...prev,
       extraFields: prev.extraFields.map((item, i) => 
@@ -373,21 +373,21 @@ const NewProject: React.FC = () => {
             ) : (
               <div className="space-y-4">
                 {formData.extraFields.map((field, index) => (
-                  <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-black/30 rounded-lg border border-gray-700">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Field Name
-                      </label>
-                      <input
-                        type="text"
-                        value={field.name}
-                        onChange={(e) => updateExtraField(index, 'name', e.target.value)}
-                        className="w-full px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="e.g., CLIENT, TIMELINE, SERVICE"
-                      />
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="flex-1">
+                  <div key={index} className="p-4 bg-black/30 rounded-lg border border-gray-700 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Field Name
+                        </label>
+                        <input
+                          type="text"
+                          value={field.name}
+                          onChange={(e) => updateExtraField(index, 'name', e.target.value)}
+                          className="w-full px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="e.g., CLIENT, TIMELINE, SERVICE, WEBSITE"
+                        />
+                      </div>
+                      <div>
                         <label className="block text-sm font-medium text-gray-300 mb-2">
                           Field Value
                         </label>
@@ -396,7 +396,22 @@ const NewProject: React.FC = () => {
                           value={field.value}
                           onChange={(e) => updateExtraField(index, 'value', e.target.value)}
                           className="w-full px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                          placeholder="e.g., INVISION STUDIO, 4 WEEKS, BRAND DESIGN"
+                          placeholder="e.g., INVISION STUDIO, 4 WEEKS, GOLA.IO"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Link URL (Optional)
+                        </label>
+                        <input
+                          type="url"
+                          value={field.url || ''}
+                          onChange={(e) => updateExtraField(index, 'url', e.target.value)}
+                          className="w-full px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          placeholder="https://example.com (makes the field clickable)"
                         />
                       </div>
                       <div className="flex items-end">

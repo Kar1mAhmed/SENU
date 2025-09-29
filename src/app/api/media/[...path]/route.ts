@@ -6,7 +6,7 @@ console.log('📁 Media serving endpoint loaded - ready to serve files like a di
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { path: string[] } }
+  { params }: { params: Promise<{ path: string[] }> }
 ) {
   console.log('🖼️ GET /api/media - serving media file');
 
@@ -14,8 +14,11 @@ export async function GET(
     // Get Cloudflare bindings from request context
     const env = getRequestContext().env as CloudflareEnv;
     
+    // Await the params promise
+    const { path } = await params;
+    
     // Join the path segments to get the full key
-    const key = params.path.join('/');
+    const key = path.join('/');
     console.log('📂 Serving media file with key:', key);
 
     // Check if R2 is available (production/preview)
