@@ -49,11 +49,16 @@ const Navbar = () => {
             {/* Center: Nav Links (Desktop) */}
             <div className="hidden lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <div className="flex items-center gap-x-8 font-alexandria text-xs uppercase font-normal text-neutral-300">
-                <a href="/about" className="hover:text-white transition-colors">About</a>
                 <Link href="/">
                   <p className="hover:text-white transition-colors">Home</p>
                 </Link>
-                <a href="/portfolio" className="hover:text-white transition-colors">Portfolio</a>
+                <Link href="/portfolio">
+                  <p className="hover:text-white transition-colors">Portfolio</p>
+                </Link>
+                <Link href="/about">
+                  <p className="hover:text-white transition-colors">About</p>
+                </Link>
+
               </div>
             </div>
 
@@ -84,10 +89,17 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="lg:hidden fixed top-[140px] left-0 w-full z-50 px-4">
           <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-3xl p-8">
-            <nav className="flex flex-col items-center text-center gap-y-6">
-              <a href="/about" onClick={() => setIsMenuOpen(false)} className="font-alexandria text-sm font-normal uppercase text-neutral-300 hover:text-white transition-colors w-full pb-4 border-b border-white/10">About</a>
-              <a href="/service" onClick={() => setIsMenuOpen(false)} className="font-alexandria text-sm font-normal uppercase text-neutral-300 hover:text-white transition-colors w-full pb-4 border-b border-white/10">Service</a>
-              <a href="/portfolio" onClick={() => setIsMenuOpen(false)} className="font-alexandria text-sm font-normal uppercase text-neutral-300 hover:text-white transition-colors w-full pb-4">Portfolio</a>
+            <nav className="flex flex-col items-center text-center gap-y-6 text-neutral-300">
+              <Link href="/">
+                <p className="hover:text-white transition-colors">Home</p>
+              </Link>
+              <Link href="/portfolio">
+                <p className="hover:text-white transition-colors">Portfolio</p>
+              </Link>
+              <Link href="/about">
+                <p className="hover:text-white transition-colors">About</p>
+              </Link>
+
             </nav>
 
             <div className="flex flex-col items-center gap-y-8 mt-8">
@@ -98,7 +110,7 @@ const Navbar = () => {
                 <a href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><SiX /></a>
               </div>
               <Link href="/contact">
-                <Button className="w-full h-[48px]">Get in touch</Button>
+                <Button className="w-full h-[20px] p-6">Get in touch</Button>
               </Link>
             </div>
           </div>
