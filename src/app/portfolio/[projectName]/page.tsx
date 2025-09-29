@@ -11,6 +11,10 @@ import Link from 'next/link';
 import Navbar from '@/components/main/Navbar';
 import Footer from '@/components/main/Footer';
 import SingleRibbon from '@/components/main/SingleRibbon';
+
+export const runtime = 'edge';
+
+
 console.log('🎯 Project detail page loaded - ready to showcase projects like a digital gallery!');
 
 const ProjectDetail: React.FC = () => {

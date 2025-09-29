@@ -6,6 +6,8 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { slidesAPI } from '@/lib/api-client';
 import { ProjectSlide, SlideType } from '@/lib/types';
 
+export const runtime = 'edge';
+
 console.log('✏️ Edit slide page loaded - ready to update slide content!');
 
 const slideTypes: SlideType[] = ['image', 'horizontal', 'vertical'];
