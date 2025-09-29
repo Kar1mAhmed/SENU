@@ -6,9 +6,11 @@ import { useProjectWithSlides } from '@/lib/hooks/useProjectWithSlides';
 import { transformProjectForFrontend } from '@/lib/data-transform';
 import ProjectHero from '@/components/portfolio/ProjectHero';
 import ProjectInfo from '@/components/portfolio/ProjectInfo';
+import ProjectSlides from '@/components/portfolio/ProjectSlides';
 import Link from 'next/link';
 import Navbar from '@/components/main/Navbar';
-
+import Footer from '@/components/main/Footer';
+import SingleRibbon from '@/components/main/SingleRibbon';
 console.log('🎯 Project detail page loaded - ready to showcase projects like a digital gallery!');
 
 const ProjectDetail: React.FC = () => {
@@ -59,14 +61,14 @@ const ProjectDetail: React.FC = () => {
             {/* Project Information Section */}
             <ProjectInfo extraFields={projectWithSlides.extraFields} />
 
-            {/* Slides Section - TODO: Implement */}
-            <section className="py-16">
-                <div className="container mx-auto px-6">
-                    <h2 className="text-3xl font-bold mb-8">Project Slides</h2>
-                    <p className="text-gray-400">Slides section coming soon...</p>
-                </div>
-            </section>
+            {/* Slides Section */}
+            <ProjectSlides 
+                slides={projectWithSlides.slides} 
+                projectType={project.type} 
+            />
         </div>
+        <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]"/>
+        <Footer />
         </>
     );
 };

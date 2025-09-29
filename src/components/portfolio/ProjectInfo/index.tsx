@@ -17,7 +17,7 @@ const ProjectInfo: React.FC<ProjectInfoProps> = ({ extraFields }) => {
   }
 
   return (
-    <section className="py-4">
+    <section className="py-4 mb-16">
       <div className="max-w-[1280px] mx-auto px-4 lg:px-0">
         {/* Project Information Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">

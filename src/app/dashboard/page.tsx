@@ -1,9 +1,9 @@
 // Main dashboard page for project management
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { projectsAPI } from '@/lib/api-client';
+import { projectsAPI, slidesAPI } from '@/lib/api-client';
 import { ProjectWithSlides, ProjectCategory } from '@/lib/types';
 
 console.log('📊 Dashboard page loaded - ready to manage projects like a digital project manager!');
@@ -36,40 +36,41 @@ const Dashboard: React.FC = () => {
     }
   }, [isAuthenticated, authLoading, router]);
 
-  // Load projects
-  useEffect(() => {
+  // Load projects function
+  const loadProjects = useCallback(async () => {
     if (!isAuthenticated) return;
-
-    const loadProjects = async () => {
-      console.log('📋 Loading projects for category:', activeCategory);
+    
+    console.log('📋 Loading projects for category:', activeCategory);
+    
+    try {
+      setLoading(true);
+      setError(null);
       
-      try {
-        setLoading(true);
-        setError(null);
-        
-        const response = await projectsAPI.getAll({
-          category: activeCategory === 'All' ? undefined : activeCategory,
-          limit: 50
-        });
-        
-        if (response && response.items) {
-          setProjects(response.items);
-          console.log(`✅ Loaded ${response.items.length} projects`);
-        } else {
-          console.log('⚠️ No data received from API');
-          setProjects([]);
-        }
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to load projects';
-        console.error('❌ Error loading projects:', errorMessage);
-        setError(errorMessage);
-      } finally {
-        setLoading(false);
+      const response = await projectsAPI.getAll({
+        category: activeCategory === 'All' ? undefined : activeCategory,
+        limit: 50
+      });
+      
+      if (response && response.items) {
+        setProjects(response.items);
+        console.log(`✅ Loaded ${response.items.length} projects`);
+      } else {
+        console.log('⚠️ No data received from API');
+        setProjects([]);
       }
-    };
-
-    loadProjects();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load projects';
+      console.error('❌ Error loading projects:', errorMessage);
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   }, [isAuthenticated, activeCategory]);
+
+  // Load projects on mount and category change
+  useEffect(() => {
+    loadProjects();
+  }, [loadProjects]);
 
   const handleDeleteProject = async (projectId: string) => {
     if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
@@ -318,7 +319,7 @@ const Dashboard: React.FC = () => {
                               )}
                               <div className="flex items-center gap-2">
                                 <button
-                                  onClick={() => router.push(`/dashboard/slides/${slide.id}`)}
+                                  onClick={() => router.push(`/dashboard/projects/${project.id}/slides/${slide.id}`)}
                                   className="flex-1 bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded text-xs font-medium transition-colors duration-200"
                                 >
                                   Edit
@@ -326,8 +327,16 @@ const Dashboard: React.FC = () => {
                                 <button
                                   onClick={async () => {
                                     if (confirm('Delete this slide?')) {
-                                      // TODO: Implement slide deletion
-                                      console.log('Delete slide:', slide.id);
+                                      try {
+                                        console.log('🗑️ Deleting slide:', slide.id);
+                                        await slidesAPI.delete(slide.id);
+                                        console.log('✅ Slide deleted successfully');
+                                        // Refresh the projects data
+                                        loadProjects();
+                                      } catch (error) {
+                                        console.error('❌ Error deleting slide:', error);
+                                        alert('Failed to delete slide. Please try again.');
+                                      }
                                     }
                                   }}
                                   className="px-3 py-2 text-red-400 hover:text-red-300 transition-colors duration-200"

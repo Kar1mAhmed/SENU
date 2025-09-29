@@ -2,6 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 
+export const runtime = 'edge';
+
 console.log('📁 Media serving endpoint loaded - ready to serve files like a digital waiter!');
 
 export async function GET(

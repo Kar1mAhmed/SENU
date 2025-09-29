@@ -21,7 +21,7 @@ const ProjectHero: React.FC<ProjectHeroProps> = ({ project }) => {
             {/* Logo and Title */}
             <div className="flex items-center gap-6 mb-8">
               {/* Client Logo */}
-              <div className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0">
+              <div className="w-20 h-20 md:w-32 md:h-32 flex-shrink-0">
                 {project.clientLogo ? (
                   <Image
                     src={project.clientLogo}

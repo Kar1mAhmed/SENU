@@ -39,6 +39,8 @@ const NewProject: React.FC = () => {
   const [tagInput, setTagInput] = useState('');
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [clientLogoFile, setClientLogoFile] = useState<File | null>(null);
+  const [clientLogoPreview, setClientLogoPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,6 +65,20 @@ const NewProject: React.FC = () => {
       const reader = new FileReader();
       reader.onload = (e) => {
         setThumbnailPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleClientLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setClientLogoFile(file);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setClientLogoPreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -119,13 +135,19 @@ const NewProject: React.FC = () => {
       return;
     }
 
+    if (!clientLogoFile) {
+      setError('Client logo is required');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
       const project = await projectsAPI.create({
         ...formData,
-        thumbnailFile
+        thumbnailFile,
+        clientLogoFile
       });
 
       console.log('🎉 Project created successfully:', project.id);
@@ -431,6 +453,31 @@ const NewProject: React.FC = () => {
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Client Logo */}
+          <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-lg p-6">
+            <h2 className="text-xl font-medium mb-6">Client Logo *</h2>
+
+            <div className="space-y-4">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleClientLogoChange}
+                className="w-full px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+                required
+              />
+
+              {clientLogoPreview && (
+                <div className="mt-4">
+                  <img
+                    src={clientLogoPreview}
+                    alt="Client logo preview"
+                    className="max-w-24 max-h-24 rounded-lg border border-gray-600 object-contain"
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Thumbnail */}

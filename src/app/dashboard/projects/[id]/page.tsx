@@ -47,6 +47,8 @@ const EditProject: React.FC<EditProjectProps> = ({ params }) => {
   const [tagInput, setTagInput] = useState('');
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const [clientLogoFile, setClientLogoFile] = useState<File | null>(null);
+  const [clientLogoPreview, setClientLogoPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingProject, setLoadingProject] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -97,6 +99,9 @@ const EditProject: React.FC<EditProjectProps> = ({ params }) => {
         });
         
         setThumbnailPreview(projectData.thumbnailUrl);
+        if (projectData.clientLogo) {
+          setClientLogoPreview(projectData.clientLogo);
+        }
         console.log('✅ Project loaded successfully:', projectData.name);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to load project';
@@ -124,6 +129,20 @@ const EditProject: React.FC<EditProjectProps> = ({ params }) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         setThumbnailPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleClientLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setClientLogoFile(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setClientLogoPreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -181,7 +200,8 @@ const EditProject: React.FC<EditProjectProps> = ({ params }) => {
     try {
       const updatedProject = await projectsAPI.update(projectId!, {
         ...formData,
-        thumbnailFile: thumbnailFile || undefined
+        thumbnailFile: thumbnailFile || undefined,
+        clientLogoFile: clientLogoFile || undefined
       });
 
       console.log('🎉 Project updated successfully:', updatedProject.id);
@@ -519,6 +539,31 @@ const EditProject: React.FC<EditProjectProps> = ({ params }) => {
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Client Logo */}
+          <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-lg p-6">
+            <h2 className="text-xl font-medium mb-6">Client Logo</h2>
+            
+            <div className="space-y-4">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleClientLogoChange}
+                className="w-full px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700"
+              />
+              
+              {clientLogoPreview && (
+                <div className="mt-4">
+                  <p className="text-sm text-gray-400 mb-2">Current client logo:</p>
+                  <img
+                    src={clientLogoPreview}
+                    alt="Client logo preview"
+                    className="max-w-24 max-h-24 rounded-lg border border-gray-600 object-contain"
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Thumbnail */}
