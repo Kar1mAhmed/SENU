@@ -15,7 +15,7 @@
 	"kv_namespaces": [
 		{
 			"binding": "CASTFORM_KV",
-			"id": "d151cbbe53dc45c88434c2ebb3ebb803",
+			"id": "d151cbbe53dc45c88434c2ebb3ebb803"
 		}
 	],
 	// Prod D1 Database (https://platform.castform.io)
@@ -30,7 +30,7 @@
 	"r2_buckets": [
 		{
 			"binding": "R2",
-			"bucket_name": "senu",
+			"bucket_name": "senu"
 		}
 	],
 	"observability": {

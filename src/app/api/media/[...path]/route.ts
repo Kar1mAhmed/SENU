@@ -2,6 +2,31 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getRequestContext } from '@cloudflare/next-on-pages';
 
+// Import Cloudflare types
+interface R2Bucket {
+  get(key: string): Promise<R2Object | null>;
+}
+
+interface R2Object {
+  body: ReadableStream;
+  size: number;
+  httpMetadata?: {
+    contentType?: string;
+    cacheControl?: string;
+  };
+}
+
+interface D1Database {
+  prepare(query: string): D1PreparedStatement;
+}
+
+interface D1PreparedStatement {
+  bind(...values: unknown[]): D1PreparedStatement;
+  first<T = unknown>(): Promise<T | null>;
+  all<T = unknown>(): Promise<{ results: T[]; success: boolean }>;
+  run(): Promise<{ success: boolean; meta: { changes: number; last_row_id: number } }>;
+}
+
 export const runtime = 'edge';
 
 console.log('📁 Media serving endpoint loaded - ready to serve files like a digital waiter!');
