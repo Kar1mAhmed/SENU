@@ -41,7 +41,7 @@ const ProjectHero: React.FC<ProjectHeroProps> = ({ project }) => {
 
               {/* Project Title */}
               <div className="flex-1">
-                <h1 className="font-alexandria text-4xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-white">
+                <h1 className="font-new-black font-medium text-4xl md:text-4xl lg:text-5xl xl:text-6xl text-white">
                   {project.name}
                 </h1>
               </div>

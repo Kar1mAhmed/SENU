@@ -52,7 +52,7 @@ const ProjectDetail: React.FC = () => {
     return (
         <>
         <Navbar />
-        <div className="min-h-screen  text-white mt-32">
+        <div className="min-h-screen  text-white mt-24">
             {/* Hero Section */}
             <ProjectHero project={project} />
 
