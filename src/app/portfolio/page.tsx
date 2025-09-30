@@ -74,7 +74,7 @@ const Portfolio: React.FC = () => {
                     )}
                 </div>
             </section>
-            <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]"/>
+            <SingleRibbon bgClass="bg-red" iconColorClass="bg-red-20" heightClass="h-[35px] md:h-[45px]"/>
             <Footer />
         </div>
         </>
