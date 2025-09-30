@@ -202,7 +202,7 @@ export default function ImprintPage() {
                 </div>
             </section>
 
-            <SingleRibbon bgClass="bg-green" iconColorClass="bg-green-soft" heightClass="h-[35px] md:h-[45px]" />
+            <SingleRibbon bgClass="bg-yellow" iconColorClass="bg-yellow-light" heightClass="h-[35px] md:h-[45px]" />
             <Footer />
         </main>
     );
