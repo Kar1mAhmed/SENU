@@ -41,6 +41,8 @@ const NewProject: React.FC = () => {
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [clientLogoFile, setClientLogoFile] = useState<File | null>(null);
   const [clientLogoPreview, setClientLogoPreview] = useState<string | null>(null);
+  const [iconBarBgColor, setIconBarBgColor] = useState('#4FAF78');
+  const [iconBarIconColor, setIconBarIconColor] = useState('#FFFFFF');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -147,7 +149,9 @@ const NewProject: React.FC = () => {
       const project = await projectsAPI.create({
         ...formData,
         thumbnailFile,
-        clientLogoFile
+        clientLogoFile,
+        iconBarBgColor,
+        iconBarIconColor
       });
 
       console.log('🎉 Project created successfully:', project.id);
@@ -502,6 +506,70 @@ const NewProject: React.FC = () => {
                   />
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Icon Bar Colors */}
+          <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-lg p-6">
+            <h2 className="text-xl font-medium mb-6">Icon Bar Colors 🎨</h2>
+            <p className="text-sm text-gray-400 mb-6">Customize the icon bar colors for this project</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Background Color */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-3">
+                  Background Color
+                </label>
+                <div className="flex items-center gap-4">
+                  <input
+                    type="color"
+                    value={iconBarBgColor}
+                    onChange={(e) => setIconBarBgColor(e.target.value)}
+                    className="h-12 w-20 rounded-lg cursor-pointer border-2 border-gray-600"
+                  />
+                  <input
+                    type="text"
+                    value={iconBarBgColor}
+                    onChange={(e) => setIconBarBgColor(e.target.value)}
+                    placeholder="#4FAF78"
+                    className="flex-1 px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div 
+                  className="mt-3 h-12 rounded-lg border border-gray-600 flex items-center justify-center text-sm"
+                  style={{ backgroundColor: iconBarBgColor }}
+                >
+                  <span style={{ color: iconBarIconColor }}>Preview</span>
+                </div>
+              </div>
+
+              {/* Icon Color */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-3">
+                  Icon Color
+                </label>
+                <div className="flex items-center gap-4">
+                  <input
+                    type="color"
+                    value={iconBarIconColor}
+                    onChange={(e) => setIconBarIconColor(e.target.value)}
+                    className="h-12 w-20 rounded-lg cursor-pointer border-2 border-gray-600"
+                  />
+                  <input
+                    type="text"
+                    value={iconBarIconColor}
+                    onChange={(e) => setIconBarIconColor(e.target.value)}
+                    placeholder="#FFFFFF"
+                    className="flex-1 px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div 
+                  className="mt-3 h-12 rounded-lg border border-gray-600 flex items-center justify-center text-sm"
+                  style={{ backgroundColor: iconBarBgColor }}
+                >
+                  <span style={{ color: iconBarIconColor }}>★ ♥ ✦</span>
+                </div>
+              </div>
             </div>
           </div>
 

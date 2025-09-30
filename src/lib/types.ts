@@ -36,6 +36,8 @@ export type DBProject = {
   date_finished?: string; // ISO date string
   thumbnail_key?: string;
   extra_fields?: string; // JSON string in database for extra fields
+  icon_bar_bg_color?: string; // Hex color for icon bar background
+  icon_bar_icon_color?: string; // Hex color for icons
   created_at: string;
   updated_at: string;
 };
@@ -65,6 +67,8 @@ export type Project = {
   type: ProjectType;
   category: ProjectCategory;
   thumbnailUrl: string;
+  iconBarBgColor?: string; // Hex color for icon bar background
+  iconBarIconColor?: string; // Hex color for icons
 };
 
 // Extended project type with slides for detailed view
@@ -81,6 +85,8 @@ export type ProjectWithSlides = {
   dateFinished?: Date;
   thumbnailKey?: string;
   extraFields: ProjectExtraField[];
+  iconBarBgColor?: string; // Hex color for icon bar background
+  iconBarIconColor?: string; // Hex color for icons
   slides: ProjectSlide[];
   createdAt: Date;
   updatedAt: Date;
@@ -111,6 +117,8 @@ export type CreateProjectRequest = {
   dateFinished?: string;
   extraFields?: ProjectExtraField[];
   thumbnailFile?: File;
+  iconBarBgColor?: string; // Hex color for icon bar background
+  iconBarIconColor?: string; // Hex color for icons
 };
 
 export type UpdateProjectRequest = Partial<CreateProjectRequest> & {

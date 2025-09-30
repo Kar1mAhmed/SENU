@@ -91,6 +91,14 @@ export async function PUT(
     const projectType = formData.get('projectType') as 'image' | 'horizontal' | 'vertical' || undefined;
     const dateFinished = formData.get('dateFinished') as string || undefined;
     const thumbnailFile = formData.get('thumbnailFile') as File | null;
+    const iconBarBgColor = formData.get('iconBarBgColor') as string || undefined;
+    const iconBarIconColor = formData.get('iconBarIconColor') as string || undefined;
+
+    console.log('🎨 Backend received colors:', {
+      iconBarBgColor,
+      iconBarIconColor,
+      hasColors: !!(iconBarBgColor && iconBarIconColor)
+    });
 
     const projectDB = new ProjectDB(env.DB);
 
@@ -193,6 +201,8 @@ export async function PUT(
       dateFinished?: string;
       extraFields?: ProjectExtraField[];
       thumbnailKey?: string;
+      iconBarBgColor?: string;
+      iconBarIconColor?: string;
     }> = {};
     if (name !== undefined) updateData.name = name;
     if (title !== undefined) updateData.title = title;
@@ -205,6 +215,8 @@ export async function PUT(
     if (dateFinished !== undefined) updateData.dateFinished = dateFinished;
     if (thumbnailKey !== undefined) updateData.thumbnailKey = thumbnailKey;
     if (extraFields !== undefined) updateData.extraFields = extraFields;
+    if (iconBarBgColor !== undefined) updateData.iconBarBgColor = iconBarBgColor;
+    if (iconBarIconColor !== undefined) updateData.iconBarIconColor = iconBarIconColor;
 
     const dbProject = await projectDB.update(id, updateData);
 

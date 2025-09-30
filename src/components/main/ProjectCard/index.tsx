@@ -35,20 +35,29 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         }
 
         const projectUrl = getProjectUrl(project.name);
-        console.log('🔗 Navigating to project:', projectUrl);
         router.push(projectUrl);
     };
 
     const icons = ['/Icons/bird.svg', '/Icons/eye.svg', '/Icons/crown.svg'];
 
-    // Color variations cycle through different themes
+    // Use project's custom colors or fallback to default variations
     const colorVariations = [
         { bg: 'bg-green', iconColor: 'bg-green-40' },
         { bg: 'bg-red-50', iconColor: 'bg-red-20' },
         { bg: 'bg-blue', iconColor: 'bg-blue-40' },
         { bg: 'bg-orange-50', iconColor: 'bg-orange-30' },
     ];
-    const colors = colorVariations[index % 4];
+
+    const defaultColors = colorVariations[index % colorVariations.length];
+    
+    // Use custom colors from project if available, otherwise use Tailwind classes
+    const hasCustomColors = project.iconBarBgColor && project.iconBarIconColor;
+    const iconBarBgColor = project.iconBarBgColor;
+    const iconBarIconColor = project.iconBarIconColor;
+    
+    // Helper to get icon bar style
+    const getIconBarStyle = () => hasCustomColors ? { backgroundColor: iconBarBgColor } : {};
+    const getIconBarClass = () => hasCustomColors ? '' : defaultColors.bg;
 
     // Render video player using the reusable VideoPlayer component
     const renderVideoPlayer = () => (
@@ -85,30 +94,38 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     </div>
 
                     {/* Icons Sidebar - Mobile */}
-                    <div className={`absolute sm:hidden ${index % 2 === 0 ? 'left-[-10px] top-16' : 'right-[-10px] bottom-16'
-                        } w-[10%] bg-opacity-90 ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%]
-                    transition-all duration-500 ease-out aspect-[1/4] group-hover:aspect-[1/5]`}>
+                    <div 
+                        className={`absolute sm:hidden ${index % 2 === 0 ? 'left-[-10px] top-16' : 'right-[-10px] bottom-16'
+                        } w-[10%] bg-opacity-90 ${getIconBarClass()} rounded-full flex flex-col items-center justify-center gap-[8%]
+                        transition-all duration-500 ease-out aspect-[1/4] group-hover:aspect-[1/5]`}
+                        style={getIconBarStyle()}
+                    >
                         {icons.map((icon, iconIndex) => (
                             <Icon
                                 key={iconIndex}
                                 src={icon}
-                                colorClass={colors.iconColor}
+                                colorClass={hasCustomColors ? '' : defaultColors.iconColor}
+                                customColor={hasCustomColors ? iconBarIconColor : undefined}
                                 className="w-[50%] h-[50%] max-w-[16px] max-h-[16px] transition-all duration-300 ease-out group-hover:scale-110"
                             />
                         ))}
                     </div>
 
                     {/* Icons Sidebar - Desktop */}
-                    <div className={`absolute hidden sm:flex ${isLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
+                    <div 
+                        className={`absolute hidden sm:flex ${isLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
                         } ${isLeft ? 'top-[10%]' : 'bottom-[10%]'
-                        } w-[7%] min-w-[30px] max-w-[40px] ${colors.bg} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90
-                    transition-all duration-500 ease-out aspect-[1/5] min-h-[90px] max-h-[180px]
-                    group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[240px]`}>
+                        } w-[7%] min-w-[30px] max-w-[40px] ${getIconBarClass()} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90
+                        transition-all duration-500 ease-out aspect-[1/5] min-h-[90px] max-h-[180px]
+                        group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[240px]`}
+                        style={getIconBarStyle()}
+                    >
                         {icons.map((icon, iconIndex) => (
                             <Icon
                                 key={iconIndex}
                                 src={icon}
-                                colorClass={colors.iconColor}
+                                colorClass={hasCustomColors ? '' : defaultColors.iconColor}
+                                customColor={hasCustomColors ? iconBarIconColor : undefined}
                                 className="w-[60%] h-[60%] min-w-[12px] min-h-[12px] max-w-[26px] max-h-[26px] transition-all duration-300 ease-out group-hover:scale-110"
                             />
                         ))}
@@ -145,30 +162,38 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     )}
 
                     {/* Icons Sidebar - Mobile */}
-                    <div className={`absolute sm:hidden ${index % 2 === 0 ? 'left-[-10px] top-16' : 'right-[-10px] bottom-16'
-                        } w-[10%] bg-opacity-90 ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%]
-                    transition-all duration-500 ease-out aspect-[1/4] group-hover:aspect-[1/5] z-10`}>
+                    <div 
+                        className={`absolute sm:hidden ${index % 2 === 0 ? 'left-[-10px] top-16' : 'right-[-10px] bottom-16'
+                        } w-[10%] bg-opacity-90 ${getIconBarClass()} rounded-full flex flex-col items-center justify-center gap-[8%]
+                        transition-all duration-500 ease-out aspect-[1/4] group-hover:aspect-[1/5] z-10`}
+                        style={getIconBarStyle()}
+                    >
                         {icons.map((icon, iconIndex) => (
                             <Icon
                                 key={iconIndex}
                                 src={icon}
-                                colorClass={colors.iconColor}
+                                colorClass={hasCustomColors ? '' : defaultColors.iconColor}
+                                customColor={hasCustomColors ? iconBarIconColor : undefined}
                                 className="w-[50%] h-[50%] max-w-[16px] max-h-[16px] transition-all duration-300 ease-out group-hover:scale-110"
                             />
                         ))}
                     </div>
 
                     {/* Icons Sidebar - Desktop */}
-                    <div className={`absolute hidden sm:flex ${isLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
+                    <div 
+                        className={`absolute hidden sm:flex ${isLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
                         } ${isLeft ? 'top-[10%]' : 'bottom-[10%]'
-                        } w-[7%] min-w-[30px] max-w-[40px] ${colors.bg} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90
-                    transition-all duration-500 ease-out aspect-[1/5] min-h-[90px] max-h-[180px]
-                    group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[240px] z-10`}>
+                        } w-[7%] min-w-[30px] max-w-[40px] ${getIconBarClass()} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90
+                        transition-all duration-500 ease-out aspect-[1/5] min-h-[90px] max-h-[180px]
+                        group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[240px] z-10`}
+                        style={getIconBarStyle()}
+                    >
                         {icons.map((icon, iconIndex) => (
                             <Icon
                                 key={iconIndex}
                                 src={icon}
-                                colorClass={colors.iconColor}
+                                colorClass={hasCustomColors ? '' : defaultColors.iconColor}
+                                customColor={hasCustomColors ? iconBarIconColor : undefined}
                                 className="w-[60%] h-[60%] min-w-[12px] min-h-[12px] max-w-[26px] max-h-[26px] transition-all duration-300 ease-out group-hover:scale-110"
                             />
                         ))}
@@ -237,16 +262,20 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                             </div>
 
                             {/* Icons Sidebar for horizontal videos */}
-                            <div className={`absolute ${shouldTextBeOnLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
+                            <div 
+                                className={`absolute ${shouldTextBeOnLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
                                 } ${shouldTextBeOnLeft ? 'top-[15%]' : 'bottom-[15%]'
-                                } w-[5%] min-w-[30px] max-w-[40px] ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%] bg-opacity-90
-                            transition-all duration-500 ease-out aspect-[1/5] min-h-[90px] max-h-[160px]
-                            group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[200px] z-10`}>
+                                } w-[5%] min-w-[30px] max-w-[40px] ${getIconBarClass()} rounded-full flex flex-col items-center justify-center gap-[8%] bg-opacity-90
+                                transition-all duration-500 ease-out aspect-[1/5] min-h-[90px] max-h-[160px]
+                                group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[200px] z-10`}
+                                style={getIconBarStyle()}
+                            >
                                 {icons.map((icon, iconIndex) => (
                                     <Icon
                                         key={iconIndex}
                                         src={icon}
-                                        colorClass={colors.iconColor}
+                                        colorClass={hasCustomColors ? '' : defaultColors.iconColor}
+                                        customColor={hasCustomColors ? iconBarIconColor : undefined}
                                         className="w-[60%] h-[60%] min-w-[12px] min-h-[12px] max-w-[26px] max-h-[26px] transition-all duration-300 ease-out group-hover:scale-110"
                                     />
                                 ))}

@@ -39,6 +39,8 @@ export function dbProjectToProject(dbProject: DBProject): ProjectWithSlides {
         dateFinished: dbProject.date_finished ? new Date(dbProject.date_finished) : undefined,
         thumbnailKey: dbProject.thumbnail_key,
         extraFields,
+        iconBarBgColor: dbProject.icon_bar_bg_color,
+        iconBarIconColor: dbProject.icon_bar_icon_color,
         slides: [], // Will be populated separately
         createdAt: new Date(dbProject.created_at),
         updatedAt: new Date(dbProject.updated_at)
@@ -80,6 +82,8 @@ export class ProjectDB {
         dateFinished?: string;
         extraFields?: ProjectExtraField[];
         thumbnailKey?: string;
+        iconBarBgColor?: string;
+        iconBarIconColor?: string;
     }): Promise<DBProject> {
         console.log('🚀 Creating new project in DB:', data.name);
 
@@ -90,8 +94,8 @@ export class ProjectDB {
       INSERT INTO projects (
         id, name, title, description, client_name, client_logo_key, tags, 
         category, project_type, date_finished, extra_fields, thumbnail_key, 
-        created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        icon_bar_bg_color, icon_bar_icon_color, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
         await stmt.bind(
@@ -107,6 +111,8 @@ export class ProjectDB {
             data.dateFinished || null,
             JSON.stringify(data.extraFields || []),
             data.thumbnailKey || null,
+            data.iconBarBgColor || '#4FAF78',
+            data.iconBarIconColor || '#FFFFFF',
             now,
             now
         ).run();
@@ -183,6 +189,8 @@ export class ProjectDB {
         dateFinished?: string;
         extraFields?: ProjectExtraField[];
         thumbnailKey?: string;
+        iconBarBgColor?: string;
+        iconBarIconColor?: string;
     }>): Promise<DBProject> {
         console.log('✏️ Updating project:', id, 'with data keys:', Object.keys(data).join(', '));
 
@@ -232,6 +240,14 @@ export class ProjectDB {
         if (data.thumbnailKey !== undefined) {
             updates.push('thumbnail_key = ?');
             bindings.push(data.thumbnailKey);
+        }
+        if (data.iconBarBgColor !== undefined) {
+            updates.push('icon_bar_bg_color = ?');
+            bindings.push(data.iconBarBgColor);
+        }
+        if (data.iconBarIconColor !== undefined) {
+            updates.push('icon_bar_icon_color = ?');
+            bindings.push(data.iconBarIconColor);
         }
 
         if (updates.length === 0) {

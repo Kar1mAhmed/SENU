@@ -38,7 +38,9 @@ export function transformProjectForFrontend(dbProject: ProjectWithSlides): Proje
     description: dbProject.description,
     type: dbProject.type,
     category: dbProject.category,
-    thumbnailUrl: keyToUrl(dbProject.thumbnailKey) || ''
+    thumbnailUrl: keyToUrl(dbProject.thumbnailKey) || '',
+    iconBarBgColor: dbProject.iconBarBgColor || '#4FAF78', // Default green
+    iconBarIconColor: dbProject.iconBarIconColor || '#FFFFFF' // Default white
   };
 
   console.log('✅ Project transformed:', {

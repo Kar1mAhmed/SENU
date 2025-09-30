@@ -4,11 +4,12 @@ interface IconProps {
   src: string;
   colorClass: string;
   className?: string;
+  customColor?: string; // Hex color for custom coloring
 }
 
-const Icon: React.FC<IconProps> = ({ src, colorClass, className = '' }) => (
+const Icon: React.FC<IconProps> = ({ src, colorClass, className = '', customColor }) => (
   <div
-    className={`w-4 h-4 md:w-6 md:h-6 ${colorClass} ${className}`}
+    className={`w-4 h-4 md:w-6 md:h-6 ${customColor ? '' : colorClass} ${className}`}
     style={{
       WebkitMaskImage: `url(${src})`,
       maskImage: `url(${src})`,
@@ -18,6 +19,7 @@ const Icon: React.FC<IconProps> = ({ src, colorClass, className = '' }) => (
       maskRepeat: 'no-repeat',
       WebkitMaskPosition: 'center',
       maskPosition: 'center',
+      ...(customColor ? { backgroundColor: customColor } : {})
     }}
   />
 );

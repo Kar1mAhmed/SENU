@@ -137,12 +137,19 @@ export const projectsAPI = {
     if (data.dateFinished) formData.append('dateFinished', data.dateFinished);
     if (data.extraFields) formData.append('extraFields', JSON.stringify(data.extraFields));
     if (data.thumbnailFile) formData.append('thumbnailFile', data.thumbnailFile);
+    if (data.iconBarBgColor) formData.append('iconBarBgColor', data.iconBarBgColor);
+    if (data.iconBarIconColor) formData.append('iconBarIconColor', data.iconBarIconColor);
 
     const response = await apiCallFormData<ProjectWithSlides>('/projects', formData, 'POST');
     return response.data!;
   },
 
   async update(id: string, data: Partial<CreateProjectRequest>): Promise<ProjectWithSlides> {
+    console.log('🎨 API Client - Updating project with colors:', {
+      iconBarBgColor: data.iconBarBgColor,
+      iconBarIconColor: data.iconBarIconColor
+    });
+    
     const formData = new FormData();
     if (data.name) formData.append('name', data.name);
     if (data.title) formData.append('title', data.title);
@@ -155,6 +162,14 @@ export const projectsAPI = {
     if (data.dateFinished !== undefined) formData.append('dateFinished', data.dateFinished);
     if (data.extraFields) formData.append('extraFields', JSON.stringify(data.extraFields));
     if (data.thumbnailFile) formData.append('thumbnailFile', data.thumbnailFile);
+    if (data.iconBarBgColor) {
+      console.log('✅ Adding iconBarBgColor to formData:', data.iconBarBgColor);
+      formData.append('iconBarBgColor', data.iconBarBgColor);
+    }
+    if (data.iconBarIconColor) {
+      console.log('✅ Adding iconBarIconColor to formData:', data.iconBarIconColor);
+      formData.append('iconBarIconColor', data.iconBarIconColor);
+    }
 
     const response = await apiCallFormData<ProjectWithSlides>(`/projects/${id}`, formData, 'PUT');
     return response.data!;

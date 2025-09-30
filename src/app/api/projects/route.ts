@@ -114,6 +114,8 @@ export async function POST(request: NextRequest) {
         const extraFieldsString = formData.get('extraFields') as string || undefined;
         const thumbnailFile = formData.get('thumbnailFile') as File | null;
         const clientLogoFile = formData.get('clientLogoFile') as File | null;
+        const iconBarBgColor = formData.get('iconBarBgColor') as string || '#4FAF78';
+        const iconBarIconColor = formData.get('iconBarIconColor') as string || '#FFFFFF';
 
         console.log('📝 Creating project with data:', { name, title, clientName, category, projectType });
 
@@ -180,7 +182,9 @@ export async function POST(request: NextRequest) {
             projectType,
             dateFinished,
             extraFields,
-            thumbnailKey
+            thumbnailKey,
+            iconBarBgColor,
+            iconBarIconColor
         });
 
         // Convert to frontend format
