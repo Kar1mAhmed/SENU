@@ -2,17 +2,20 @@ import React from 'react';
 
 const HeroSection = () => {
   return (
-    <section className="h-[70vh] w-full relative flex items-center justify-center md:mt-32">
+    <section className="h-screen w-full relative overflow-hidden">
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="relative w-11/12 md:w-7/12 h-auto aspect-video rounded-2xl object-cover shadow-lg"
+        className="absolute inset-0 w-full h-full object-cover"
       >
         <source src="/SHOWREEL.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
+      
+      {/* Optional overlay for better text readability if needed */}
+      <div className="absolute inset-0 bg-black/20 pointer-events-none" />
     </section>
   );
 };

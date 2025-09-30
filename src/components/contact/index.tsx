@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { ContactFormData, ContactMethod } from '@/lib/types';
 import { FiCopy, FiCheck, FiChevronDown, FiX, FiAlertCircle } from 'react-icons/fi';
 import { contactAPI } from '@/lib/api-client';
@@ -32,6 +33,8 @@ const countryCodes = getCountries().map(country => ({
 })).sort((a, b) => a.name.localeCompare(b.name));
 
 export default function GetInTouchSection() {
+  const searchParams = useSearchParams();
+  
   const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     contactMethod: 'email',
@@ -50,6 +53,15 @@ export default function GetInTouchSection() {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [countrySearch, setCountrySearch] = useState('');
+
+  // Pre-fill email from URL parameter
+  useEffect(() => {
+    const emailParam = searchParams.get('email');
+    if (emailParam) {
+      console.log('📧 Pre-filling email from URL:', emailParam);
+      setFormData(prev => ({ ...prev, email: emailParam }));
+    }
+  }, [searchParams]);
 
   console.log('🚀 GetInTouchSection rendered with new design');
 
