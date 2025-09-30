@@ -114,25 +114,20 @@ const Dashboard: React.FC = () => {
       {/* Header */}
       <header className="bg-glass-fill backdrop-blur-md border-b border-white/10 px-6 py-4">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="font-new-black text-2xl font-light">
-              SENU <span className="font-medium">Dashboard</span>
-            </h1>
-            <p className="text-gray-400 text-sm">Project Management System</p>
-          </div>
+          <h1 className="font-new-black text-2xl font-light">
+            Dashboard
+          </h1>
           
-          <div className="flex items-center gap-4">
-            <a
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-400 hover:text-white transition-colors duration-200"
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push('/dashboard/messages')}
+              className="text-gray-400 hover:text-white transition-colors text-sm"
             >
-              View Site
-            </a>
+              Messages
+            </button>
             <button
               onClick={logout}
-              className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200"
+              className="bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-sm transition-colors"
             >
               Logout
             </button>

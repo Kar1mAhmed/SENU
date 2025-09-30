@@ -8,15 +8,17 @@
     "start": "next start",
     "lint": "next lint",
     "migrations-local": "npx wrangler d1 migrations apply senu --local",
-		"migrations-prod": "npx wrangler d1 migrations apply senu --remote"
+    "migrations-prod": "npx wrangler d1 migrations apply senu --remote"
   },
   "dependencies": {
     "@cloudflare/next-on-pages": "^1.13.12",
     "framer-motion": "^12.12.1",
+    "libphonenumber-js": "^1.12.23",
     "next": "15.5.3",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "react-icons": "^5.5.0",
+    "react-phone-number-input": "^3.4.12",
     "tailwindcss-filters": "^3.0.0"
   },
   "devDependencies": {

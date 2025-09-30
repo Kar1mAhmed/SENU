@@ -10,7 +10,11 @@ import {
   UpdateSlideRequest,
   FileUploadResponse,
   DashboardAuth,
-  ProjectCategory
+  ProjectCategory,
+  ContactMessage,
+  CreateContactMessageRequest,
+  UpdateContactMessageRequest,
+  ContactMessageStatus
 } from './types';
 
 console.log('🌐 API client loaded - ready to communicate with backend like a diplomatic translator!');
@@ -214,5 +218,48 @@ export const uploadAPI = {
 
   async deleteFile(key: string): Promise<void> {
     await apiCall(`/upload?key=${encodeURIComponent(key)}`, { method: 'DELETE' });
+  },
+};
+
+// Contact Messages API
+export const contactAPI = {
+  async getAll(params: {
+    status?: ContactMessageStatus;
+    page?: number;
+    limit?: number;
+  } = {}): Promise<PaginatedResponse<ContactMessage>['data']> {
+    const searchParams = new URLSearchParams();
+    if (params.status) searchParams.set('status', params.status);
+    if (params.page) searchParams.set('page', params.page.toString());
+    if (params.limit) searchParams.set('limit', params.limit.toString());
+
+    const endpoint = `/contact${searchParams.toString() ? `?${searchParams}` : ''}`;
+    const response = await apiCall<PaginatedResponse<ContactMessage>['data']>(endpoint);
+    return response.data!;
+  },
+
+  async getById(id: string): Promise<ContactMessage> {
+    const response = await apiCall<ContactMessage>(`/contact/${id}`);
+    return response.data!;
+  },
+
+  async create(data: CreateContactMessageRequest): Promise<ContactMessage> {
+    const response = await apiCall<ContactMessage>('/contact', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return response.data!;
+  },
+
+  async updateStatus(id: string, status: ContactMessageStatus): Promise<ContactMessage> {
+    const response = await apiCall<ContactMessage>(`/contact/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    });
+    return response.data!;
+  },
+
+  async delete(id: string): Promise<void> {
+    await apiCall(`/contact/${id}`, { method: 'DELETE' });
   },
 };

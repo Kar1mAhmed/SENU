@@ -317,6 +317,7 @@ export type TeamMember = {
 };
 
 export type ContactMethod = 'whatsapp' | 'email' | 'phone';
+export type ContactMessageStatus = 'new' | 'read' | 'archived';
 
 export type ContactFormData = {
   name: string;
@@ -325,4 +326,47 @@ export type ContactFormData = {
   phoneNumber?: string;
   email?: string;
   message?: string;
+};
+
+// Database ContactMessage type (matches database schema)
+export type DBContactMessage = {
+  id: string;
+  name: string;
+  contact_method: ContactMethod;
+  country_code?: string;
+  phone_number?: string;
+  email?: string;
+  message?: string;
+  status: ContactMessageStatus;
+  created_at: string;
+  updated_at: string;
+};
+
+// Frontend ContactMessage type
+export type ContactMessage = {
+  id: string;
+  name: string;
+  contactMethod: ContactMethod;
+  countryCode?: string;
+  phoneNumber?: string;
+  email?: string;
+  message?: string;
+  status: ContactMessageStatus;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+// API request types for contact messages
+export type CreateContactMessageRequest = {
+  name: string;
+  contactMethod: ContactMethod;
+  countryCode?: string;
+  phoneNumber?: string;
+  email?: string;
+  message?: string;
+};
+
+export type UpdateContactMessageRequest = {
+  id: string;
+  status?: ContactMessageStatus;
 };
