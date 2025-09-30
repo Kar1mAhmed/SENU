@@ -17,7 +17,6 @@ const ServiceCard: React.FC<WithClassName<ServiceCardProps>> = ({ service, class
       {/* Card shell - Full width and height */}
       <div
         className="relative w-full h-full overflow-hidden transition-transform duration-300 group-hover:scale-105 rounded-lg"
-        style={{ backgroundColor: accentColor || '#4FAF78' }} // Default to green if no accent color
       >
         {/* Background media (transparent art) */}
         <div

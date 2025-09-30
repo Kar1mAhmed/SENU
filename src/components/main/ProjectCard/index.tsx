@@ -239,7 +239,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                             {/* Icons Sidebar for horizontal videos */}
                             <div className={`absolute ${shouldTextBeOnLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
                                 } ${shouldTextBeOnLeft ? 'top-[15%]' : 'bottom-[15%]'
-                                } w-[6%] min-w-[30px] max-w-[40px] ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%] bg-opacity-90
+                                } w-[5%] min-w-[30px] max-w-[40px] ${colors.bg} rounded-full flex flex-col items-center justify-center gap-[8%] bg-opacity-90
                             transition-all duration-500 ease-out aspect-[1/5] min-h-[90px] max-h-[160px]
                             group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[200px] z-10`}>
                                 {icons.map((icon, iconIndex) => (
