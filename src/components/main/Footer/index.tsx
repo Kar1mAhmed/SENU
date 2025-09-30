@@ -227,8 +227,8 @@ const Footer: React.FC<WithClassName> = ({ className }) => {
               </h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="/brand" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
-                    BRAND
+                  <a href="/privacy" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
+                    PRIVACY&POLICY
                   </a>
                 </li>
                 <li>
@@ -237,8 +237,8 @@ const Footer: React.FC<WithClassName> = ({ className }) => {
                   </a>
                 </li>
                 <li>
-                  <a href="/styleguide" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
-                    STYLEGUIDE
+                  <a href="/imprint" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
+                    IMPRINT
                   </a>
                 </li>
               </ul>
