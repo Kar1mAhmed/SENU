@@ -203,18 +203,18 @@ const Footer: React.FC<WithClassName> = ({ className }) => {
               </h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="/about" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
-                    ABOUT
-                  </a>
-                </li>
-                <li>
-                  <a href="/service" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
-                    SERVICE
+                  <a href="/home" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
+                    HOME
                   </a>
                 </li>
                 <li>
                   <a href="/portfolio" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
                     PORTFOLIO
+                  </a>
+                </li>
+                <li>
+                  <a href="/about" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
+                    ABOUT
                   </a>
                 </li>
               </ul>
