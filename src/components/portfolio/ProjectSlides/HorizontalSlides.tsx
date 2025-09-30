@@ -1,16 +1,20 @@
 'use client';
 import React from 'react';
-import Image from 'next/image';
 import { keyToUrl } from '@/lib/media';
 import { ProjectSlide } from '@/lib/types';
+import VideoPlayer from '@/components/main/VideoPlayer';
 
 interface HorizontalSlidesProps {
   slides: ProjectSlide[];
 }
 
+console.log('🎥 HorizontalSlides component loaded - ready to showcase horizontal videos in style!');
+
 const HorizontalSlides: React.FC<HorizontalSlidesProps> = ({ slides }) => {
   // Filter only horizontal slides
   const horizontalSlides = slides.filter(slide => slide.type === 'horizontal');
+
+  console.log('🎥 Horizontal slides found:', horizontalSlides.length);
 
   if (horizontalSlides.length === 0) {
     return (
@@ -27,23 +31,23 @@ const HorizontalSlides: React.FC<HorizontalSlidesProps> = ({ slides }) => {
   return (
     <section className="w-full py-16">
       <div className="max-w-[1280px] mx-auto px-4 lg:px-0">
-        {/* Horizontal slides - 16:9 video format */}
-        <div className="space-y-12">
-          {horizontalSlides.map((slide, index) => (
+        {/* Horizontal slides - 16:9 video format with full-width video player */}
+        <div className="space-y-16">
+          {horizontalSlides.map((slide) => (
             <div key={slide.id} className="w-full">
-              <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-gray-900">
-                <Image
-                  src={keyToUrl(slide.mediaKey) || ''}
-                  alt={slide.text || `Horizontal slide ${index + 1}`}
-                  fill
-                  className="object-cover"
-                  priority={index === 0}
-                  quality={95}
+              {/* Video Player - Max height 80vh on large screens */}
+              <div className="relative w-full aspect-video lg:max-h-[80vh]">
+                <VideoPlayer
+                  videoUrl={keyToUrl(slide.mediaKey) || ''}
+                  projectType="horizontal"
+                  className="w-full h-full"
                 />
               </div>
+
+              {/* Optional Text Below Video */}
               {slide.text && (
                 <div className="mt-6 text-center">
-                  <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+                  <p className="text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
                     {slide.text}
                   </p>
                 </div>

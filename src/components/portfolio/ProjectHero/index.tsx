@@ -8,7 +8,7 @@ interface ProjectHeroProps {
 }
 
 const ProjectHero: React.FC<ProjectHeroProps> = ({ project }) => {
-  console.log('🦸 ProjectHero rendering for:', project.name, 'using thumbnailUrl:', project.thumbnailUrl);
+  console.log('🦸 ProjectHero rendering for:', project.name, 'type:', project.type, 'using thumbnailUrl:', project.thumbnailUrl);
 
   return (
     <section className="w-full px-4 lg:px-0 py-16 md:py-20">
