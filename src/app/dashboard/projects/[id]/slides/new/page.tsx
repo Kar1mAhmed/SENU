@@ -12,6 +12,15 @@ console.log('🎬 New slide page loaded - ready to create slides like a digital 
 
 const slideTypes: SlideType[] = ['image', 'horizontal', 'vertical'];
 
+// Utility function for formatting bytes
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
+
 interface NewSlideProps {
   params: Promise<{ id: string }>;
 }
@@ -33,6 +42,7 @@ const NewSlide: React.FC<NewSlideProps> = ({ params }) => {
   const [loading, setLoading] = useState(false);
   const [loadingProject, setLoadingProject] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<{ loaded: number; total: number; percentage: number } | null>(null);
 
   // Resolve params
   useEffect(() => {
@@ -122,15 +132,22 @@ const NewSlide: React.FC<NewSlideProps> = ({ params }) => {
 
     setLoading(true);
     setError(null);
+    setUploadProgress(null);
 
     try {
-      const slide = await slidesAPI.create({
-        projectId: projectId!,
-        order: formData.order,
-        type: formData.type,
-        text: formData.text || undefined,
-        mediaFile
-      });
+      const slide = await slidesAPI.create(
+        {
+          projectId: projectId!,
+          order: formData.order,
+          type: formData.type,
+          text: formData.text || undefined,
+          mediaFile
+        },
+        (progress) => {
+          console.log(`📊 Upload progress: ${progress.percentage}%`);
+          setUploadProgress(progress);
+        }
+      );
 
       console.log('🎉 Slide created successfully:', slide.id);
       router.push(`/dashboard/projects/${projectId}`);
@@ -140,6 +157,7 @@ const NewSlide: React.FC<NewSlideProps> = ({ params }) => {
       setError(errorMessage);
     } finally {
       setLoading(false);
+      setUploadProgress(null);
     }
   };
 
@@ -347,6 +365,30 @@ const NewSlide: React.FC<NewSlideProps> = ({ params }) => {
                     <p className="text-blue-400 text-xs mt-1">New Slide</p>
                   </div>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Upload Progress */}
+          {uploadProgress && (
+            <div className="bg-blue-600/20 border border-blue-500/50 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
+                  <span className="text-blue-400 font-medium">
+                    Uploading {mediaFile?.name}...
+                  </span>
+                </div>
+                <span className="text-blue-400 font-bold">{uploadProgress.percentage}%</span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-blue-500 h-full transition-all duration-300 ease-out"
+                  style={{ width: `${uploadProgress.percentage}%` }}
+                />
+              </div>
+              <div className="mt-2 text-xs text-gray-400">
+                {formatBytes(uploadProgress.loaded)} / {formatBytes(uploadProgress.total)}
               </div>
             </div>
           )}

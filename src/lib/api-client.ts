@@ -59,11 +59,76 @@ async function apiCall<T>(
 async function apiCallFormData<T>(
   endpoint: string,
   formData: FormData,
-  method: 'POST' | 'PUT' = 'POST'
+  method: 'POST' | 'PUT' = 'POST',
+  onProgress?: (progress: { loaded: number; total: number; percentage: number }) => void
 ): Promise<APIResponse<T>> {
   console.log('📤 FormData API call:', method, endpoint);
 
   try {
+    // If progress callback is provided, use XMLHttpRequest for progress tracking
+    if (onProgress) {
+      return await new Promise<APIResponse<T>>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        
+        // Set timeout to 10 minutes for large file uploads
+        xhr.timeout = 10 * 60 * 1000;
+
+        // Track upload progress
+        xhr.upload.addEventListener('progress', (e) => {
+          if (e.lengthComputable) {
+            const percentage = Math.round((e.loaded / e.total) * 100);
+            console.log(`📊 Upload progress: ${percentage}% (${e.loaded}/${e.total} bytes)`);
+            onProgress({
+              loaded: e.loaded,
+              total: e.total,
+              percentage,
+            });
+          }
+        });
+
+        // Handle timeout
+        xhr.addEventListener('timeout', () => {
+          const error = new Error('Upload timeout. Please check your internet connection and try again.');
+          console.error('⏱️ Upload timeout:', error.message);
+          reject(error);
+        });
+
+        // Handle network errors
+        xhr.addEventListener('error', () => {
+          const error = new Error('Network error during upload. Please check your internet connection.');
+          console.error('🌐 Network error:', error.message);
+          reject(error);
+        });
+
+        // Handle completion
+        xhr.addEventListener('load', () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+              const data = JSON.parse(xhr.responseText) as APIResponse<T>;
+              console.log('✅ FormData API success:', endpoint);
+              resolve(data);
+            } catch (error) {
+              console.error('❌ Failed to parse response:', error);
+              reject(new Error('Invalid response from server'));
+            }
+          } else {
+            try {
+              const data = JSON.parse(xhr.responseText) as APIResponse<T>;
+              console.error('❌ FormData API error:', xhr.status, data.error);
+              reject(new Error(data.error || `HTTP ${xhr.status}`));
+            } catch {
+              reject(new Error(`HTTP ${xhr.status}`));
+            }
+          }
+        });
+
+        // Open and send request
+        xhr.open(method, `${API_BASE}${endpoint}`);
+        xhr.send(formData);
+      });
+    }
+
+    // Fallback to fetch for non-progress requests
     const response = await fetch(`${API_BASE}${endpoint}`, {
       method,
       body: formData,
@@ -127,7 +192,10 @@ export const projectsAPI = {
     return response.data!;
   },
 
-  async create(data: CreateProjectRequest): Promise<ProjectWithSlides> {
+  async create(
+    data: CreateProjectRequest,
+    onProgress?: (progress: { loaded: number; total: number; percentage: number }) => void
+  ): Promise<ProjectWithSlides> {
     const formData = new FormData();
     formData.append('name', data.name);
     formData.append('title', data.title);
@@ -143,11 +211,15 @@ export const projectsAPI = {
     if (data.iconBarBgColor) formData.append('iconBarBgColor', data.iconBarBgColor);
     if (data.iconBarIconColor) formData.append('iconBarIconColor', data.iconBarIconColor);
 
-    const response = await apiCallFormData<ProjectWithSlides>('/projects', formData, 'POST');
+    const response = await apiCallFormData<ProjectWithSlides>('/projects', formData, 'POST', onProgress);
     return response.data!;
   },
 
-  async update(id: string, data: Partial<CreateProjectRequest>): Promise<ProjectWithSlides> {
+  async update(
+    id: string,
+    data: Partial<CreateProjectRequest>,
+    onProgress?: (progress: { loaded: number; total: number; percentage: number }) => void
+  ): Promise<ProjectWithSlides> {
     console.log('🎨 API Client - Updating project with colors:', {
       iconBarBgColor: data.iconBarBgColor,
       iconBarIconColor: data.iconBarIconColor
@@ -174,7 +246,7 @@ export const projectsAPI = {
       formData.append('iconBarIconColor', data.iconBarIconColor);
     }
 
-    const response = await apiCallFormData<ProjectWithSlides>(`/projects/${id}`, formData, 'PUT');
+    const response = await apiCallFormData<ProjectWithSlides>(`/projects/${id}`, formData, 'PUT', onProgress);
     return response.data!;
   },
 
@@ -195,7 +267,10 @@ export const slidesAPI = {
     return response.data!;
   },
 
-  async create(data: CreateSlideRequest): Promise<ProjectSlide> {
+  async create(
+    data: CreateSlideRequest,
+    onProgress?: (progress: { loaded: number; total: number; percentage: number }) => void
+  ): Promise<ProjectSlide> {
     const formData = new FormData();
     formData.append('projectId', data.projectId);
     formData.append('order', data.order.toString());
@@ -203,18 +278,22 @@ export const slidesAPI = {
     if (data.text) formData.append('text', data.text);
     if (data.mediaFile) formData.append('mediaFile', data.mediaFile);
 
-    const response = await apiCallFormData<ProjectSlide>('/slides', formData, 'POST');
+    const response = await apiCallFormData<ProjectSlide>('/slides', formData, 'POST', onProgress);
     return response.data!;
   },
 
-  async update(id: string, data: Partial<CreateSlideRequest>): Promise<ProjectSlide> {
+  async update(
+    id: string,
+    data: Partial<CreateSlideRequest>,
+    onProgress?: (progress: { loaded: number; total: number; percentage: number }) => void
+  ): Promise<ProjectSlide> {
     const formData = new FormData();
     if (data.order !== undefined) formData.append('order', data.order.toString());
     if (data.type) formData.append('type', data.type);
     if (data.text !== undefined) formData.append('text', data.text);
     if (data.mediaFile) formData.append('mediaFile', data.mediaFile);
 
-    const response = await apiCallFormData<ProjectSlide>(`/slides/${id}`, formData, 'PUT');
+    const response = await apiCallFormData<ProjectSlide>(`/slides/${id}`, formData, 'PUT', onProgress);
     return response.data!;
   },
 

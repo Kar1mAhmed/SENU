@@ -12,12 +12,12 @@ console.log('🎨 WhatWeDo component loaded - showcasing our services dynamicall
 const serviceData = [
     {
         description: 'Crafting complete visual identities and brand worlds from the ground up.',
-        imageSrc: '/images/covers/5.jpg',
+        imageSrc: '/images/covers/7.jpg',
         projectCount: "20+"
     },
     {
         description: 'Creating cinematic, story-driven YouTube videos that hook viewers from the first second.',
-        imageSrc: '/images/covers/6.jpg',
+        imageSrc: '/images/covers/8.jpg',
         projectCount: "150+"
 
     },

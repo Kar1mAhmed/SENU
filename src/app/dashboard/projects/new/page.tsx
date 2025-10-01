@@ -11,6 +11,15 @@ console.log('🆕 New project page loaded - ready to create projects like a digi
 
 const projectTypes: ProjectType[] = ['image', 'horizontal', 'vertical'];
 
+// Utility function for formatting bytes
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+}
+
 const NewProject: React.FC = () => {
   const { isAuthenticated, loading: authLoading } = useAuth();
   const { categories, loading: categoriesLoading } = useCategories();
@@ -44,6 +53,7 @@ const NewProject: React.FC = () => {
   const [iconBarIconColor, setIconBarIconColor] = useState('#FFFFFF');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<{ loaded: number; total: number; percentage: number } | null>(null);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -143,23 +153,30 @@ const NewProject: React.FC = () => {
 
     setLoading(true);
     setError(null);
+    setUploadProgress(null);
 
     try {
-      const response = await projectsAPI.create({
-        name: formData.name,
-        title: formData.title,
-        description: formData.description,
-        clientName: formData.clientName,
-        tags: formData.tags,
-        categoryId: formData.categoryId,
-        projectType: formData.projectType,
-        dateFinished: formData.dateFinished,
-        extraFields: formData.extraFields,
-        thumbnailFile: thumbnailFile!,
-        clientLogoFile: clientLogoFile || undefined,
-        iconBarBgColor,
-        iconBarIconColor
-      });
+      const response = await projectsAPI.create(
+        {
+          name: formData.name,
+          title: formData.title,
+          description: formData.description,
+          clientName: formData.clientName,
+          tags: formData.tags,
+          categoryId: formData.categoryId,
+          projectType: formData.projectType,
+          dateFinished: formData.dateFinished,
+          extraFields: formData.extraFields,
+          thumbnailFile: thumbnailFile!,
+          clientLogoFile: clientLogoFile || undefined,
+          iconBarBgColor,
+          iconBarIconColor
+        },
+        (progress) => {
+          console.log(`📊 Upload progress: ${progress.percentage}%`);
+          setUploadProgress(progress);
+        }
+      );
 
       console.log('🎉 Project created successfully:', response.id);
       router.push('/dashboard');
@@ -169,6 +186,7 @@ const NewProject: React.FC = () => {
       setError(errorMessage);
     } finally {
       setLoading(false);
+      setUploadProgress(null);
     }
   };
 
@@ -585,6 +603,35 @@ const NewProject: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Upload Progress */}
+          {uploadProgress && (
+            <div className="bg-blue-600/20 border border-blue-500/50 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
+                  <span className="text-blue-400 font-medium">
+                    Uploading files...
+                  </span>
+                </div>
+                <span className="text-blue-400 font-bold">{uploadProgress.percentage}%</span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-blue-500 h-full transition-all duration-300 ease-out"
+                  style={{ width: `${uploadProgress.percentage}%` }}
+                />
+              </div>
+              <div className="mt-2 text-xs text-gray-400">
+                {formatBytes(uploadProgress.loaded)} / {formatBytes(uploadProgress.total)}
+              </div>
+              {uploadProgress.percentage < 100 && (
+                <p className="mt-2 text-xs text-yellow-400">
+                  ⚠️ Please keep this page open until upload completes
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Error Message */}
           {error && (
