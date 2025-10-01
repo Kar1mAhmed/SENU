@@ -13,21 +13,31 @@ import Navbar from '@/components/main/Navbar';
 // Separate component for search params logic
 const PortfolioContent: React.FC = () => {
     const searchParams = useSearchParams();
-    const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
+    
+    // Initialize activeCategoryId from URL immediately
+    const initialCategoryId = (() => {
+        const categoryIdParam = searchParams.get('categoryId');
+        if (categoryIdParam) {
+            const categoryId = parseInt(categoryIdParam);
+            return !isNaN(categoryId) ? categoryId : null;
+        }
+        return null;
+    })();
+    
+    const [activeCategoryId, setActiveCategoryId] = useState<number | null>(initialCategoryId);
 
     // Fetch categories from backend
     const { categories, loading: categoriesLoading } = useCategories();
 
-    // Set category from URL parameter on mount
+    // Validate category ID once categories are loaded
     useEffect(() => {
-        const categoryIdParam = searchParams.get('categoryId');
-        if (categoryIdParam && categories.length > 0) {
-            const categoryId = parseInt(categoryIdParam);
-            if (!isNaN(categoryId) && categories.find(c => c.id === categoryId)) {
-                setActiveCategoryId(categoryId);
+        if (initialCategoryId && categories.length > 0) {
+            // Verify the category exists, if not reset to null
+            if (!categories.find(c => c.id === initialCategoryId)) {
+                setActiveCategoryId(null);
             }
         }
-    }, [searchParams, categories]);
+    }, [categories, initialCategoryId]);
 
     console.log('🎯 Portfolio page loaded with categoryId:', activeCategoryId);
 
