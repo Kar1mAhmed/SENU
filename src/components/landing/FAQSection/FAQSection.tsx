@@ -94,7 +94,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({
                         {/* Right: Button */}
                         <div className="flex justify-center md:justify-end md:flex-shrink-0">
                             <Link href="/contact" className="w-full sm:w-auto">
-                                <button className="w-full sm:w-auto mx-4 lg:mx-0 bg-blue hover:bg-blue-700 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-600/25">
+                                <button className="w-full sm:w-auto bg-blue hover:bg-blue-700 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-600/25">
                                     Ask Us
                                 </button>
                             </Link>
