@@ -77,7 +77,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <div className="w-full bg-transparent flex flex-col mb-8 group">
             <div className="relative w-full px-6">
                 <div className="relative w-full aspect-[560/620] max-w-full md:max-w-[450px] lg:max-w-[480px] xl:max-w-[560px] mx-auto">
-                    <div className="absolute inset-0 rounded-lg overflow-hidden">
+                    <div 
+                        className="absolute inset-0 rounded-lg overflow-hidden cursor-pointer"
+                        onClick={handleProjectClick}
+                    >
                         {project.thumbnailUrl ? (
                             <Image
                                 src={project.thumbnailUrl}
@@ -144,7 +147,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     {project.videoUrl ? (
                         renderVideoPlayer()
                     ) : (
-                        <div className="absolute inset-0 rounded-lg overflow-hidden bg-black">
+                        <div 
+                            className="absolute inset-0 rounded-lg overflow-hidden bg-black cursor-pointer"
+                            onClick={handleProjectClick}
+                        >
                             {project.thumbnailUrl ? (
                                 <Image
                                     src={project.thumbnailUrl}
@@ -215,7 +221,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     <div className="relative w-full px-6">
                         <div className="relative w-full aspect-[16/9] mx-auto">
                             {project.videoUrl ? renderVideoPlayer() : (
-                                <div className="absolute inset-0 rounded-lg overflow-hidden bg-black">
+                                <div 
+                                    className="absolute inset-0 rounded-lg overflow-hidden bg-black cursor-pointer"
+                                    onClick={handleProjectClick}
+                                >
                                     {project.thumbnailUrl ? (
                                         <Image
                                             src={project.thumbnailUrl}
@@ -243,7 +252,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         <div className="flex-1 max-w-[600px] xl:max-w-[650px] relative">
                             <div className="relative w-full aspect-[16/9]">
                                 {project.videoUrl ? renderVideoPlayer() : (
-                                    <div className="absolute inset-0 rounded-lg overflow-hidden bg-black">
+                                    <div 
+                                        className="absolute inset-0 rounded-lg overflow-hidden bg-black cursor-pointer"
+                                        onClick={handleProjectClick}
+                                    >
                                         {project.thumbnailUrl ? (
                                             <Image
                                                 src={project.thumbnailUrl}

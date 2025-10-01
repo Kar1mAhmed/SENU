@@ -199,7 +199,7 @@ const Footer: React.FC<WithClassName> = ({ className }) => {
             {/* Home Page Links */}
             <div>
               <h3 className="font-alexandria text-sm font-semibold uppercase tracking-wider text-gray-400 mb-6">
-                HOME PAGE
+                HOME PAGES
               </h3>
               <ul className="space-y-3">
                 <li>
