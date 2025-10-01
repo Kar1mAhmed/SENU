@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { keyToUrl } from '@/lib/media';
 import { ProjectSlide } from '@/lib/types';
 import VideoPlayer from '@/components/main/VideoPlayer';
@@ -15,6 +15,16 @@ const HorizontalSlides: React.FC<HorizontalSlidesProps> = ({ slides }) => {
   const horizontalSlides = slides.filter(slide => slide.type === 'horizontal');
 
   console.log('🎥 Horizontal slides found:', horizontalSlides.length);
+  
+  // Preload video metadata on mount to keep them ready
+  useEffect(() => {
+    console.log('🎨 Preloading horizontal video metadata to keep in memory');
+    horizontalSlides.forEach((slide) => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.src = keyToUrl(slide.mediaKey) || '';
+    });
+  }, [horizontalSlides]);
 
   if (horizontalSlides.length === 0) {
     return (

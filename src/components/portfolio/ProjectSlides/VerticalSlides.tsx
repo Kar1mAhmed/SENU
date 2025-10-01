@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import { keyToUrl } from '@/lib/media';
 import { ProjectSlide } from '@/lib/types';
@@ -12,6 +12,15 @@ console.log('📱 VerticalSlides component loaded - ready to showcase vertical s
 const VerticalSlides: React.FC<VerticalSlidesProps> = ({ slides }) => {
   // Filter only vertical slides
   const verticalSlides = slides.filter(slide => slide.type === 'vertical');
+
+  // Preload all images on mount to keep them in memory
+  useEffect(() => {
+    console.log('🎨 Preloading all vertical slide images to keep in memory');
+    verticalSlides.forEach((slide) => {
+      const img = new window.Image();
+      img.src = keyToUrl(slide.mediaKey) || '';
+    });
+  }, [verticalSlides]);
 
   if (verticalSlides.length === 0) {
     return (
@@ -38,7 +47,8 @@ const VerticalSlides: React.FC<VerticalSlidesProps> = ({ slides }) => {
                   alt={slide.text || `Vertical slide ${index + 1}`}
                   fill
                   className="object-cover"
-                  priority={index === 0}
+                  priority={index < 3}
+                  loading={index < 3 ? 'eager' : 'lazy'}
                   quality={95}
                 />
               </div>
