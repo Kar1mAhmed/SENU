@@ -14,7 +14,10 @@ import {
   ContactMessage,
   CreateContactMessageRequest,
   UpdateContactMessageRequest,
-  ContactMessageStatus
+  ContactMessageStatus,
+  Category,
+  CreateCategoryRequest,
+  UpdateCategoryRequest
 } from './types';
 
 console.log('🌐 API client loaded - ready to communicate with backend like a diplomatic translator!');
@@ -105,12 +108,12 @@ export const authAPI = {
 // Projects API
 export const projectsAPI = {
   async getAll(params: {
-    category?: ProjectCategory;
+    categoryId?: number;
     page?: number;
     limit?: number;
   } = {}): Promise<PaginatedResponse<ProjectWithSlides>['data']> {
     const searchParams = new URLSearchParams();
-    if (params.category) searchParams.set('category', params.category);
+    if (params.categoryId) searchParams.set('categoryId', params.categoryId.toString());
     if (params.page) searchParams.set('page', params.page.toString());
     if (params.limit) searchParams.set('limit', params.limit.toString());
 
@@ -132,7 +135,7 @@ export const projectsAPI = {
     formData.append('clientName', data.clientName);
     if (data.clientLogoFile) formData.append('clientLogoFile', data.clientLogoFile);
     formData.append('tags', JSON.stringify(data.tags));
-    formData.append('category', data.category);
+    formData.append('categoryId', data.categoryId.toString());
     formData.append('projectType', data.projectType);
     if (data.dateFinished) formData.append('dateFinished', data.dateFinished);
     if (data.extraFields) formData.append('extraFields', JSON.stringify(data.extraFields));
@@ -157,7 +160,7 @@ export const projectsAPI = {
     if (data.clientName) formData.append('clientName', data.clientName);
     if (data.clientLogoFile) formData.append('clientLogoFile', data.clientLogoFile);
     if (data.tags) formData.append('tags', JSON.stringify(data.tags));
-    if (data.category) formData.append('category', data.category);
+    if (data.categoryId) formData.append('categoryId', data.categoryId.toString());
     if (data.projectType) formData.append('projectType', data.projectType);
     if (data.dateFinished !== undefined) formData.append('dateFinished', data.dateFinished);
     if (data.extraFields) formData.append('extraFields', JSON.stringify(data.extraFields));
@@ -276,5 +279,38 @@ export const contactAPI = {
 
   async delete(id: string): Promise<void> {
     await apiCall(`/contact/${id}`, { method: 'DELETE' });
+  },
+};
+
+// Categories API
+export const categoriesAPI = {
+  async getAll(): Promise<Category[]> {
+    const response = await apiCall<Category[]>('/categories');
+    return response.data!;
+  },
+
+  async getById(id: number): Promise<Category> {
+    const response = await apiCall<Category>(`/categories/${id}`);
+    return response.data!;
+  },
+
+  async create(data: CreateCategoryRequest): Promise<Category> {
+    const response = await apiCall<Category>('/categories', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    return response.data!;
+  },
+
+  async update(id: number, data: Omit<UpdateCategoryRequest, 'id'>): Promise<Category> {
+    const response = await apiCall<Category>(`/categories/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+    return response.data!;
+  },
+
+  async delete(id: number): Promise<void> {
+    await apiCall(`/categories/${id}`, { method: 'DELETE' });
   },
 };

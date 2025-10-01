@@ -2,16 +2,28 @@
 import {
     DBProject,
     DBSlide,
+    DBCategory,
+    Category,
     ProjectWithSlides,
     ProjectSlide,
     ProjectExtraField,
     D1Database,
-    ProjectCategory,
     ProjectType,
     SlideType
 } from './types';
 
 console.log('🗄️ Database utilities loaded - ready to handle data like a boss!');
+
+// Convert database category to frontend format
+export function dbCategoryToCategory(dbCategory: DBCategory): Category {
+    return {
+        id: dbCategory.id,
+        name: dbCategory.name,
+        displayOrder: dbCategory.display_order,
+        createdAt: new Date(dbCategory.created_at),
+        updatedAt: new Date(dbCategory.updated_at)
+    };
+}
 
 // Convert database project to frontend format
 export function dbProjectToProject(dbProject: DBProject): ProjectWithSlides {
@@ -34,7 +46,8 @@ export function dbProjectToProject(dbProject: DBProject): ProjectWithSlides {
         client: dbProject.client_name,
         clientLogoKey: dbProject.client_logo_key,
         tags: JSON.parse(dbProject.tags || '[]'),
-        category: dbProject.category,
+        category: dbProject.category, // Legacy field for display
+        categoryId: dbProject.category_id, // New field for database operations
         type: dbProject.project_type,
         dateFinished: dbProject.date_finished ? new Date(dbProject.date_finished) : undefined,
         thumbnailKey: dbProject.thumbnail_key,
@@ -77,7 +90,7 @@ export class ProjectDB {
         clientName: string;
         clientLogoKey?: string;
         tags: string[];
-        category: ProjectCategory;
+        categoryId: number;
         projectType: ProjectType;
         dateFinished?: string;
         extraFields?: ProjectExtraField[];
@@ -90,12 +103,17 @@ export class ProjectDB {
         const id = generateId();
         const now = new Date().toISOString();
 
+        // Get category name for legacy field
+        const categoryResult = await this.db.prepare('SELECT name FROM categories WHERE id = ?')
+            .bind(data.categoryId).first<{ name: string }>();
+        const categoryName = categoryResult?.name || 'Branding';
+
         const stmt = this.db.prepare(`
       INSERT INTO projects (
         id, name, title, description, client_name, client_logo_key, tags, 
-        category, project_type, date_finished, extra_fields, thumbnail_key, 
+        category, category_id, project_type, date_finished, extra_fields, thumbnail_key, 
         icon_bar_bg_color, icon_bar_icon_color, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
         await stmt.bind(
@@ -106,7 +124,8 @@ export class ProjectDB {
             data.clientName,
             data.clientLogoKey || null,
             JSON.stringify(data.tags),
-            data.category,
+            categoryName,
+            data.categoryId,
             data.projectType,
             data.dateFinished || null,
             JSON.stringify(data.extraFields || []),
@@ -136,7 +155,7 @@ export class ProjectDB {
     }
 
     async getAll(options: {
-        category?: ProjectCategory;
+        categoryId?: number;
         limit?: number;
         offset?: number;
     } = {}): Promise<{ projects: DBProject[]; total: number }> {
@@ -146,10 +165,10 @@ export class ProjectDB {
         let countQuery = 'SELECT COUNT(*) as count FROM projects';
         const bindings: unknown[] = [];
 
-        if (options.category) {
-            query += ' WHERE category = ?';
-            countQuery += ' WHERE category = ?';
-            bindings.push(options.category);
+        if (options.categoryId) {
+            query += ' WHERE category_id = ?';
+            countQuery += ' WHERE category_id = ?';
+            bindings.push(options.categoryId);
         }
 
         query += ' ORDER BY created_at DESC';
@@ -166,7 +185,7 @@ export class ProjectDB {
 
         const [projectsResult, countResult] = await Promise.all([
             this.db.prepare(query).bind(...bindings).all<DBProject>(),
-            this.db.prepare(countQuery).bind(...(options.category ? [options.category] : [])).first<{ count: number }>()
+            this.db.prepare(countQuery).bind(...(options.categoryId ? [options.categoryId] : [])).first<{ count: number }>()
         ]);
 
         console.log(`📊 Found ${projectsResult.results?.length || 0} projects out of ${countResult?.count || 0} total`);
@@ -184,7 +203,7 @@ export class ProjectDB {
         clientName: string;
         clientLogoKey?: string;
         tags: string[];
-        category: ProjectCategory;
+        categoryId: number;
         projectType: ProjectType;
         dateFinished?: string;
         extraFields?: ProjectExtraField[];
@@ -225,9 +244,16 @@ export class ProjectDB {
             updates.push('extra_fields = ?');
             bindings.push(JSON.stringify(data.extraFields));
         }
-        if (data.category !== undefined) {
+        if (data.categoryId !== undefined) {
+            // Get category name for legacy field
+            const categoryResult = await this.db.prepare('SELECT name FROM categories WHERE id = ?')
+                .bind(data.categoryId).first<{ name: string }>();
+            const categoryName = categoryResult?.name || 'Branding';
+            
             updates.push('category = ?');
-            bindings.push(data.category);
+            bindings.push(categoryName);
+            updates.push('category_id = ?');
+            bindings.push(data.categoryId);
         }
         if (data.projectType !== undefined) {
             updates.push('project_type = ?');
@@ -395,5 +421,126 @@ export class SlideDB {
         await stmt.bind(projectId).run();
 
         console.log('✅ All slides deleted for project:', projectId);
+    }
+}
+
+// Category database operations
+export class CategoryDB {
+    constructor(private db: D1Database) { }
+
+    async create(data: {
+        name: string;
+        displayOrder?: number;
+    }): Promise<DBCategory> {
+        console.log('🏷️ Creating new category:', data.name);
+
+        const now = new Date().toISOString();
+        
+        // Get the max display order if not provided
+        let displayOrder = data.displayOrder;
+        if (displayOrder === undefined) {
+            const maxOrderResult = await this.db.prepare('SELECT MAX(display_order) as max_order FROM categories')
+                .first<{ max_order: number | null }>();
+            displayOrder = (maxOrderResult?.max_order || 0) + 1;
+        }
+
+        const stmt = this.db.prepare(`
+            INSERT INTO categories (name, display_order, created_at, updated_at)
+            VALUES (?, ?, ?, ?)
+        `);
+
+        const result = await stmt.bind(
+            data.name,
+            displayOrder,
+            now,
+            now
+        ).run();
+
+        console.log('✅ Category created successfully');
+        
+        // Get the created category
+        const created = await this.db.prepare('SELECT * FROM categories WHERE name = ?')
+            .bind(data.name).first<DBCategory>();
+        
+        if (!created) {
+            throw new Error('Failed to retrieve created category');
+        }
+        
+        return created;
+    }
+
+    async getById(id: number): Promise<DBCategory> {
+        console.log('🔍 Fetching category by ID:', id);
+
+        const stmt = this.db.prepare('SELECT * FROM categories WHERE id = ?');
+        const result = await stmt.bind(id).first<DBCategory>();
+
+        if (!result) {
+            throw new Error(`Category with ID ${id} not found`);
+        }
+
+        console.log('📦 Category found:', result.name);
+        return result;
+    }
+
+    async getAll(): Promise<DBCategory[]> {
+        console.log('📋 Fetching all categories');
+
+        const stmt = this.db.prepare('SELECT * FROM categories ORDER BY display_order ASC');
+        const result = await stmt.all<DBCategory>();
+
+        console.log(`📊 Found ${result.results?.length || 0} categories`);
+        return result.results || [];
+    }
+
+    async update(id: number, data: Partial<{
+        name: string;
+        displayOrder: number;
+    }>): Promise<DBCategory> {
+        console.log('✏️ Updating category:', id);
+
+        const updates: string[] = [];
+        const bindings: unknown[] = [];
+
+        if (data.name !== undefined) {
+            updates.push('name = ?');
+            bindings.push(data.name);
+        }
+        if (data.displayOrder !== undefined) {
+            updates.push('display_order = ?');
+            bindings.push(data.displayOrder);
+        }
+
+        if (updates.length === 0) {
+            console.log('⚠️ No updates provided for category:', id);
+            return this.getById(id);
+        }
+
+        updates.push('updated_at = ?');
+        bindings.push(new Date().toISOString());
+        bindings.push(id);
+
+        const query = `UPDATE categories SET ${updates.join(', ')} WHERE id = ?`;
+        await this.db.prepare(query).bind(...bindings).run();
+
+        console.log('✅ Category updated successfully:', id);
+        return this.getById(id);
+    }
+
+    async delete(id: number): Promise<void> {
+        console.log('🗑️ Deleting category:', id);
+
+        // Check if any projects are using this category
+        const projectCount = await this.db.prepare('SELECT COUNT(*) as count FROM projects WHERE category_id = ?')
+            .bind(id).first<{ count: number }>();
+
+        if (projectCount && projectCount.count > 0) {
+            throw new Error(`Cannot delete category: ${projectCount.count} projects are using it`);
+        }
+
+        const stmt = this.db.prepare('DELETE FROM categories WHERE id = ?');
+        await stmt.bind(id).run();
+
+        console.log('✅ Category deleted successfully:', id);
     }
 }

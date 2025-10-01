@@ -12,8 +12,28 @@ export type WithClassName<T = object> = T & {
 };
 
 export type ProjectType = 'image' | 'horizontal' | 'vertical';
-export type ProjectCategory = 'Branding' | 'Logo design' | 'UI/UX' | 'Products' | 'Prints' | 'Motions' | 'Shorts';
 export type SlideType = 'image' | 'vertical' | 'horizontal';
+
+// Database Category type (matches database schema)
+export type DBCategory = {
+  id: number;
+  name: string;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
+// Frontend Category type
+export type Category = {
+  id: number;
+  name: string;
+  displayOrder: number;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+// Legacy type for backwards compatibility - will be removed after full migration
+export type ProjectCategory = string;
 
 // Extra field type for project information
 export interface ProjectExtraField {
@@ -31,7 +51,8 @@ export type DBProject = {
   client_name: string;
   client_logo_key?: string;
   tags: string; // JSON string in database
-  category: ProjectCategory;
+  category: string; // Legacy field, kept for backwards compatibility
+  category_id: number; // Foreign key to categories table
   project_type: ProjectType;
   date_finished?: string; // ISO date string
   thumbnail_key?: string;
@@ -80,7 +101,8 @@ export type ProjectWithSlides = {
   client: string;
   clientLogoKey?: string;
   tags: string[];
-  category: ProjectCategory;
+  category: string; // Category name for display
+  categoryId: number; // Category ID for database operations
   type: ProjectType;
   dateFinished?: Date;
   thumbnailKey?: string;
@@ -112,7 +134,7 @@ export type CreateProjectRequest = {
   clientName: string;
   clientLogoFile?: File;
   tags: string[];
-  category: ProjectCategory;
+  categoryId: number; // Changed from category to categoryId
   projectType: ProjectType;
   dateFinished?: string;
   extraFields?: ProjectExtraField[];
@@ -135,6 +157,17 @@ export type CreateSlideRequest = {
 
 export type UpdateSlideRequest = Partial<CreateSlideRequest> & {
   id: string;
+};
+
+export type CreateCategoryRequest = {
+  name: string;
+  displayOrder?: number;
+};
+
+export type UpdateCategoryRequest = {
+  id: number;
+  name?: string;
+  displayOrder?: number;
 };
 
 // API Response types

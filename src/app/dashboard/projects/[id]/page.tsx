@@ -4,22 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useCategories } from '@/lib/hooks/useCategories';
 import { projectsAPI } from '@/lib/api-client';
-import { ProjectWithSlides, ProjectCategory, ProjectType, ProjectExtraField } from '@/lib/types';
+import { ProjectWithSlides, ProjectType, ProjectExtraField } from '@/lib/types';
 
 export const runtime = 'edge';
 
 console.log('✏️ Edit project page loaded - ready to modify projects like a digital editor!');
-
-const categories: ProjectCategory[] = [
-  'Branding',
-  'Logo design', 
-  'UI/UX',
-  'Products',
-  'Prints',
-  'Motions',
-  'Shorts'
-];
 
 const projectTypes: ProjectType[] = ['image', 'horizontal', 'vertical'];
 
@@ -29,6 +20,7 @@ interface EditProjectProps {
 
 const EditProject: React.FC<EditProjectProps> = ({ params }) => {
   const { isAuthenticated, loading: authLoading } = useAuth();
+  const { categories, loading: categoriesLoading } = useCategories();
   const router = useRouter();
   
   const [projectId, setProjectId] = useState<string | null>(null);
@@ -39,7 +31,7 @@ const EditProject: React.FC<EditProjectProps> = ({ params }) => {
     description: '',
     clientName: '',
     tags: [] as string[],
-    category: 'Branding' as ProjectCategory,
+    categoryId: 0,
     projectType: 'image' as ProjectType,
     dateFinished: '',
     extraFields: [] as ProjectExtraField[],
@@ -91,7 +83,7 @@ const EditProject: React.FC<EditProjectProps> = ({ params }) => {
           description: projectData.description || '',
           clientName: projectData.client,
           tags: projectData.tags,
-          category: projectData.category,
+          categoryId: projectData.categoryId,
           projectType: projectData.type,
           dateFinished: projectData.dateFinished ? 
             (projectData.dateFinished instanceof Date ? 
@@ -395,21 +387,27 @@ const EditProject: React.FC<EditProjectProps> = ({ params }) => {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="categoryId" className="block text-sm font-medium text-gray-300 mb-2">
                   Category *
                 </label>
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                >
-                  {categories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
+                {categoriesLoading ? (
+                  <div className="w-full px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-gray-400">
+                    Loading categories...
+                  </div>
+                ) : (
+                  <select
+                    id="categoryId"
+                    name="categoryId"
+                    value={formData.categoryId}
+                    onChange={(e) => setFormData(prev => ({ ...prev, categoryId: parseInt(e.target.value) }))}
+                    className="w-full px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  >
+                    {categories.map(category => (
+                      <option key={category.id} value={category.id}>{category.name}</option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               <div>

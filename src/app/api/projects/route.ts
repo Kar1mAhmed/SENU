@@ -7,8 +7,7 @@ import {
     CloudflareEnv,
     APIResponse,
     PaginatedResponse,
-    ProjectWithSlides,
-    ProjectCategory
+    ProjectWithSlides
 } from '@/lib/types';
 
 export const runtime = 'edge';
@@ -21,12 +20,12 @@ export async function GET(request: NextRequest) {
 
     try {
         const { searchParams } = new URL(request.url);
-        const category = searchParams.get('category') as ProjectCategory | null;
+        const categoryId = searchParams.get('categoryId') ? parseInt(searchParams.get('categoryId')!) : undefined;
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '10');
         const offset = (page - 1) * limit;
 
-        console.log('🔍 Query params:', { category, page, limit, offset });
+        console.log('🔍 Query params:', { categoryId, page, limit, offset });
 
         // Get Cloudflare bindings from request context with fallback
         let env: CloudflareEnv;
@@ -53,7 +52,7 @@ export async function GET(request: NextRequest) {
 
         // Get projects with pagination
         const { projects, total } = await projectDB.getAll({
-            category: category || undefined,
+            categoryId: categoryId || undefined,
             limit,
             offset
         });
@@ -108,7 +107,7 @@ export async function POST(request: NextRequest) {
         const description = formData.get('description') as string || undefined;
         const clientName = formData.get('clientName') as string;
         const tagsString = formData.get('tags') as string;
-        const category = formData.get('category') as ProjectCategory;
+        const categoryIdString = formData.get('categoryId') as string;
         const projectType = formData.get('projectType') as 'image' | 'horizontal' | 'vertical';
         const dateFinished = formData.get('dateFinished') as string || undefined;
         const extraFieldsString = formData.get('extraFields') as string || undefined;
@@ -117,11 +116,17 @@ export async function POST(request: NextRequest) {
         const iconBarBgColor = formData.get('iconBarBgColor') as string || '#4FAF78';
         const iconBarIconColor = formData.get('iconBarIconColor') as string || '#FFFFFF';
 
-        console.log('📝 Creating project with data:', { name, title, clientName, category, projectType });
+        // Parse categoryId
+        const categoryId = parseInt(categoryIdString);
+        if (isNaN(categoryId)) {
+            throw new Error('Invalid categoryId');
+        }
+
+        console.log('📝 Creating project with data:', { name, title, clientName, categoryId, projectType });
 
         // Validate required fields
-        if (!name || !title || !clientName || !category || !projectType) {
-            throw new Error('Missing required fields: name, title, clientName, category, projectType');
+        if (!name || !title || !clientName || !categoryId || !projectType) {
+            throw new Error('Missing required fields: name, title, clientName, categoryId, projectType');
         }
 
         // Parse tags
@@ -178,7 +183,7 @@ export async function POST(request: NextRequest) {
             clientName,
             clientLogoKey,
             tags,
-            category,
+            categoryId,
             projectType,
             dateFinished,
             extraFields,

@@ -87,7 +87,7 @@ export async function PUT(
     const clientLogoFile = formData.get('clientLogoFile') as File | null;
     const tagsString = formData.get('tags') as string || undefined;
     const extraFieldsString = formData.get('extraFields') as string || undefined;
-    const category = formData.get('category') as ProjectCategory || undefined;
+    const categoryIdString = formData.get('categoryId') as string || undefined;
     const projectType = formData.get('projectType') as 'image' | 'horizontal' | 'vertical' || undefined;
     const dateFinished = formData.get('dateFinished') as string || undefined;
     const thumbnailFile = formData.get('thumbnailFile') as File | null;
@@ -138,7 +138,7 @@ export async function PUT(
       clientName && 'clientName',
       tags && 'tags',
       extraFields && 'extraFields',
-      category && 'category',
+      categoryIdString && 'categoryId',
       projectType && 'projectType',
       dateFinished !== undefined && 'dateFinished',
       thumbnailFile && 'thumbnailFile'
@@ -188,6 +188,15 @@ export async function PUT(
       thumbnailKey = await uploadMedia(env.R2, thumbnailFile, 'thumbnails');
     }
 
+    // Parse categoryId if provided
+    let categoryId: number | undefined;
+    if (categoryIdString) {
+      categoryId = parseInt(categoryIdString);
+      if (isNaN(categoryId)) {
+        throw new Error('Invalid categoryId');
+      }
+    }
+
     // Update project in database
     const updateData: Partial<{
       name: string;
@@ -196,7 +205,7 @@ export async function PUT(
       clientName: string;
       clientLogoKey?: string;
       tags: string[];
-      category: ProjectCategory;
+      categoryId: number;
       projectType: ProjectType;
       dateFinished?: string;
       extraFields?: ProjectExtraField[];
@@ -210,7 +219,7 @@ export async function PUT(
     if (clientName !== undefined) updateData.clientName = clientName;
     if (clientLogoKey !== undefined) updateData.clientLogoKey = clientLogoKey;
     if (tags !== undefined) updateData.tags = tags;
-    if (category !== undefined) updateData.category = category;
+    if (categoryId !== undefined) updateData.categoryId = categoryId;
     if (projectType !== undefined) updateData.projectType = projectType;
     if (dateFinished !== undefined) updateData.dateFinished = dateFinished;
     if (thumbnailKey !== undefined) updateData.thumbnailKey = thumbnailKey;

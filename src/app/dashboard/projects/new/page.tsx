@@ -3,25 +3,17 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useCategories } from '@/lib/hooks/useCategories';
 import { projectsAPI } from '@/lib/api-client';
-import { ProjectCategory, ProjectType, ProjectExtraField } from '@/lib/types';
+import { ProjectType, ProjectExtraField } from '@/lib/types';
 
 console.log('🆕 New project page loaded - ready to create projects like a digital architect!');
-
-const categories: ProjectCategory[] = [
-  'Branding',
-  'Logo design',
-  'UI/UX',
-  'Products',
-  'Prints',
-  'Motions',
-  'Shorts'
-];
 
 const projectTypes: ProjectType[] = ['image', 'horizontal', 'vertical'];
 
 const NewProject: React.FC = () => {
   const { isAuthenticated, loading: authLoading } = useAuth();
+  const { categories, loading: categoriesLoading } = useCategories();
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -30,11 +22,18 @@ const NewProject: React.FC = () => {
     description: '',
     clientName: '',
     tags: [] as string[],
-    category: 'Branding' as ProjectCategory,
+    categoryId: 0,
     projectType: 'image' as ProjectType,
     dateFinished: '',
     extraFields: [] as ProjectExtraField[],
   });
+
+  // Set default category when categories load
+  useEffect(() => {
+    if (categories.length > 0 && formData.categoryId === 0) {
+      setFormData(prev => ({ ...prev, categoryId: categories[0].id }));
+    }
+  }, [categories, formData.categoryId]);
 
   const [tagInput, setTagInput] = useState('');
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
@@ -146,18 +145,26 @@ const NewProject: React.FC = () => {
     setError(null);
 
     try {
-      const project = await projectsAPI.create({
-        ...formData,
-        thumbnailFile,
-        clientLogoFile,
+      const response = await projectsAPI.create({
+        name: formData.name,
+        title: formData.title,
+        description: formData.description,
+        clientName: formData.clientName,
+        tags: formData.tags,
+        categoryId: formData.categoryId,
+        projectType: formData.projectType,
+        dateFinished: formData.dateFinished,
+        extraFields: formData.extraFields,
+        thumbnailFile: thumbnailFile!,
+        clientLogoFile: clientLogoFile || undefined,
         iconBarBgColor,
         iconBarIconColor
       });
 
-      console.log('🎉 Project created successfully:', project.id);
+      console.log('🎉 Project created successfully:', response.id);
       router.push('/dashboard');
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to create project';
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to create project';
       console.error('❌ Error creating project:', errorMessage);
       setError(errorMessage);
     } finally {
@@ -296,21 +303,27 @@ const NewProject: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="categoryId" className="block text-sm font-medium text-gray-300 mb-2">
                   Category *
                 </label>
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                >
-                  {categories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
+                {categoriesLoading ? (
+                  <div className="w-full px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-gray-400">
+                    Loading categories...
+                  </div>
+                ) : (
+                  <select
+                    id="categoryId"
+                    name="categoryId"
+                    value={formData.categoryId}
+                    onChange={(e) => setFormData(prev => ({ ...prev, categoryId: parseInt(e.target.value) }))}
+                    className="w-full px-4 py-3 bg-black/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  >
+                    {categories.map(category => (
+                      <option key={category.id} value={category.id}>{category.name}</option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               <div>

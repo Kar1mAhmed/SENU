@@ -1,31 +1,27 @@
 'use client';
 import React, { useState } from 'react';
 import { useProjects } from '@/lib/hooks/useProjects';
+import { useCategories } from '@/lib/hooks/useCategories';
 import ProjectGridLayout from '../../main/ProjectGridLayout';
-import { ProjectCategory } from '@/lib/types';
-
-const categories = [
-    'All',
-    'Branding',
-    'Logo design',
-    'UI/UX',
-    'Products',
-    'Prints',
-    'Motions',
-    'Shorts',
-];
 
 const ProjectHighlight: React.FC = () => {
-    const [activeCategory, setActiveCategory] = useState<ProjectCategory | 'All'>('All');
+    const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
+
+    // Fetch categories from backend
+    const { categories, loading: categoriesLoading } = useCategories();
 
     // Fetch projects from backend with limit of 6 for highlights
     const { projects, loading, error } = useProjects({ 
-        category: activeCategory,
+        categoryId: activeCategoryId || undefined,
         limit: 6 
     });
 
     // Take only first 6 projects for highlights
     const filteredProjects = projects.slice(0, 6);
+
+    // Build categories array with 'All' option
+    const categoryOptions = ['All', ...categories.map(cat => cat.name)];
+    const activeCategoryName = activeCategoryId === null ? 'All' : categories.find(c => c.id === activeCategoryId)?.name || 'All';
 
     return (
         <section className="py-16 md:py-20">
@@ -37,22 +33,35 @@ const ProjectHighlight: React.FC = () => {
                 </h2>
                 
                 {/* Category buttons - centered */}
-                <div className="flex justify-center mb-16">
-                    <div className="flex overflow-x-auto md:flex-wrap md:justify-center gap-4 no-scrollbar px-4" id="category-buttons">
-                        {categories.map((category) => (
-                            <button
-                                key={category}
-                                onClick={() => setActiveCategory(category as ProjectCategory | 'All')}
-                                className={`px-6 w-[143px] h-[39px] py-2 rounded-full text-sm font-medium transition-colors duration-300 whitespace-nowrap ${
-                                    activeCategory === category
-                                        ? 'bg-blue-600 text-white'
-                                        : 'bg-[#474747]/20 border-[1px] border-[#474747]/80 bg-opacity-50 text-[#8E8E8E] hover:text-white'
-                                }`}>
-                                {category}
-                            </button>
-                        ))}
+                {categoriesLoading ? (
+                    <div className="flex justify-center mb-16">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
                     </div>
-                </div>
+                ) : (
+                    <div className="flex justify-center mb-16">
+                        <div className="flex overflow-x-auto md:flex-wrap md:justify-center gap-4 no-scrollbar px-4" id="category-buttons">
+                            {categoryOptions.map((categoryName) => (
+                                <button
+                                    key={categoryName}
+                                    onClick={() => {
+                                        if (categoryName === 'All') {
+                                            setActiveCategoryId(null);
+                                        } else {
+                                            const category = categories.find(c => c.name === categoryName);
+                                            if (category) setActiveCategoryId(category.id);
+                                        }
+                                    }}
+                                    className={`px-6 w-[143px] h-[39px] py-2 rounded-full text-sm font-medium transition-colors duration-300 whitespace-nowrap ${
+                                        activeCategoryName === categoryName
+                                            ? 'bg-blue-600 text-white'
+                                            : 'bg-[#474747]/20 border-[1px] border-[#474747]/80 bg-opacity-50 text-[#8E8E8E] hover:text-white'
+                                    }`}>
+                                    {categoryName}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {/* Loading state */}
                 {loading && (

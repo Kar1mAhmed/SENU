@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react';
 import { projectsAPI } from '@/lib/api-client';
 import { transformProjectsForFrontend } from '@/lib/data-transform';
-import { Project, ProjectCategory } from '@/lib/types';
+import { Project } from '@/lib/types';
 
 console.log('🎯 Projects hook loaded - ready to fetch data like a data retrieval specialist!');
 
 interface UseProjectsOptions {
-  category?: ProjectCategory | 'All';
+  categoryId?: number;
   limit?: number;
 }
 
@@ -26,7 +26,7 @@ export function useProjects(options: UseProjectsOptions = {}) {
         setError(null);
         
         const response = await projectsAPI.getAll({
-          category: options.category === 'All' ? undefined : options.category,
+          categoryId: options.categoryId,
           limit: options.limit || 50
         });
         
@@ -50,15 +50,10 @@ export function useProjects(options: UseProjectsOptions = {}) {
     };
 
     fetchProjects();
-  }, [options.category, options.limit]);
-
-  // Filter projects client-side if needed (for better performance)
-  const filteredProjects = options.category === 'All' || !options.category
-    ? projects
-    : projects.filter(project => project.category === options.category);
+  }, [options.categoryId, options.limit]);
 
   return {
-    projects: filteredProjects,
+    projects,
     loading,
     error,
     refetch: () => {
