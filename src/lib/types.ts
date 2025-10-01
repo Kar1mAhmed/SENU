@@ -315,6 +315,11 @@ export type CloudflareEnv = {
   R2: R2Bucket;
   DASHBOARD_USERNAME?: string;
   DASHBOARD_PASSWORD?: string;
+  // R2 credentials for presigned URLs
+  R2_ACCESS_KEY_ID?: string;
+  R2_SECRET_ACCESS_KEY?: string;
+  R2_ACCOUNT_ID?: string;
+  R2_BUCKET_NAME?: string;
 };
 
 export type Testimonial = {

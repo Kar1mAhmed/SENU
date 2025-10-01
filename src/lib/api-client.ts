@@ -271,6 +271,38 @@ export const slidesAPI = {
     data: CreateSlideRequest,
     onProgress?: (progress: { loaded: number; total: number; percentage: number }) => void
   ): Promise<ProjectSlide> {
+    // For large files (>100MB), use presigned URL upload
+    const FILE_SIZE_THRESHOLD = 100 * 1024 * 1024; // 100MB
+    const usePresignedUrl = data.mediaFile && data.mediaFile.size > FILE_SIZE_THRESHOLD;
+
+    if (usePresignedUrl && data.mediaFile) {
+      console.log('📦 Large file detected, using presigned URL upload');
+      
+      // Upload file directly to R2
+      const { key } = await uploadAPI.uploadWithPresignedUrl(
+        data.mediaFile,
+        'slides',
+        onProgress
+      );
+
+      // Create slide with the uploaded key (no file in FormData)
+      const slideData = {
+        projectId: data.projectId,
+        order: data.order,
+        type: data.type,
+        text: data.text,
+        mediaKey: key
+      };
+
+      const response = await apiCall<ProjectSlide>('/slides', {
+        method: 'POST',
+        body: JSON.stringify(slideData)
+      });
+
+      return response.data!;
+    }
+
+    // For smaller files, use traditional upload through Worker
     const formData = new FormData();
     formData.append('projectId', data.projectId);
     formData.append('order', data.order.toString());
@@ -315,6 +347,93 @@ export const uploadAPI = {
 
   async deleteFile(key: string): Promise<void> {
     await apiCall(`/upload?key=${encodeURIComponent(key)}`, { method: 'DELETE' });
+  },
+
+  /**
+   * Upload file directly to R2 using presigned URL (bypasses Worker limits)
+   * Supports files larger than 500MB (up to 5GB)
+   */
+  async uploadWithPresignedUrl(
+    file: File,
+    folder: string = 'uploads',
+    onProgress?: (progress: { loaded: number; total: number; percentage: number }) => void
+  ): Promise<{ key: string }> {
+    console.log('🚀 Starting presigned URL upload for:', file.name, `(${(file.size / 1024 / 1024).toFixed(2)} MB)`);
+
+    // Step 1: Get presigned URL from Worker
+    const presignedResponse = await apiCall<{
+      presignedUrl: string;
+      key: string;
+      expiresIn: number;
+    }>('/upload/presigned', {
+      method: 'POST',
+      body: JSON.stringify({
+        fileName: file.name,
+        contentType: file.type,
+        folder
+      })
+    });
+
+    if (!presignedResponse.data) {
+      throw new Error('Failed to get presigned URL');
+    }
+
+    const { presignedUrl, key } = presignedResponse.data;
+    console.log('✅ Presigned URL obtained for key:', key);
+
+    // Step 2: Upload directly to R2 using presigned URL
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      // Set timeout to 30 minutes for large files
+      xhr.timeout = 30 * 60 * 1000;
+
+      // Track upload progress
+      if (onProgress) {
+        xhr.upload.addEventListener('progress', (e) => {
+          if (e.lengthComputable) {
+            const percentage = Math.round((e.loaded / e.total) * 100);
+            console.log(`📊 Direct R2 upload progress: ${percentage}% (${(e.loaded / 1024 / 1024).toFixed(2)}/${(e.total / 1024 / 1024).toFixed(2)} MB)`);
+            onProgress({
+              loaded: e.loaded,
+              total: e.total,
+              percentage,
+            });
+          }
+        });
+      }
+
+      // Handle timeout
+      xhr.addEventListener('timeout', () => {
+        const error = new Error('Upload timeout after 30 minutes. File may be too large or connection too slow.');
+        console.error('⏱️ Upload timeout:', error.message);
+        reject(error);
+      });
+
+      // Handle network errors
+      xhr.addEventListener('error', () => {
+        const error = new Error('Network error during upload to R2. Please check your internet connection.');
+        console.error('🌐 Network error:', error.message);
+        reject(error);
+      });
+
+      // Handle completion
+      xhr.addEventListener('load', () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          console.log('✅ File uploaded successfully to R2 with key:', key);
+          resolve({ key });
+        } else {
+          const error = new Error(`Upload failed with status ${xhr.status}: ${xhr.statusText}`);
+          console.error('❌ Upload failed:', error.message);
+          reject(error);
+        }
+      });
+
+      // Open and send request to R2 directly
+      xhr.open('PUT', presignedUrl);
+      xhr.setRequestHeader('Content-Type', file.type);
+      xhr.send(file);
+    });
   },
 };
 

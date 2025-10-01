@@ -62,47 +62,74 @@ export async function POST(request: NextRequest) {
     // Get Cloudflare bindings from request context
     const env = getRequestContext().env as CloudflareEnv;
 
-    const formData = await request.formData();
-    
-    // Extract form data
-    const projectId = formData.get('projectId') as string;
-    const orderString = formData.get('order') as string;
-    const slideType = formData.get('type') as SlideType;
-    const text = formData.get('text') as string || undefined;
-    const mediaFile = formData.get('mediaFile') as File | null;
+    // Check if request is JSON (presigned URL flow) or FormData (traditional flow)
+    const contentType = request.headers.get('content-type') || '';
+    const isJson = contentType.includes('application/json');
 
-    console.log('📝 Creating slide with data:', { projectId, order: orderString, slideType, hasText: !!text, hasMedia: !!mediaFile });
+    let projectId: string;
+    let order: number;
+    let slideType: SlideType;
+    let text: string | undefined;
+    let mediaKey: string;
 
-    // Validate required fields
-    if (!projectId || !orderString) {
-      throw new Error('Missing required fields: projectId, order');
-    }
+    if (isJson) {
+      // Presigned URL flow - media already uploaded, just save metadata
+      const body = await request.json();
+      projectId = body.projectId;
+      order = body.order;
+      slideType = body.type;
+      text = body.text;
+      mediaKey = body.mediaKey;
 
-    const order = parseInt(orderString);
-    if (isNaN(order)) {
-      throw new Error('Order must be a valid number');
-    }
+      console.log('📝 Creating slide with presigned upload:', { projectId, order, slideType, mediaKey });
 
-    // Upload media file if provided
-    let mediaKey = '';
-    let finalSlideType = slideType;
-
-    if (mediaFile && mediaFile.size > 0) {
-      console.log('📁 Uploading media file:', mediaFile.name);
-      
-      // Determine slide type from file if not provided
-      if (!finalSlideType) {
-        finalSlideType = getSlideTypeFromFile(mediaFile);
+      if (!projectId || !order || !slideType || !mediaKey) {
+        throw new Error('Missing required fields: projectId, order, type, mediaKey');
       }
-      
-      mediaKey = await uploadMedia(env.R2, mediaFile, 'slides');
     } else {
-      throw new Error('Media file is required');
-    }
+      // Traditional flow - upload file through Worker
+      const formData = await request.formData();
+      
+      // Extract form data
+      projectId = formData.get('projectId') as string;
+      const orderString = formData.get('order') as string;
+      slideType = formData.get('type') as SlideType;
+      text = formData.get('text') as string || undefined;
+      const mediaFile = formData.get('mediaFile') as File | null;
 
-    // Default slide type if still not determined
-    if (!finalSlideType) {
-      finalSlideType = 'image';
+      console.log('📝 Creating slide with data:', { projectId, order: orderString, slideType, hasText: !!text, hasMedia: !!mediaFile });
+
+      // Validate required fields
+      if (!projectId || !orderString) {
+        throw new Error('Missing required fields: projectId, order');
+      }
+
+      order = parseInt(orderString);
+      if (isNaN(order)) {
+        throw new Error('Order must be a valid number');
+      }
+
+      // Upload media file if provided
+      let finalSlideType = slideType;
+
+      if (mediaFile && mediaFile.size > 0) {
+        console.log('📁 Uploading media file:', mediaFile.name);
+        
+        // Determine slide type from file if not provided
+        if (!finalSlideType) {
+          finalSlideType = getSlideTypeFromFile(mediaFile);
+        }
+        
+        mediaKey = await uploadMedia(env.R2, mediaFile, 'slides');
+      } else {
+        throw new Error('Media file is required');
+      }
+
+      // Default slide type if still not determined
+      if (!finalSlideType) {
+        finalSlideType = 'image';
+      }
+      slideType = finalSlideType;
     }
 
     // Create slide in database
@@ -110,7 +137,7 @@ export async function POST(request: NextRequest) {
     const dbSlide = await slideDB.create({
       projectId,
       order,
-      type: finalSlideType,
+      type: slideType,
       text,
       mediaKey
     });

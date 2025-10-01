@@ -8,7 +8,12 @@
 	// PROD ENV (https://platform.castform.io)
 	"vars": { 
 		"DASHBOARD_USERNAME": "admin",
-		"DASHBOARD_PASSWORD": "senu2024"
+		"DASHBOARD_PASSWORD": "senu2024",
+		// R2 credentials for presigned URLs (direct upload)
+		"R2_ACCESS_KEY_ID": "99f97032155da2a540d7bce93a3dae23",
+		"R2_SECRET_ACCESS_KEY": "b4a9263ece7d6fdfa89ea7bc495da7715a3700c35db755d88ba5af25506e633f",
+		"R2_ACCOUNT_ID": "64527ffa7fe8ba4c2423472e53228cad",
+		"R2_BUCKET_NAME": "senu"
 	},
 	"pages_build_output_dir": ".vercel/output/static",
 	// Prod KV Namespace (https://platform.castform.io)
