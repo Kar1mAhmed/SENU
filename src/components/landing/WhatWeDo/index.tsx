@@ -1,44 +1,43 @@
 "use client";
 import React from 'react';
+import { useRouter } from 'next/navigation';
+import { useCategories } from '@/lib/hooks/useCategories';
+import { useProjects } from '@/lib/hooks/useProjects';
 import ServiceCard from './ServiceCard';
 import type { Service } from '@/lib/types';
 
-const services: Service[] = [
+console.log('🎨 WhatWeDo component loaded - showcasing our services dynamically!');
+
+// Static service data for images and descriptions
+const serviceData = [
     {
-        id: 'graphic',
-        title: 'graphic design',
-        description: 'high-quality image or video showcasing your best work.',
+        description: 'Crafting complete visual identities and brand worlds from the ground up.',
         imageSrc: '/images/covers/5.jpg',
-        projectsCount: 10,
-        accentColor: '',
+        projectCount: "20+"
     },
     {
-        id: 'shorts',
-        title: 'Shorts',
-        description: 'high-quality image or video showcasing your best work.',
+        description: 'Creating cinematic, story-driven YouTube videos that hook viewers from the first second.',
         imageSrc: '/images/covers/6.jpg',
-        projectsCount: 10,
-        accentColor: '',
+        projectCount: "150+"
+
     },
     {
-        id: 'branding',
-        title: 'Branding',
-        description: 'high-quality image or video showcasing your best work.',
+        description: 'Eye-catching motion graphics that bring ideas to life.',
         imageSrc: '/images/covers/7.jpg',
-        projectsCount: 10,
-        accentColor: '',
+        projectCount: "40+"
+
     },
     {
-        id: 'motion',
-        title: 'Motion Graphics',
-        description: 'high-quality image or video showcasing your best work.',
+        description: 'Engaging short-form videos built to capture attention fast.',
         imageSrc: '/images/covers/8.jpg',
-        projectsCount: 10,
-        accentColor: '',
+        projectCount: "500+"
     },
 ];
 
 const WhatWeDo: React.FC = () => {
+    const router = useRouter();
+    const { categories, loading: categoriesLoading } = useCategories();
+    const { projects } = useProjects({});
     return (
         <section className="w-full py-16 md:py-20">
             <div className="w-full">
@@ -48,20 +47,44 @@ const WhatWeDo: React.FC = () => {
                 </h2>
 
                 {/* Services Grid - Aligned with BackgroundGrid like Impact Section */}
-                <div className="w-full h-full">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-rows-4 md:grid-rows-2 lg:grid-rows-1 gap-y-8 md:gap-y-8 lg:gap-y-0 h-full w-full">
-                        {services.map((service, index) => (
-                            <div
-                                key={service.id}
-                                className="flex justify-center items-center px-3 md:px-4 lg:px-6"
-                            >
-                                <div className="w-full max-w-[260px] md:max-w-[300px] lg:max-w-[360px]">
-                                    <ServiceCard service={service} />
-                                </div>
-                            </div>
-                        ))}
+                {categoriesLoading ? (
+                    <div className="text-center py-12">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
                     </div>
-                </div>
+                ) : (
+                    <div className="w-full h-full">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-rows-4 md:grid-rows-2 lg:grid-rows-1 gap-y-8 md:gap-y-8 lg:gap-y-0 h-full w-full">
+                            {categories.slice(0, 4).map((category, index) => {
+                                // Count projects for this category
+                                
+                                // Create service object
+                                const service: Service = {
+                                    id: category.id.toString(),
+                                    title: category.name,
+                                    description: serviceData[index]?.description || 'high-quality image or video showcasing your best work.',
+                                    imageSrc: serviceData[index]?.imageSrc || '/images/covers/5.jpg',
+                                    projectsCount: serviceData[index]?.projectCount || '2',
+                                    accentColor: '',
+                                };
+
+                                return (
+                                    <div
+                                        key={category.id}
+                                        className="flex justify-center items-center px-3 md:px-4 lg:px-6 cursor-pointer"
+                                        onClick={() => {
+                                            // Navigate to portfolio with category selected
+                                            router.push(`/portfolio?categoryId=${category.id}`);
+                                        }}
+                                    >
+                                        <div className="w-full max-w-[260px] md:max-w-[300px] lg:max-w-[360px]">
+                                            <ServiceCard service={service} />
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
             </div>
         </section>
     );

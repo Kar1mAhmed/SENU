@@ -10,8 +10,6 @@ interface ServiceCardProps {
 const ServiceCard: React.FC<WithClassName<ServiceCardProps>> = ({ service, className }) => {
   const { title, description, imageSrc, projectsCount, accentColor } = service;
 
-  const bigCount = projectsCount > 9 ? `${projectsCount}+` : projectsCount;
-
   return (
     <div className={`w-full h-[260px] md:h-[280px] lg:h-[315px] group ${className}`} style={{ transform: 'translateZ(0)' }}>
       {/* Card shell - Full width and height */}
@@ -46,7 +44,7 @@ const ServiceCard: React.FC<WithClassName<ServiceCardProps>> = ({ service, class
 
           {/* Bottom: big count and description */}
           <div className="mt-auto overflow-hidden">
-            <div className="font-new-black font-extrabold text-[96px] md:text-[108px] lg:text-[128px] leading-none">{bigCount}</div>
+            <div className="font-new-black font-extrabold text-[96px] md:text-[108px] lg:text-[128px] leading-none">{projectsCount}</div>
             <p className="mt-2 text-white/80 text-sm max-w-[85%]">{description}</p>
           </div>
         </div>

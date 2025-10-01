@@ -3,7 +3,7 @@ export type Service = {
   title: string;
   description: string;
   imageSrc: string;
-  projectsCount: number;
+  projectsCount: string;
   accentColor: string;
 };
 
@@ -87,6 +87,7 @@ export type Project = {
   description?: string;
   type: ProjectType;
   category: ProjectCategory;
+  categoryId: number; // Category ID for filtering
   thumbnailUrl: string;
   iconBarBgColor?: string; // Hex color for icon bar background
   iconBarIconColor?: string; // Hex color for icons

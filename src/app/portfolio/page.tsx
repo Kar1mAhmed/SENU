@@ -1,6 +1,7 @@
 // src/app/portfolio/page.tsx
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useProjects } from '@/lib/hooks/useProjects';
 import { useCategories } from '@/lib/hooks/useCategories';
 import ProjectGridLayout from '@/components/main/ProjectGridLayout';
@@ -9,13 +10,26 @@ import SingleRibbon from '@/components/main/SingleRibbon';
 import Footer from '@/components/main/Footer';
 import Navbar from '@/components/main/Navbar';
 
-const Portfolio: React.FC = () => {
+// Separate component for search params logic
+const PortfolioContent: React.FC = () => {
+    const searchParams = useSearchParams();
     const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
-
-    console.log('🎯 Portfolio page loaded with categoryId:', activeCategoryId);
 
     // Fetch categories from backend
     const { categories, loading: categoriesLoading } = useCategories();
+
+    // Set category from URL parameter on mount
+    useEffect(() => {
+        const categoryIdParam = searchParams.get('categoryId');
+        if (categoryIdParam && categories.length > 0) {
+            const categoryId = parseInt(categoryIdParam);
+            if (!isNaN(categoryId) && categories.find(c => c.id === categoryId)) {
+                setActiveCategoryId(categoryId);
+            }
+        }
+    }, [searchParams, categories]);
+
+    console.log('🎯 Portfolio page loaded with categoryId:', activeCategoryId);
 
     // Fetch projects from backend
     const { projects: filteredProjects, loading, error } = useProjects({ 
@@ -87,6 +101,19 @@ const Portfolio: React.FC = () => {
             <Footer />
         </div>
         </>
+    );
+};
+
+// Main Portfolio component with Suspense wrapper
+const Portfolio: React.FC = () => {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-black flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+            </div>
+        }>
+            <PortfolioContent />
+        </Suspense>
     );
 };
 

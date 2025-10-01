@@ -107,19 +107,19 @@ const Footer: React.FC<WithClassName> = ({ className }) => {
                 </h3>
                 <ul className="space-y-3">
                   <li>
-                    <a href="/about" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
-                      ABOUT
-                    </a>
+                    <Link href="/" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
+                      HOME
+                    </Link>
                   </li>
                   <li>
-                    <a href="/service" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
-                      SERVICE
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/portfolio" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
+                    <Link href="/portfolio" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
                       PORTFOLIO
-                    </a>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/about" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
+                      ABOUT
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -203,19 +203,19 @@ const Footer: React.FC<WithClassName> = ({ className }) => {
               </h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="/home" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
+                  <Link href="/" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
                     HOME
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/portfolio" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
+                  <Link href="/portfolio" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
                     PORTFOLIO
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/about" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
+                  <Link href="/about" className="font-alexandria text-sm text-gray-300 hover:text-white transition-colors uppercase">
                     ABOUT
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
