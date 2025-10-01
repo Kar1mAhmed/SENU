@@ -1,28 +1,29 @@
 'use client';
 import React, { useEffect } from 'react';
-import Image from 'next/image';
 import { keyToUrl } from '@/lib/media';
 import { ProjectSlide } from '@/lib/types';
+import VideoPlayer from '@/components/main/VideoPlayer';
 
 interface VerticalSlidesProps {
   slides: ProjectSlide[];
 }
-console.log('📱 VerticalSlides component loaded - ready to showcase vertical slides like TikTok/Instagram!');
+
+console.log('📱 VerticalSlides component loaded - ready to showcase vertical videos like TikTok/Instagram reels!');
 
 const VerticalSlides: React.FC<VerticalSlidesProps> = ({ slides }) => {
-  // Filter only vertical slides
-  const verticalSlides = slides.filter(slide => slide.type === 'vertical');
+  console.log('📱 Vertical slides received:', slides.length, 'slides ready to rock like TikTok stars!');
 
-  // Preload all images on mount to keep them in memory
+  // Preload video metadata on mount to keep them ready
   useEffect(() => {
-    console.log('🎨 Preloading all vertical slide images to keep in memory');
-    verticalSlides.forEach((slide) => {
-      const img = new window.Image();
-      img.src = keyToUrl(slide.mediaKey) || '';
+    console.log('🎨 Preloading vertical video metadata to keep in memory');
+    slides.forEach((slide) => {
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.src = keyToUrl(slide.mediaKey) || '';
     });
-  }, [verticalSlides]);
+  }, [slides]);
 
-  if (verticalSlides.length === 0) {
+  if (slides.length === 0) {
     return (
       <section className="py-16">
         <div className="max-w-[1280px] mx-auto px-4 lg:px-0">
@@ -37,28 +38,60 @@ const VerticalSlides: React.FC<VerticalSlidesProps> = ({ slides }) => {
   return (
     <section className="w-full py-16">
       <div className="max-w-[1280px] mx-auto px-4 lg:px-0">
-        {/* Vertical slides grid - optimized for mobile-first reel format */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {verticalSlides.map((slide, index) => (
-            <div key={slide.id} className="w-full">
-              <div className="relative w-full aspect-[9/16] rounded-lg overflow-hidden bg-gray-900">
-                <Image
-                  src={keyToUrl(slide.mediaKey) || ''}
-                  alt={slide.text || `Vertical slide ${index + 1}`}
-                  fill
-                  className="object-cover"
-                  priority={index < 3}
-                  loading={index < 3 ? 'eager' : 'lazy'}
-                  quality={95}
-                />
+        {/* Vertical slides - 9:16 mobile video format */}
+        <div className="space-y-20">
+          {slides.map((slide, index) => {
+            const hasText = slide.text && slide.text.trim().length > 0;
+            // Alternate text position: even index = left, odd index = right
+            const isTextLeft = index % 2 === 0;
+
+            console.log(`📱 Rendering slide ${index + 1}: text ${hasText ? 'exists' : 'missing'}, position: ${isTextLeft ? 'left' : 'right'}`);
+
+            return (
+              <div key={slide.id} className="w-full">
+                {hasText ? (
+                  // Layout with text: Alternating sides on desktop / stacked on mobile
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center max-w-[1100px] mx-auto">
+                    {/* Text Section - Alternates between left and right */}
+                    <div className={`flex flex-col justify-center ${isTextLeft ? 'lg:order-1' : 'lg:order-2'}`}>
+                      <div className="space-y-4 lg:space-y-6">
+                        {/* Large Yellow Reel Number */}
+                        <div className="text-[#F5A623] font-new-black text-6xl sm:text-7xl lg:text-8xl xl:text-9xl leading-none">
+                          {String(index + 1).padStart(2, '0')}
+                        </div>
+                        {/* Beautiful Description Text */}
+                        <p className="text-base sm:text-lg lg:text-xl text-gray-300 font-alexandria leading-relaxed max-w-md">
+                          {slide.text}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Video Section - Alternates between right and left, centered */}
+                    <div className={`flex justify-center ${isTextLeft ? 'lg:order-2' : 'lg:order-1'}`}>
+                      <div className="relative w-full max-w-[320px] sm:max-w-[360px] aspect-[9/16]">
+                        <VideoPlayer
+                          videoUrl={keyToUrl(slide.mediaKey) || ''}
+                          projectType="vertical"
+                          className="w-full h-full"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  // Layout without text: Video centered
+                  <div className="flex justify-center">
+                    <div className="relative w-full max-w-[320px] sm:max-w-[380px] aspect-[9/16]">
+                      <VideoPlayer
+                        videoUrl={keyToUrl(slide.mediaKey) || ''}
+                        projectType="vertical"
+                        className="w-full h-full"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
-              {slide.text && (
-                <p className="mt-3 text-sm text-gray-400 text-center">
-                  {slide.text}
-                </p>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
