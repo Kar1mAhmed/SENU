@@ -44,6 +44,6 @@
 		"enabled": true
 	},
 	"limits":{
-		"cpu_ms": 60000,
+		"cpu_ms": 60000
 	}
 }
