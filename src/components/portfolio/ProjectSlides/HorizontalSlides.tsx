@@ -42,7 +42,7 @@ const HorizontalSlides: React.FC<HorizontalSlidesProps> = ({ slides }) => {
                   projectType="horizontal"
                   className="w-full h-full"
                   lazyLoad={true}
-                  autoGeneratePoster={true}
+                  autoGeneratePoster={false}
                 />
               </div>
 

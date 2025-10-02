@@ -65,7 +65,7 @@ const VerticalSlides: React.FC<VerticalSlidesProps> = ({ slides }) => {
                         projectType="vertical"
                         className="w-full h-full"
                         lazyLoad={true}
-                        autoGeneratePoster={true}
+                        autoGeneratePoster={false}
                       />
                     </div>
                   </div>
