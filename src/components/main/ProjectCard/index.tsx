@@ -69,6 +69,8 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
             projectType={project.type === 'vertical' ? 'vertical' : 'horizontal'}
             className="absolute inset-0"
             showProjectInfo={true}
+            lazyLoad={true}
+            autoGeneratePoster={true}
         />
     );
 
