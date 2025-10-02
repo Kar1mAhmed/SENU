@@ -15,7 +15,7 @@
 		"R2_ACCOUNT_ID": "64527ffa7fe8ba4c2423472e53228cad",
 		"R2_BUCKET_NAME": "senu",
 		// R2 Public Domain for direct CDN access (better performance for video streaming)
-		"NEXT_PUBLIC_R2_DOMAIN": "https://media.senu.studio"
+		"R2_PUBLIC_DOMAIN": "https://media.senu.studio"
 	},
 	"pages_build_output_dir": ".vercel/output/static",
 	// Prod KV Namespace (https://platform.castform.io)

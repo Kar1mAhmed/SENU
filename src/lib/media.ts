@@ -3,6 +3,11 @@ import { R2Bucket } from './types';
 
 console.log('🎬 Media utilities loaded - centralized media management ready!');
 
+// CDN domain - hardcoded for production since it's a constant
+// This avoids the need for environment variables in client-side code
+const R2_CDN_DOMAIN = 'https://media.senu.studio';
+const USE_CDN = true; // Set to false for local development
+
 /**
  * Generate a unique media key for R2 storage
  */
@@ -23,12 +28,9 @@ export function generateMediaKey(originalName: string, folder: string = 'uploads
 export function keyToUrl(key: string | null | undefined): string | null {
     if (!key) return null;
     
-    // Get R2 public domain from environment (set in wrangler.jsonc)
-    const R2_PUBLIC_DOMAIN = process.env.NEXT_PUBLIC_R2_DOMAIN;
-    
-    // Use direct CDN URL if configured (production)
-    if (R2_PUBLIC_DOMAIN) {
-        const url = `${R2_PUBLIC_DOMAIN}/${key}`;
+    // Use direct CDN URL in production
+    if (USE_CDN) {
+        const url = `${R2_CDN_DOMAIN}/${key}`;
         console.log('🚀 CDN URL:', key, '→', url);
         return url;
     }
