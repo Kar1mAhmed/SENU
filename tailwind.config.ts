@@ -23,7 +23,6 @@ const config: Config = {
                     50: '#FF7124',
                     30: '#FDBA74',
                     soft: '#DD846E',
-                    light: '#E6CCE2',
                 },
                 red: {
                     DEFAULT: '#EF4444',

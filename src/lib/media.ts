@@ -18,11 +18,24 @@ export function generateMediaKey(originalName: string, folder: string = 'uploads
 
 /**
  * Convert media key to URL for frontend consumption
+ * Uses custom R2 public domain for direct CDN access (better performance & video streaming)
  */
 export function keyToUrl(key: string | null | undefined): string | null {
     if (!key) return null;
+    
+    // Get R2 public domain from environment (set in wrangler.jsonc)
+    const R2_PUBLIC_DOMAIN = process.env.NEXT_PUBLIC_R2_DOMAIN;
+    
+    // Use direct CDN URL if configured (production)
+    if (R2_PUBLIC_DOMAIN) {
+        const url = `${R2_PUBLIC_DOMAIN}/${key}`;
+        console.log('🚀 CDN URL:', key, '→', url);
+        return url;
+    }
+    
+    // Fallback to Worker proxy for local development
     const url = `/api/media/${key}`;
-    console.log('🔗 Key to URL:', key, '→', url);
+    console.log('🔗 Worker proxy URL:', key, '→', url);
     return url;
 }
 

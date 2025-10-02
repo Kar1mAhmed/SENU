@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useCategories } from '@/lib/hooks/useCategories';
 import { projectsAPI } from '@/lib/api-client';
 import { ProjectWithSlides, ProjectType, ProjectExtraField } from '@/lib/types';
+import { keyToUrl } from '@/lib/media';
 
 export const runtime = 'edge';
 
@@ -95,10 +96,10 @@ const EditProject: React.FC<EditProjectProps> = ({ params }) => {
         
         // Set image previews using keys
         if (projectData.thumbnailKey) {
-          setThumbnailPreview(`/api/media/${projectData.thumbnailKey}`);
+          setThumbnailPreview(keyToUrl(projectData.thumbnailKey) || '');
         }
         if (projectData.clientLogoKey) {
-          setClientLogoPreview(`/api/media/${projectData.clientLogoKey}`);
+          setClientLogoPreview(keyToUrl(projectData.clientLogoKey) || '');
         }
         
         // Set icon bar colors

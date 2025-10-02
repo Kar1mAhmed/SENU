@@ -45,8 +45,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const isSeekingRef = useRef<boolean>(false);
-  const lastSeekTimeRef = useRef<number>(0);
 
   useEffect(() => {
     if (isFullscreen) {
@@ -169,15 +167,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   }, [autoGeneratePoster, posterUrl, isInView, generatedPoster]);
 
   const handleTimeUpdate = () => {
-    if (!videoRef.current || isDragging || isSeekingRef.current) return;
+    if (!videoRef.current || isDragging) return;
     
     const current = videoRef.current.currentTime;
     const total = videoRef.current.duration;
-    
-    // Don't update if we just sought to this position
-    if (Math.abs(current - lastSeekTimeRef.current) < 0.1) {
-      return;
-    }
     
     if (duration === 0 && !isNaN(total) && isFinite(total) && total > 0) {
       setDuration(total);
@@ -197,24 +190,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       }
       setIsVideoLoaded(true);
     }
-  };
-
-  const seekToTime = (newTime: number) => {
-    if (!videoRef.current || !duration) return;
-    
-    isSeekingRef.current = true;
-    lastSeekTimeRef.current = newTime;
-    
-    const newProgress = (newTime / duration) * 100;
-    setProgress(newProgress);
-    setCurrentTime(newTime);
-    
-    videoRef.current.currentTime = newTime;
-    
-    // Clear seeking flag after a delay
-    setTimeout(() => {
-      isSeekingRef.current = false;
-    }, 200);
   };
 
   const togglePlayPause = (e?: React.MouseEvent) => {
@@ -247,27 +222,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     }
   };
 
-  const handleProgressClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!progressRef.current || !duration) return;
+  const handleProgressBarInteraction = (clientX: number) => {
+    if (!progressRef.current || !videoRef.current || !duration) return;
     
     const rect = progressRef.current.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickPercent = Math.max(0, Math.min(100, (clickX / rect.width) * 100));
-    const newTime = (clickPercent / 100) * duration;
+    const clickPosition = clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, clickPosition / rect.width));
+    const targetTime = percentage * duration;
     
-    seekToTime(newTime);
-  };
-
-  const handleProgressDrag = (e: MouseEvent) => {
-    if (!isDragging || !progressRef.current || !duration) return;
-    
-    const rect = progressRef.current.getBoundingClientRect();
-    const dragX = e.clientX - rect.left;
-    const dragPercent = Math.max(0, Math.min(100, (dragX / rect.width) * 100));
-    const newTime = (dragPercent / 100) * duration;
-    
-    seekToTime(newTime);
+    videoRef.current.currentTime = targetTime;
+    setCurrentTime(targetTime);
+    setProgress(percentage * 100);
   };
 
   const formatTime = (time: number) => {
@@ -345,7 +310,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/30">
           <div className="flex flex-col items-center gap-3">
             <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin" />
-            <div className="text-white text-sm">Buffering...</div>
+            <div className="text-white text-sm">Loading...</div>
           </div>
         </div>
       )}
@@ -413,29 +378,39 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
             <div
               ref={progressRef}
               className="flex-1 h-1.5 bg-white/20 rounded-full cursor-pointer relative group mx-2"
-              onClick={handleProgressClick}
               onMouseDown={(e) => {
                 e.stopPropagation();
+                e.preventDefault();
+                
                 setIsDragging(true);
-                handleProgressClick(e);
+                handleProgressBarInteraction(e.clientX);
 
-                const handleMouseMove = (e: MouseEvent) => handleProgressDrag(e);
-                const handleMouseUp = () => {
-                  setIsDragging(false);
-                  document.removeEventListener('mousemove', handleMouseMove);
-                  document.removeEventListener('mouseup', handleMouseUp);
+                const onMouseMove = (moveEvent: MouseEvent) => {
+                  handleProgressBarInteraction(moveEvent.clientX);
                 };
 
-                document.addEventListener('mousemove', handleMouseMove);
-                document.addEventListener('mouseup', handleMouseUp);
+                const onMouseUp = () => {
+                  setIsDragging(false);
+                  document.removeEventListener('mousemove', onMouseMove);
+                  document.removeEventListener('mouseup', onMouseUp);
+                };
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!isDragging) {
+                  handleProgressBarInteraction(e.clientX);
+                }
               }}
             >
               <div
-                className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full"
+                className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full pointer-events-none"
                 style={{ width: `${progress}%` }}
               />
               <div
-                className="absolute top-1/2 w-3 h-3 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-1/2 w-3 h-3 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
                 style={{ left: `${progress}%`, transform: 'translateX(-50%) translateY(-50%)' }}
               />
             </div>

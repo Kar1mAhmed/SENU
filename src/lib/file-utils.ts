@@ -64,7 +64,9 @@ export async function uploadFileToR2(
 
   // Use new centralized upload
   const key = await uploadMedia(r2, file, folder);
-  const mediaUrl = `/api/media/${key}`;
+  // Import keyToUrl dynamically to avoid circular dependency
+  const { keyToUrl } = await import('./media');
+  const mediaUrl = keyToUrl(key) || `/api/media/${key}`;
 
   return {
     url: mediaUrl,

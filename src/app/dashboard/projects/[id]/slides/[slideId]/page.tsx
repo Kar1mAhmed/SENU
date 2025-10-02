@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { slidesAPI } from '@/lib/api-client';
 import { ProjectSlide, SlideType } from '@/lib/types';
+import { keyToUrl } from '@/lib/media';
 
 export const runtime = 'edge';
 
@@ -67,7 +68,7 @@ const EditSlide: React.FC = () => {
 
         // Set media preview if slide has media
         if (slide.mediaKey) {
-          setMediaPreview(`/api/media/${slide.mediaKey}`);
+          setMediaPreview(keyToUrl(slide.mediaKey) || '');
         }
 
         console.log('✅ Slide loaded successfully');
