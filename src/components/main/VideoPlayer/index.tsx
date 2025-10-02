@@ -35,6 +35,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const [showControls, setShowControls] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
   const [isBuffering, setIsBuffering] = useState(false);
+  const [canPlayThrough, setCanPlayThrough] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [isInView, setIsInView] = useState(!lazyLoad);
   const [generatedPoster, setGeneratedPoster] = useState<string | null>(null);
@@ -270,7 +271,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
           muted={isMuted}
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
+          crossOrigin="anonymous"
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleLoadedMetadata}
           onDurationChange={() => {
@@ -289,14 +291,38 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
               }
             }
           }}
-          onCanPlay={() => setIsBuffering(false)}
-          onWaiting={() => setIsBuffering(true)}
-          onError={() => {
+          onCanPlay={() => {
+            setIsBuffering(false);
+            console.log('🎬 Video can play:', videoUrl);
+          }}
+          onCanPlayThrough={() => {
+            setCanPlayThrough(true);
+            setIsBuffering(false);
+            console.log('✅ Video can play through without buffering:', videoUrl);
+          }}
+          onWaiting={() => {
+            setIsBuffering(true);
+            console.log('⏳ Video buffering...', videoUrl);
+          }}
+          onStalled={() => {
+            console.log('⚠️ Video stalled:', videoUrl);
+          }}
+          onSuspend={() => {
+            console.log('⏸️ Video suspended:', videoUrl);
+          }}
+          onError={(e) => {
+            console.error('❌ Video error:', videoUrl, e);
             setHasError(true);
             setIsBuffering(false);
           }}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
+          onPlay={() => {
+            setIsPlaying(true);
+            console.log('▶️ Video playing:', videoUrl);
+          }}
+          onPause={() => {
+            setIsPlaying(false);
+            console.log('⏸️ Video paused:', videoUrl);
+          }}
         />
       ) : (
         <div className="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center">
