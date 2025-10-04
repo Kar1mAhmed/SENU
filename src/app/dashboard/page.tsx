@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { projectsAPI, slidesAPI, categoriesAPI } from '@/lib/api-client';
+import { projectsAPI, slidesAPI } from '@/lib/api-client';
 import { useCategories } from '@/lib/hooks/useCategories';
 import { ProjectWithSlides, Category } from '@/lib/types';
 
@@ -145,6 +145,21 @@ const Dashboard: React.FC = () => {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete project';
       console.error('❌ Error deleting project:', errorMessage);
       alert(`Error deleting project: ${errorMessage}`);
+    }
+  };
+
+  const handleReorderProject = async (projectId: string, direction: 'up' | 'down') => {
+    console.log('🔄 Reordering project:', projectId, direction);
+    
+    try {
+      await projectsAPI.reorder(projectId, direction, activeCategoryId);
+      // Reload projects to reflect new order
+      await loadProjects();
+      console.log('✅ Project reordered successfully');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to reorder project';
+      console.error('❌ Error reordering project:', errorMessage);
+      alert(`Error reordering project: ${errorMessage}`);
     }
   };
 
@@ -340,6 +355,28 @@ const Dashboard: React.FC = () => {
                       </div>
                       
                       <div className="flex items-center gap-2">
+                        {/* Reorder buttons */}
+                        <div className="flex flex-col gap-0.5 mr-1">
+                          <button
+                            onClick={() => handleReorderProject(project.id, 'up')}
+                            className="p-1 text-gray-400 hover:text-white hover:bg-gray-700 rounded transition-colors duration-200"
+                            title="Move Up"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                            </svg>
+                          </button>
+                          <button
+                            onClick={() => handleReorderProject(project.id, 'down')}
+                            className="p-1 text-gray-400 hover:text-white hover:bg-gray-700 rounded transition-colors duration-200"
+                            title="Move Down"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                        </div>
+                        
                         <button
                           onClick={() => toggleProjectExpansion(project.id)}
                           className="p-2 text-gray-400 hover:text-white transition-colors duration-200"

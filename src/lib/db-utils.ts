@@ -54,6 +54,8 @@ export function dbProjectToProject(dbProject: DBProject): ProjectWithSlides {
         extraFields,
         iconBarBgColor: dbProject.icon_bar_bg_color,
         iconBarIconColor: dbProject.icon_bar_icon_color,
+        displayOrderInCategory: dbProject.display_order_in_category || 0,
+        displayOrderGlobal: dbProject.display_order_global || 0,
         slides: [], // Will be populated separately
         createdAt: new Date(dbProject.created_at),
         updatedAt: new Date(dbProject.updated_at)
@@ -108,12 +110,25 @@ export class ProjectDB {
             .bind(data.categoryId).first<{ name: string }>();
         const categoryName = categoryResult?.name || 'Branding';
 
+        // Get max display orders for initialization
+        const maxCategoryOrder = await this.db.prepare(
+            'SELECT MAX(display_order_in_category) as max_order FROM projects WHERE category_id = ?'
+        ).bind(data.categoryId).first<{ max_order: number | null }>();
+        
+        const maxGlobalOrder = await this.db.prepare(
+            'SELECT MAX(display_order_global) as max_order FROM projects'
+        ).first<{ max_order: number | null }>();
+
+        const displayOrderInCategory = (maxCategoryOrder?.max_order || 0) + 1;
+        const displayOrderGlobal = (maxGlobalOrder?.max_order || 0) + 1;
+
         const stmt = this.db.prepare(`
       INSERT INTO projects (
         id, name, title, description, client_name, client_logo_key, tags, 
         category, category_id, project_type, date_finished, extra_fields, thumbnail_key, 
-        icon_bar_bg_color, icon_bar_icon_color, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        icon_bar_bg_color, icon_bar_icon_color, display_order_in_category, display_order_global,
+        created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
         await stmt.bind(
@@ -132,6 +147,8 @@ export class ProjectDB {
             data.thumbnailKey || null,
             data.iconBarBgColor || '#4FAF78',
             data.iconBarIconColor || '#FFFFFF',
+            displayOrderInCategory,
+            displayOrderGlobal,
             now,
             now
         ).run();
@@ -171,7 +188,12 @@ export class ProjectDB {
             bindings.push(options.categoryId);
         }
 
-        query += ' ORDER BY created_at DESC';
+        // Sort by display order (category-specific if filtered, global if not)
+        if (options.categoryId) {
+            query += ' ORDER BY display_order_in_category ASC';
+        } else {
+            query += ' ORDER BY display_order_global ASC';
+        }
 
         if (options.limit) {
             query += ' LIMIT ?';
@@ -299,6 +321,52 @@ export class ProjectDB {
         await stmt.bind(id).run();
 
         console.log('✅ Project deleted successfully:', id);
+    }
+
+    async reorder(projectId: string, direction: 'up' | 'down', categoryId: number | null): Promise<void> {
+        console.log('🔄 Reordering project:', projectId, direction, 'in category:', categoryId);
+
+        // Get the current project
+        const currentProject = await this.getById(projectId);
+        
+        // Determine which order field to use
+        const isGlobal = categoryId === null;
+        const orderField = isGlobal ? 'display_order_global' : 'display_order_in_category';
+        const currentOrder = isGlobal ? currentProject.display_order_global : currentProject.display_order_in_category;
+
+        // Find the adjacent project to swap with
+        let adjacentQuery: string;
+        if (direction === 'up') {
+            // Moving up means decreasing order number (swap with previous)
+            adjacentQuery = isGlobal
+                ? `SELECT * FROM projects WHERE ${orderField} < ? ORDER BY ${orderField} DESC LIMIT 1`
+                : `SELECT * FROM projects WHERE category_id = ? AND ${orderField} < ? ORDER BY ${orderField} DESC LIMIT 1`;
+        } else {
+            // Moving down means increasing order number (swap with next)
+            adjacentQuery = isGlobal
+                ? `SELECT * FROM projects WHERE ${orderField} > ? ORDER BY ${orderField} ASC LIMIT 1`
+                : `SELECT * FROM projects WHERE category_id = ? AND ${orderField} > ? ORDER BY ${orderField} ASC LIMIT 1`;
+        }
+
+        const adjacentProject = isGlobal
+            ? await this.db.prepare(adjacentQuery).bind(currentOrder).first<DBProject>()
+            : await this.db.prepare(adjacentQuery).bind(categoryId, currentOrder).first<DBProject>();
+
+        if (!adjacentProject) {
+            console.log('⚠️ No adjacent project found, already at boundary');
+            return;
+        }
+
+        const adjacentOrder = isGlobal ? adjacentProject.display_order_global : adjacentProject.display_order_in_category;
+
+        // Swap the display orders
+        await this.db.prepare(`UPDATE projects SET ${orderField} = ? WHERE id = ?`)
+            .bind(adjacentOrder, projectId).run();
+        
+        await this.db.prepare(`UPDATE projects SET ${orderField} = ? WHERE id = ?`)
+            .bind(currentOrder, adjacentProject.id).run();
+
+        console.log('✅ Projects reordered successfully');
     }
 }
 

@@ -59,6 +59,8 @@ export type DBProject = {
   extra_fields?: string; // JSON string in database for extra fields
   icon_bar_bg_color?: string; // Hex color for icon bar background
   icon_bar_icon_color?: string; // Hex color for icons
+  display_order_in_category: number; // Order within category
+  display_order_global: number; // Order in "All" category
   created_at: string;
   updated_at: string;
 };
@@ -110,6 +112,8 @@ export type ProjectWithSlides = {
   extraFields: ProjectExtraField[];
   iconBarBgColor?: string; // Hex color for icon bar background
   iconBarIconColor?: string; // Hex color for icons
+  displayOrderInCategory: number; // Order within category
+  displayOrderGlobal: number; // Order in "All" category
   slides: ProjectSlide[];
   createdAt: Date;
   updatedAt: Date;

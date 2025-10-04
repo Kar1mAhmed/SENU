@@ -253,6 +253,13 @@ export const projectsAPI = {
   async delete(id: string): Promise<void> {
     await apiCall(`/projects/${id}`, { method: 'DELETE' });
   },
+
+  async reorder(projectId: string, direction: 'up' | 'down', categoryId: number | null): Promise<void> {
+    await apiCall('/projects/reorder', {
+      method: 'POST',
+      body: JSON.stringify({ projectId, direction, categoryId }),
+    });
+  },
 };
 
 // Slides API
