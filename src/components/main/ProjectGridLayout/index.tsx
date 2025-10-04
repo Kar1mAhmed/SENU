@@ -16,64 +16,114 @@ const ProjectGridLayout: React.FC<ProjectGridLayoutProps> = ({
     console.log('📊 ProjectGridLayout rendering with layout:', layout, 'projects:', projects.length);
     console.log('📊 Projects order received:', projects.map(p => p.name));
 
-    // Track zigzag counter for proper left/right alternation
-    let zigzagCounter = 0;
-
     return (
         <div className="flex justify-center w-full px-4 overflow-visible">
             {/* Container with proper overflow handling */}
             <div className="w-full max-w-[1000px] md:max-w-[1000px] lg:max-w-[1100px] xl:max-w-[1400px] 2xl:max-w-[1600px] overflow-visible">
-                <div className="space-y-16 lg:space-y-20">
-                    {projects.map((project, index) => {
-                        // Horizontal projects get full-width layout
-                        if (project.type === 'horizontal') {
+                {/* Mobile: Single column for all */}
+                <div className="block md:hidden">
+                    <div className="flex flex-col items-center gap-8">
+                        {projects.map((project, index) => {
+                            if (project.type === 'horizontal') {
+                                return (
+                                    <div key={project.id} className="w-full relative overflow-visible">
+                                        <ProjectCard 
+                                            project={project} 
+                                            index={index}
+                                            layout="fullwidth"
+                                        />
+                                    </div>
+                                );
+                            }
+                            
+                            // Calculate zigzag position
+                            const zigzagIndex = projects.slice(0, index).filter(p => p.type === 'image' || p.type === 'vertical').length;
+                            const isLeft = zigzagIndex % 2 === 0;
+                            
                             return (
-                                <div key={project.id} className="w-full relative overflow-visible">
+                                <div key={project.id} className="w-full max-w-[400px]">
                                     <ProjectCard 
                                         project={project} 
                                         index={index}
-                                        layout="fullwidth"
+                                        isLeft={isLeft}
+                                        layout="zigzag"
                                     />
                                 </div>
                             );
-                        }
-                        
-                        // Image and vertical projects get zigzag layout
-                        const isLeft = zigzagCounter % 2 === 0;
-                        zigzagCounter++;
-                        
-                        return (
-                            <div key={project.id} className="w-full">
-                                {/* Mobile: Centered */}
-                                <div className="flex md:hidden justify-center">
-                                    <div className="w-full max-w-[400px]">
-                                        <ProjectCard 
-                                            project={project} 
-                                            index={index}
-                                            isLeft={isLeft}
-                                            layout="zigzag"
-                                        />
-                                    </div>
-                                </div>
+                        })}
+                    </div>
+                </div>
+
+                {/* Desktop: Zigzag layout with full-width interruptions */}
+                <div className="hidden md:block">
+                    <div className="grid grid-cols-2 gap-x-6 md:gap-x-8 lg:gap-x-12 xl:gap-x-16">
+                        {/* Left Column */}
+                        <div className="flex flex-col items-end gap-10 md:gap-12">
+                            {projects.map((project, index) => {
+                                if (project.type === 'horizontal') return null;
                                 
-                                {/* Desktop: Zigzag */}
-                                <div className="hidden md:flex justify-center">
-                                    <div className={`w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px] ${
-                                        isLeft 
-                                            ? 'md:mr-auto md:pr-4 lg:pr-8 xl:pr-12' 
-                                            : 'md:ml-auto md:pl-4 lg:pl-8 xl:pl-12'
-                                    }`}>
+                                const zigzagIndex = projects.slice(0, index).filter(p => p.type === 'image' || p.type === 'vertical').length;
+                                const isLeft = zigzagIndex % 2 === 0;
+                                
+                                if (!isLeft) return null;
+                                
+                                return (
+                                    <div key={project.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
                                         <ProjectCard 
                                             project={project} 
                                             index={index}
-                                            isLeft={isLeft}
+                                            isLeft={true}
                                             layout="zigzag"
                                         />
                                     </div>
-                                </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Right Column with offset */}
+                        <div className="flex flex-col items-start gap-10 md:gap-12 mt-16 md:mt-20 lg:mt-24 xl:mt-32">
+                            {projects.map((project, index) => {
+                                if (project.type === 'horizontal') return null;
+                                
+                                const zigzagIndex = projects.slice(0, index).filter(p => p.type === 'image' || p.type === 'vertical').length;
+                                const isLeft = zigzagIndex % 2 === 0;
+                                
+                                if (isLeft) return null;
+                                
+                                return (
+                                    <div key={project.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
+                                        <ProjectCard 
+                                            project={project} 
+                                            index={index}
+                                            isLeft={false}
+                                            layout="zigzag"
+                                        />
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* Horizontal videos - rendered separately after zigzag */}
+                    {projects.filter(p => p.type === 'horizontal').length > 0 && (
+                        <div className="w-full mt-20">
+                            <div className="space-y-16 lg:space-y-20">
+                                {projects.map((project, index) => {
+                                    if (project.type !== 'horizontal') return null;
+                                    
+                                    return (
+                                        <div key={project.id} className="w-full relative overflow-visible">
+                                            <ProjectCard 
+                                                project={project} 
+                                                index={index}
+                                                layout="fullwidth"
+                                            />
+                                        </div>
+                                    );
+                                })}
                             </div>
-                        );
-                    })}
+                        </div>
+                    )}
                 </div>
 
                 {/* Empty state */}
