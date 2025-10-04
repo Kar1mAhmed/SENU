@@ -2,11 +2,9 @@ import type { Metadata } from 'next';
 import { Alexandria } from 'next/font/google';
 import localFont from 'next/font/local';
 import './../styles/globals.css';
+import { generateMetadata as generatePageMetadata, generateOrganizationSchema } from '@/lib/metadata';
 
-export const metadata: Metadata = {
-  title: 'Senu',
-  description: 'Senu - Creative Studio',
-};
+export const metadata: Metadata = generatePageMetadata();
 
 const alexandria = Alexandria({
   subsets: ['latin'],
@@ -37,8 +35,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const organizationSchema = generateOrganizationSchema();
+
   return (
     <html lang="en" className={`${newBlack.variable} ${alexandria.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+      </head>
       <body>
         <BackgroundGrid />
         <div className="">

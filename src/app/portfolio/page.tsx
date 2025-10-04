@@ -9,6 +9,8 @@ import CategoryFilter from '@/components/main/CategoryFilter';
 import SingleRibbon from '@/components/main/SingleRibbon';
 import Footer from '@/components/main/Footer';
 import Navbar from '@/components/main/Navbar';
+import SEOHead from '@/components/SEOHead';
+import { siteConfig } from '@/lib/seo-config';
 
 // Separate component for search params logic
 const PortfolioContent: React.FC = () => {
@@ -54,6 +56,12 @@ const PortfolioContent: React.FC = () => {
 
     return (
         <>
+        <SEOHead 
+            title="Portfolio - Creative Projects & Work | SENU"
+            description="Explore our portfolio of creative projects including video editing, motion graphics, 3D animation, graphic design, social media content, and advertising campaigns."
+            keywords={['portfolio', 'creative projects', 'video portfolio', 'design work', 'motion graphics portfolio']}
+            canonicalUrl={`${siteConfig.url}/portfolio`}
+        />
         <Navbar />
         <div className="min-h-screen text-white mt-32">
             <section className="py-16 md:py-20">

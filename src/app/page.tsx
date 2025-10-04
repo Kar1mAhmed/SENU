@@ -10,10 +10,22 @@ import ClientsSection from '@/components/landing/Testimonial';
 import FAQSection from '@/components/landing/FAQSection';
 import Footer from '@/components/main/Footer';
 import Navbar from '@/components/main/Navbar';
+import { generateServiceSchema } from '@/lib/metadata';
 
 export default function Home() {
+  // Generate service schema for homepage
+  const serviceSchemas = generateServiceSchema();
+
   return (
     <div className="min-h-screen w-full">
+      {/* Add service structured data */}
+      {serviceSchemas.map((schema, index) => (
+        <script
+          key={index}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
       <main>
         <Navbar />
         <HeroSection />

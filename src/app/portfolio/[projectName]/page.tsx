@@ -11,6 +11,9 @@ import Link from 'next/link';
 import Navbar from '@/components/main/Navbar';
 import Footer from '@/components/main/Footer';
 import SingleRibbon from '@/components/main/SingleRibbon';
+import SEOHead from '@/components/SEOHead';
+import { siteConfig } from '@/lib/seo-config';
+import { generateCreativeWorkSchema, generateBreadcrumbSchema } from '@/lib/metadata';
 
 export const runtime = 'edge';
 
@@ -55,8 +58,48 @@ const ProjectDetail: React.FC = () => {
     // Convert ProjectWithSlides to Project format for ProjectHero component
     const project = transformProjectForFrontend(projectWithSlides);
 
+    // Generate dynamic OG image URL
+    const ogImageParams = new URLSearchParams({
+        name: project.name,
+        client: project.client || '',
+        category: project.category,
+        description: project.description || `${project.name} - ${project.category} project by SENU`,
+        logo: project.clientLogo || '',
+    });
+    const dynamicOgImage = `${siteConfig.url}/api/og?${ogImageParams.toString()}`;
+
+    // Generate structured data
+    const creativeWorkSchema = generateCreativeWorkSchema({
+        name: project.name,
+        description: project.description || `${project.name} - ${project.category} project by SENU`,
+        thumbnailUrl: project.thumbnailUrl,
+        category: project.category,
+        client: project.client
+    });
+
+    const breadcrumbSchema = generateBreadcrumbSchema([
+        { name: 'Home', url: '/' },
+        { name: 'Portfolio', url: '/portfolio' },
+        { name: project.name, url: `/portfolio/${projectName}` }
+    ]);
+
     return (
         <>
+        <SEOHead 
+            title={`${project.name} - ${project.category} Project | SENU`}
+            description={project.description || `${project.name} - ${project.category} project by SENU creative studio`}
+            keywords={[project.category, project.type, 'creative project', project.client || ''].filter(Boolean)}
+            ogImage={dynamicOgImage}
+            canonicalUrl={`${siteConfig.url}/portfolio/${projectName}`}
+        />
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(creativeWorkSchema) }}
+        />
+        <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+        />
         <Navbar />
         <div className="min-h-screen  text-white mt-24">
             {/* Hero Section */}
