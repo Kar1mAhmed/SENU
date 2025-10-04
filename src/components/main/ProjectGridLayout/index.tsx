@@ -54,76 +54,85 @@ const ProjectGridLayout: React.FC<ProjectGridLayoutProps> = ({
                     </div>
                 </div>
 
-                {/* Desktop: Zigzag layout with full-width interruptions */}
+                {/* Desktop: Exact DB order with proper zigzag */}
                 <div className="hidden md:block">
-                    <div className="grid grid-cols-2 gap-x-6 md:gap-x-8 lg:gap-x-12 xl:gap-x-16">
-                        {/* Left Column */}
-                        <div className="flex flex-col items-end gap-10 md:gap-12">
-                            {projects.map((project, index) => {
-                                if (project.type === 'horizontal') return null;
-                                
-                                const zigzagIndex = projects.slice(0, index).filter(p => p.type === 'image' || p.type === 'vertical').length;
-                                const isLeft = zigzagIndex % 2 === 0;
-                                
-                                if (!isLeft) return null;
-                                
-                                return (
-                                    <div key={project.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
-                                        <ProjectCard 
-                                            project={project} 
-                                            index={index}
-                                            isLeft={true}
-                                            layout="zigzag"
-                                        />
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                        {/* Right Column with offset */}
-                        <div className="flex flex-col items-start gap-10 md:gap-12 mt-16 md:mt-20 lg:mt-24 xl:mt-32">
-                            {projects.map((project, index) => {
-                                if (project.type === 'horizontal') return null;
-                                
-                                const zigzagIndex = projects.slice(0, index).filter(p => p.type === 'image' || p.type === 'vertical').length;
-                                const isLeft = zigzagIndex % 2 === 0;
-                                
-                                if (isLeft) return null;
-                                
-                                return (
-                                    <div key={project.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
-                                        <ProjectCard 
-                                            project={project} 
-                                            index={index}
-                                            isLeft={false}
-                                            layout="zigzag"
-                                        />
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    {/* Horizontal videos - rendered separately after zigzag */}
-                    {projects.filter(p => p.type === 'horizontal').length > 0 && (
-                        <div className="w-full mt-20">
-                            <div className="space-y-16 lg:space-y-20">
-                                {projects.map((project, index) => {
-                                    if (project.type !== 'horizontal') return null;
-                                    
-                                    return (
-                                        <div key={project.id} className="w-full relative overflow-visible">
-                                            <ProjectCard 
-                                                project={project} 
-                                                index={index}
-                                                layout="fullwidth"
-                                            />
+                    {(() => {
+                        const elements: React.ReactElement[] = [];
+                        let currentZigzagBatch: typeof projects = [];
+                        
+                        projects.forEach((project, index) => {
+                            if (project.type === 'horizontal') {
+                                // Render any accumulated zigzag projects first
+                                if (currentZigzagBatch.length > 0) {
+                                    elements.push(
+                                        <div key={`zigzag-${index}`} className="grid grid-cols-2 gap-x-6 md:gap-x-8 lg:gap-x-12 xl:gap-x-16 mb-20">
+                                            <div className="flex flex-col items-end gap-10 md:gap-12">
+                                                {currentZigzagBatch.map((p, i) => {
+                                                    if (i % 2 !== 0) return null;
+                                                    return (
+                                                        <div key={p.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
+                                                            <ProjectCard project={p} index={projects.indexOf(p)} isLeft={true} layout="zigzag" />
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                            <div className="flex flex-col items-start gap-10 md:gap-12 mt-16 md:mt-20 lg:mt-24 xl:mt-32">
+                                                {currentZigzagBatch.map((p, i) => {
+                                                    if (i % 2 === 0) return null;
+                                                    return (
+                                                        <div key={p.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
+                                                            <ProjectCard project={p} index={projects.indexOf(p)} isLeft={false} layout="zigzag" />
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
                                         </div>
                                     );
-                                })}
-                            </div>
-                        </div>
-                    )}
+                                    currentZigzagBatch = [];
+                                }
+                                
+                                // Render horizontal video
+                                elements.push(
+                                    <div key={project.id} className="w-full mb-20">
+                                        <ProjectCard project={project} index={index} layout="fullwidth" />
+                                    </div>
+                                );
+                            } else {
+                                // Add to zigzag batch
+                                currentZigzagBatch.push(project);
+                            }
+                        });
+                        
+                        // Render any remaining zigzag projects
+                        if (currentZigzagBatch.length > 0) {
+                            elements.push(
+                                <div key="zigzag-final" className="grid grid-cols-2 gap-x-6 md:gap-x-8 lg:gap-x-12 xl:gap-x-16">
+                                    <div className="flex flex-col items-end gap-10 md:gap-12">
+                                        {currentZigzagBatch.map((p, i) => {
+                                            if (i % 2 !== 0) return null;
+                                            return (
+                                                <div key={p.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
+                                                    <ProjectCard project={p} index={projects.indexOf(p)} isLeft={true} layout="zigzag" />
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                    <div className="flex flex-col items-start gap-10 md:gap-12 mt-16 md:mt-20 lg:mt-24 xl:mt-32">
+                                        {currentZigzagBatch.map((p, i) => {
+                                            if (i % 2 === 0) return null;
+                                            return (
+                                                <div key={p.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
+                                                    <ProjectCard project={p} index={projects.indexOf(p)} isLeft={false} layout="zigzag" />
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            );
+                        }
+                        
+                        return elements;
+                    })()}
                 </div>
 
                 {/* Empty state */}
