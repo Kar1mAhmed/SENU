@@ -57,6 +57,12 @@ export async function GET(request: NextRequest) {
             offset
         });
 
+        console.log('🔢 Projects order from DB:', projects.map(p => ({
+            name: p.name,
+            categoryOrder: p.display_order_in_category,
+            globalOrder: p.display_order_global
+        })));
+
         // Convert to frontend format and get slides for each project
         const projectsWithSlides: ProjectWithSlides[] = await Promise.all(
             projects.map(async (dbProject) => {
@@ -66,6 +72,12 @@ export async function GET(request: NextRequest) {
                 return project;
             })
         );
+
+        console.log('🔢 Projects order after transform:', projectsWithSlides.map(p => ({
+            name: p.name,
+            categoryOrder: p.displayOrderInCategory,
+            globalOrder: p.displayOrderGlobal
+        })));
 
         const response: PaginatedResponse<ProjectWithSlides> = {
             success: true,

@@ -31,8 +31,17 @@ export function useProjects(options: UseProjectsOptions = {}) {
         });
         
         if (response && response.items) {
+          console.log('📦 Raw projects from API:', response.items.map(p => ({
+            name: p.name,
+            categoryOrder: p.displayOrderInCategory,
+            globalOrder: p.displayOrderGlobal
+          })));
+          
           // Transform database projects to frontend format
           const frontendProjects = transformProjectsForFrontend(response.items);
+          
+          console.log('📦 Transformed projects order:', frontendProjects.map(p => p.name));
+          
           setProjects(frontendProjects);
           console.log(`✅ Loaded ${frontendProjects.length} projects successfully`);
         } else {
