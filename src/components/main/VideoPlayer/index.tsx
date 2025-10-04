@@ -28,6 +28,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [volume, setVolume] = useState(1);
+  const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -213,6 +215,20 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     }
   };
 
+  const handleVolumeChange = (newVolume: number) => {
+    if (videoRef.current) {
+      videoRef.current.volume = newVolume;
+      setVolume(newVolume);
+      if (newVolume === 0) {
+        videoRef.current.muted = true;
+        setIsMuted(true);
+      } else if (isMuted) {
+        videoRef.current.muted = false;
+        setIsMuted(false);
+      }
+    }
+  };
+
   const toggleFullscreen = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!document.fullscreenElement && containerRef.current) {
@@ -247,9 +263,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       ref={containerRef}
       className={`relative rounded-lg overflow-hidden bg-black ${
         isFullscreen
-          ? projectType === 'vertical'
-            ? 'fixed inset-0 z-50 rounded-none flex items-center justify-center bg-black'
-            : 'fixed inset-0 z-50 rounded-none'
+          ? 'fixed inset-0 z-50 rounded-none flex items-center justify-center bg-black'
           : 'w-full h-full'
       } ${className}`}
       onMouseMove={() => {
@@ -263,10 +277,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
           src={videoUrl}
           poster={posterUrl || generatedPoster || undefined}
           className={`${
-            isFullscreen && projectType === 'vertical'
-              ? 'h-full w-auto max-w-none'
-              : 'absolute inset-0 w-full h-full'
-          } object-cover`}
+            isFullscreen
+              ? projectType === 'vertical'
+                ? 'h-full w-auto max-w-none object-contain'
+                : 'w-full h-full object-contain'
+              : 'absolute inset-0 w-full h-full object-cover'
+          }`}
           muted={isMuted}
           loop
           playsInline
@@ -357,19 +373,55 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
               )}
             </button>
 
-            <button onClick={toggleMute} className="text-white hover:text-blue-400 transition-colors p-1 flex-shrink-0">
-              {isMuted ? (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" strokeWidth="2" fill="none" />
-                  <path d="M23 9L17 15M17 9L23 15" stroke="currentColor" strokeWidth="2" />
-                </svg>
-              ) : (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" strokeWidth="2" fill="none" />
-                  <path d="M19.07 4.93A10 10 0 0122 12A10 10 0 0119.07 19.07M15.54 8.46A5 5 0 0117 12A5 5 0 0115.54 15.54" stroke="currentColor" strokeWidth="2" />
-                </svg>
-              )}
-            </button>
+            {/* Volume Control Group */}
+            <div 
+              className="flex items-center gap-2 group relative"
+              onMouseEnter={() => setShowVolumeSlider(true)}
+              onMouseLeave={() => setShowVolumeSlider(false)}
+            >
+              <button onClick={toggleMute} className="text-white hover:text-blue-400 transition-colors p-1 flex-shrink-0">
+                {isMuted || volume === 0 ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" strokeWidth="2" fill="none" />
+                    <path d="M23 9L17 15M17 9L23 15" stroke="currentColor" strokeWidth="2" />
+                  </svg>
+                ) : volume < 0.5 ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" strokeWidth="2" fill="none" />
+                    <path d="M15.54 8.46A5 5 0 0117 12A5 5 0 0115.54 15.54" stroke="currentColor" strokeWidth="2" />
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" strokeWidth="2" fill="none" />
+                    <path d="M19.07 4.93A10 10 0 0122 12A10 10 0 0119.07 19.07M15.54 8.46A5 5 0 0117 12A5 5 0 0115.54 15.54" stroke="currentColor" strokeWidth="2" />
+                  </svg>
+                )}
+              </button>
+              
+              {/* Volume Slider - Shows on hover */}
+              <div className={`transition-all duration-200 overflow-hidden ${showVolumeSlider ? 'w-16 opacity-100' : 'w-0 opacity-0'}`}>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={volume}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    handleVolumeChange(parseFloat(e.target.value));
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="w-full h-1 bg-white/20 rounded-full appearance-none cursor-pointer
+                    [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 
+                    [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:cursor-pointer
+                    [&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:h-3 [&::-moz-range-thumb]:rounded-full 
+                    [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
+                  style={{
+                    background: `linear-gradient(to right, rgb(96 165 250) 0%, rgb(96 165 250) ${volume * 100}%, rgba(255,255,255,0.2) ${volume * 100}%, rgba(255,255,255,0.2) 100%)`
+                  }}
+                />
+              </div>
+            </div>
 
             <div className="text-white text-xs flex-shrink-0">
               {formatTime(currentTime)} / {formatTime(duration || 0)}
