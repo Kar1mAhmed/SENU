@@ -16,7 +16,7 @@ const ProjectSlides: React.FC<ProjectSlidesProps> = ({ slides, projectType }) =>
     // Early return if no slides
     if (!slides || slides.length === 0) {
         return (
-            <section className="py-16">
+            <section id="projectSlides" className="py-16">
                 <div className="max-w-[1280px] mx-auto px-4 lg:px-0">
                     <div className="text-center text-gray-400">
                         <p>No slides available for this project.</p>
@@ -27,19 +27,32 @@ const ProjectSlides: React.FC<ProjectSlidesProps> = ({ slides, projectType }) =>
     }
 
     // Route to appropriate component based on project type
+    // Wrap each component in a section with ID for navbar scroll detection
     switch (projectType) {
         case 'image':
-            return <ImageSlides slides={slides} />;
+            return (
+                <section id="projectSlides">
+                    <ImageSlides slides={slides} />
+                </section>
+            );
         
         case 'vertical':
-            return <VerticalSlides slides={slides} />;
+            return (
+                <section id="projectSlides">
+                    <VerticalSlides slides={slides} />
+                </section>
+            );
         
         case 'horizontal':
-            return <HorizontalSlides slides={slides} />;
+            return (
+                <section id="projectSlides">
+                    <HorizontalSlides slides={slides} />
+                </section>
+            );
         
         default:
             return (
-                <section className="py-16">
+                <section id="projectSlides" className="py-16">
                     <div className="max-w-[1280px] mx-auto px-4 lg:px-0">
                         <div className="text-center text-gray-400">
                             <p>Unsupported project type: {projectType}</p>

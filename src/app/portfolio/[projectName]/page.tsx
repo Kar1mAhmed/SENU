@@ -100,7 +100,7 @@ const ProjectDetail: React.FC = () => {
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
-        <Navbar />
+        <Navbar hideOnSectionId="projectSlides" />
         <div className="min-h-screen  text-white mt-24">
             {/* Hero Section */}
             <ProjectHero project={project} />

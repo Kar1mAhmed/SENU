@@ -7,7 +7,11 @@ import { SiX } from 'react-icons/si';
 import { FiMenu, FiX } from 'react-icons/fi';
 import Link from "next/link";
 
-const Navbar = () => {
+interface NavbarProps {
+  hideOnSectionId?: string; // Optional: ID of section to hide navbar when reached
+}
+
+const Navbar: React.FC<NavbarProps> = ({ hideOnSectionId }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
 
@@ -18,6 +22,19 @@ const Navbar = () => {
     if (typeof window === 'undefined') return;
 
     const handleScroll = () => {
+      // If a custom section ID is provided, use it for hide trigger
+      if (hideOnSectionId) {
+        const section = document.getElementById(hideOnSectionId);
+        if (section) {
+          const sectionRect = section.getBoundingClientRect();
+          // Hide navbar when section reaches top of viewport
+          const shouldHide = sectionRect.top <= 100;
+          setIsVisible(!shouldHide);
+          return;
+        }
+      }
+
+      // Default behavior: hide when footer is near
       const footer = document.querySelector('footer');
       if (footer) {
         const footerRect = footer.getBoundingClientRect();
@@ -31,7 +48,7 @@ const Navbar = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [hideOnSectionId]);
 
   return (
     <>
