@@ -20,7 +20,7 @@ const EmailSignup = () => {
   };
 
   return (
-    <div className="relative z-20 flex justify-center mt-0 mt-20 md:py-16 px-4">
+    <div className="relative z-20 flex justify-center mt-0 mt-4 md:py-16 px-4">
       <form onSubmit={handleSubmit} className="bg-transparent rounded-full p-1 flex items-center gap-x-1 border border-white/10 w-full max-w-[300px] md:max-w-md">
         <input
           type="email"

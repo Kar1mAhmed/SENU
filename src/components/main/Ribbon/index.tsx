@@ -13,10 +13,10 @@ const Ribbon = () => {
   const repeatedIcons2 = Array(10).fill(iconUrls).flat().sort(() => Math.random() - 0.5);
 
   return (
-    <div className="relative w-full lg:h-40 overflow-hidden pointer-events-none">
+    <div className="relative w-full h-24 lg:h-40 overflow-hidden pointer-events-none">
       {/* Blue Ribbon */}
       <div
-        className="absolute top-1/2 w-full lg:h-[45px] h-[35px] bg-blue transform -rotate-[2.2deg] flex items-center justify-center"
+        className="absolute top-1/2 w-full h-[35px] lg:h-[45px] bg-blue transform -rotate-[2.2deg] flex items-center justify-center"
       >
         <div className="flex items-center gap-x-[50px] md:gap-x-[100px]">
           {repeatedIcons.map((src, i) => (
