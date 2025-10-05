@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@cloudflare/next-on-pages": "^1.13.12",
+    "@microsoft/clarity": "^1.0.0",
     "framer-motion": "^12.12.1",
     "libphonenumber-js": "^1.12.23",
     "next": "15.5.3",
