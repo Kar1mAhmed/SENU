@@ -54,6 +54,21 @@ const PortfolioContent: React.FC = () => {
     const categoryOptions = ['All', ...categories.map(cat => cat.name)];
     const activeCategoryName = activeCategoryId === null ? 'All' : categories.find(c => c.id === activeCategoryId)?.name || 'All';
 
+    // Restore scroll position after content is loaded
+    useEffect(() => {
+        if (!loading && !categoriesLoading) {
+            const savedPosition = sessionStorage.getItem('scroll-/portfolio');
+            if (savedPosition) {
+                const position = parseInt(savedPosition, 10);
+                console.log('🎯 Portfolio: Restoring scroll to', position);
+                // Wait for DOM to be ready
+                setTimeout(() => {
+                    window.scrollTo(0, position);
+                }, 150);
+            }
+        }
+    }, [loading, categoriesLoading]);
+
     return (
         <>
         <SEOHead 

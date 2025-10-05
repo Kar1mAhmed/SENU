@@ -31,7 +31,6 @@ const config: Config = {
                     50: "#EF4444",
                     20: "#FECACA",
                     soft: '#DD846E',
-                    light: '#E6CCE2',
                 },
                 yellow: {
                     DEFAULT: '#FAC53A',
