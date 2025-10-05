@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Button from '@/components/main/Button';
 import { FaInstagram, FaBehance, FaVimeo } from 'react-icons/fa';
 import { SiX } from 'react-icons/si';
-import { FiMenu, FiX } from 'react-icons/fi';
+import { FiMenu } from 'react-icons/fi';
 import Link from "next/link";
 
 interface NavbarProps {
@@ -46,8 +46,15 @@ const Navbar: React.FC<NavbarProps> = ({ hideOnSectionId }) => {
       }
     };
 
+    // Run initial check on mount and after a brief delay to ensure DOM is ready
+    handleScroll();
+    const initialCheck = setTimeout(handleScroll, 100);
+
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(initialCheck);
+    };
   }, [hideOnSectionId]);
 
   return (

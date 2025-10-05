@@ -28,6 +28,7 @@ const newBlack = localFont({
 });
 
 import BackgroundGrid from '../components/main/BackgroundGrid';
+import ScrollRestoration from '../components/ScrollRestoration';
 
 
 export default function RootLayout({
@@ -46,6 +47,7 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <ScrollRestoration />
         <BackgroundGrid />
         <div className="">
           <main className="relative z-10">{children}</main>
