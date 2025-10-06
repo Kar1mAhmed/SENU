@@ -37,7 +37,7 @@ export default function Home() {
         <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]" />
         <MetricsSection />
         <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]" />
-        <ClientsSection />
+        {/* <ClientsSection /> */}
         <FAQSection />
         <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]" />
         <Footer />
