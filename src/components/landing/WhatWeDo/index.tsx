@@ -23,13 +23,13 @@ const serviceData = [
     },
     {
         description: 'Eye-catching motion graphics that bring ideas to life.',
-        imageSrc: '/images/covers/7.jpg',
+        imageSrc: '/images/covers/5.jpg',
         projectCount: "40+"
 
     },
     {
         description: 'Engaging short-form videos built to capture attention fast.',
-        imageSrc: '/images/covers/8.jpg',
+        imageSrc: '/images/covers/6.jpg',
         projectCount: "500+"
     },
 ];
