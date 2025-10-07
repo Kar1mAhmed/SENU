@@ -2,7 +2,6 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { useCategories } from '@/lib/hooks/useCategories';
-import { useProjects } from '@/lib/hooks/useProjects';
 import ServiceCard from './ServiceCard';
 import type { Service } from '@/lib/types';
 
@@ -37,7 +36,6 @@ const serviceData = [
 const WhatWeDo: React.FC = () => {
     const router = useRouter();
     const { categories, loading: categoriesLoading } = useCategories();
-    const { projects } = useProjects({});
     return (
         <section className="w-full py-16 md:py-20">
             <div className="w-full">

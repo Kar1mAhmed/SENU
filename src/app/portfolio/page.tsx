@@ -1,7 +1,7 @@
 // src/app/portfolio/page.tsx
 'use client';
 import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { useProjects } from '@/lib/hooks/useProjects';
 import { useCategories } from '@/lib/hooks/useCategories';
 import ProjectGridLayout from '@/components/main/ProjectGridLayout';
@@ -12,34 +12,47 @@ import Navbar from '@/components/main/Navbar';
 import SEOHead from '@/components/SEOHead';
 import { siteConfig } from '@/lib/seo-config';
 
+// Helper function to convert category name to URL-friendly slug
+const categoryToSlug = (categoryName: string): string => {
+    return categoryName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+};
+
 // Separate component for search params logic
 const PortfolioContent: React.FC = () => {
     const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+
+    // Fetch categories from backend
+    const { categories, loading: categoriesLoading } = useCategories();
 
     // Initialize activeCategoryId from URL immediately
     const initialCategoryId = (() => {
-        const categoryIdParam = searchParams.get('categoryId');
-        if (categoryIdParam) {
-            const categoryId = parseInt(categoryIdParam);
-            return !isNaN(categoryId) ? categoryId : null;
+        const categoryParam = searchParams.get('category');
+        if (categoryParam && categories.length > 0) {
+            // Find category by slug
+            const category = categories.find(c => categoryToSlug(c.name) === categoryParam);
+            return category?.id || null;
         }
         return null;
     })();
 
     const [activeCategoryId, setActiveCategoryId] = useState<number | null>(initialCategoryId);
 
-    // Fetch categories from backend
-    const { categories, loading: categoriesLoading } = useCategories();
-
-    // Validate category ID once categories are loaded
+    // Update activeCategoryId when URL changes or categories load
     useEffect(() => {
-        if (initialCategoryId && categories.length > 0) {
-            // Verify the category exists, if not reset to null
-            if (!categories.find(c => c.id === initialCategoryId)) {
+        const categoryParam = searchParams.get('category');
+        if (categoryParam && categories.length > 0) {
+            const category = categories.find(c => categoryToSlug(c.name) === categoryParam);
+            if (category) {
+                setActiveCategoryId(category.id);
+            } else {
                 setActiveCategoryId(null);
             }
+        } else if (!categoryParam) {
+            setActiveCategoryId(null);
         }
-    }, [categories, initialCategoryId]);
+    }, [searchParams, categories]);
 
     console.log('🎯 Portfolio page loaded with categoryId:', activeCategoryId);
 
@@ -54,13 +67,18 @@ const PortfolioContent: React.FC = () => {
     const categoryOptions = ['All', ...categories.map(cat => cat.name)];
     const activeCategoryName = activeCategoryId === null ? 'All' : categories.find(c => c.id === activeCategoryId)?.name || 'All';
 
+    // Build canonical URL with category if selected
+    const canonicalUrl = activeCategoryId 
+        ? `${siteConfig.url}/portfolio?category=${categoryToSlug(activeCategoryName)}`
+        : `${siteConfig.url}/portfolio`;
+
     return (
         <>
             <SEOHead
-                title="Portfolio - Creative Projects & Work | SENU"
+                title={activeCategoryName !== 'All' ? `${activeCategoryName} Portfolio - SENU` : "Portfolio - Creative Projects & Work | SENU"}
                 description="Explore our portfolio of creative projects including video editing, motion graphics, 3D animation, graphic design, social media content, and advertising campaigns."
                 keywords={['portfolio', 'creative projects', 'video portfolio', 'design work', 'motion graphics portfolio']}
-                canonicalUrl={`${siteConfig.url}/portfolio`}
+                canonicalUrl={canonicalUrl}
             />
             <Navbar />
             <div className="min-h-screen text-white mt-32">
@@ -83,9 +101,14 @@ const PortfolioContent: React.FC = () => {
                                 onCategoryChange={(categoryName) => {
                                     if (categoryName === 'All') {
                                         setActiveCategoryId(null);
+                                        router.push(pathname);
                                     } else {
                                         const category = categories.find(c => c.name === categoryName);
-                                        if (category) setActiveCategoryId(category.id);
+                                        if (category) {
+                                            setActiveCategoryId(category.id);
+                                            const slug = categoryToSlug(categoryName);
+                                            router.push(`${pathname}?category=${slug}`);
+                                        }
                                     }
                                 }}
                             />

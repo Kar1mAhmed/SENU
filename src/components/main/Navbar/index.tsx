@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Button from '@/components/main/Button';
 import { FaInstagram, FaBehance, FaVimeo } from 'react-icons/fa';
 import { SiX } from 'react-icons/si';
@@ -66,7 +67,7 @@ const Navbar: React.FC<NavbarProps> = ({ hideOnSectionId }) => {
             {/* Left: Logo */}
             <div className="flex-shrink-0">
               <Link href="/">
-                <img src="/logo.svg" alt="Senu Logo" className="w-[45px] h-[45px] lg:w-[55px] lg:h-[55px] mx-8 lg:mx-12" />
+                <Image src="/logo.svg" alt="Senu Logo" width={55} height={55} className="w-[45px] h-[45px] lg:w-[55px] lg:h-[55px] mx-8 lg:mx-12" />
               </Link>
             </div>
 

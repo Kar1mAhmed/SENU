@@ -1,4 +1,4 @@
-import { Project, Testimonial, FAQ, AboutCard, Service, TeamMember } from './types';
+import { Testimonial, FAQ, AboutCard, TeamMember } from './types';
 
 
 
@@ -124,7 +124,7 @@ export const mockAboutCards: AboutCard[] = [
         id: '1',
         question: 'Who are we?',
         answer: 'We are a collective of passionate designers, artists, and creative minds who believe in the power of visual storytelling. Our diverse backgrounds in branding, digital design, and creative strategy allow us to bring unique perspectives to every project we undertake.',
-        imageUrl: '/images/covers/1.jpg',
+        imageUrl: '/images/covers/Who.jpg',
         cardBackgroundColor: 'bg-blue',
         sidebarBackgroundColor: 'bg-blue-soft',
         sidebarCharacterColor: 'bg-blue-40',

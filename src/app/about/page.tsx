@@ -2,7 +2,7 @@ import React from 'react';
 import { Metadata } from 'next';
 import WhoWeAre from '@/components/about/WhoWeAre';
 import ServiceSection from '@/components/about/ServiceSection';
-import TeamSection from '@/components/about/TeamSection';
+// import TeamSection from '@/components/about/TeamSection';
 import QuestionsSection from '@/components/about/QuestionsSection';
 import Footer from '@/components/main/Footer';
 import SingleRibbon from '@/components/main/SingleRibbon';
