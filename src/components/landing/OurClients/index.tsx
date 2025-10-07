@@ -4,7 +4,7 @@ import React from 'react';
 const clientLogos = [
     { name: 'havana', src: '/images/clients/1.svg' },
     { name: 'oryx', src: '/images/clients/2.svg' },
-    { name: 'khazna', src: '/images/clients/3.svg' },
+    { name: 'Unicef', src: '/images/clients/12.svg' },
     { name: 'lego', src: '/images/clients/4.svg' },
     { name: 'tanoreen', src: '/images/clients/5.svg' },
     { name: 'havana', src: '/images/clients/6.svg' },

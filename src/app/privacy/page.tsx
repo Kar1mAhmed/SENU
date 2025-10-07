@@ -6,7 +6,7 @@ export default function PrivacyPage() {
     return (
         <main>
             <Navbar />
-            
+
             {/* Privacy Policy Content */}
             <section className="min-h-screen bg-black text-white py-20 px-4 mt-32">
                 <div className="max-w-[1280px] mx-auto px-4 lg:px-0">
@@ -28,14 +28,14 @@ export default function PrivacyPage() {
                                 1. Information We Collect
                             </h2>
                             <p className="text-gray-300 leading-relaxed mb-4">
-                                We collect information that you provide directly to us when you use our services, 
-                                including when you create an account, submit inquiries, or communicate with us. 
-                                This may include your name, email address, phone number, and any other information 
+                                We collect information that you provide directly to us when you use our services,
+                                including when you create an account, submit inquiries, or communicate with us.
+                                This may include your name, email address, phone number, and any other information
                                 you choose to provide.
                             </p>
                             <p className="text-gray-300 leading-relaxed">
-                                We also automatically collect certain information about your device when you use 
-                                our website, including your IP address, browser type, operating system, and browsing 
+                                We also automatically collect certain information about your device when you use
+                                our website, including your IP address, browser type, operating system, and browsing
                                 behavior through cookies and similar technologies.
                             </p>
                         </div>
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
                                 3. Information Sharing and Disclosure
                             </h2>
                             <p className="text-gray-300 leading-relaxed mb-4">
-                                We do not sell, trade, or rent your personal information to third parties. 
+                                We do not sell, trade, or rent your personal information to third parties.
                                 We may share your information only in the following circumstances:
                             </p>
                             <ul className="list-disc list-inside text-gray-300 space-y-2 ml-4">
@@ -83,9 +83,9 @@ export default function PrivacyPage() {
                                 4. Data Security
                             </h2>
                             <p className="text-gray-300 leading-relaxed">
-                                We take reasonable measures to protect your information from unauthorized access, 
-                                use, or disclosure. However, no internet transmission is completely secure, and we 
-                                cannot guarantee the absolute security of your information. We use industry-standard 
+                                We take reasonable measures to protect your information from unauthorized access,
+                                use, or disclosure. However, no internet transmission is completely secure, and we
+                                cannot guarantee the absolute security of your information. We use industry-standard
                                 encryption and security protocols to protect your data.
                             </p>
                         </div>
@@ -96,8 +96,8 @@ export default function PrivacyPage() {
                                 5. Cookies and Tracking Technologies
                             </h2>
                             <p className="text-gray-300 leading-relaxed">
-                                We use cookies and similar tracking technologies to collect information about your 
-                                browsing activities. You can control cookies through your browser settings, but 
+                                We use cookies and similar tracking technologies to collect information about your
+                                browsing activities. You can control cookies through your browser settings, but
                                 disabling cookies may affect your ability to use certain features of our website.
                             </p>
                         </div>
@@ -108,7 +108,7 @@ export default function PrivacyPage() {
                                 6. Your Rights and Choices
                             </h2>
                             <p className="text-gray-300 leading-relaxed mb-4">
-                                Depending on your location, you may have certain rights regarding your personal 
+                                Depending on your location, you may have certain rights regarding your personal
                                 information, including:
                             </p>
                             <ul className="list-disc list-inside text-gray-300 space-y-2 ml-4">
@@ -127,9 +127,9 @@ export default function PrivacyPage() {
                                 7. Children&apos;s Privacy
                             </h2>
                             <p className="text-gray-300 leading-relaxed">
-                                Our services are not directed to children under the age of 13, and we do not 
-                                knowingly collect personal information from children. If we learn that we have 
-                                collected information from a child under 13, we will take steps to delete that 
+                                Our services are not directed to children under the age of 13, and we do not
+                                knowingly collect personal information from children. If we learn that we have
+                                collected information from a child under 13, we will take steps to delete that
                                 information as soon as possible.
                             </p>
                         </div>
@@ -140,9 +140,9 @@ export default function PrivacyPage() {
                                 8. Changes to This Privacy Policy
                             </h2>
                             <p className="text-gray-300 leading-relaxed">
-                                We may update this Privacy Policy from time to time. We will notify you of any 
-                                changes by posting the new Privacy Policy on this page and updating the &quot;Last 
-                                updated&quot; date. We encourage you to review this Privacy Policy periodically for 
+                                We may update this Privacy Policy from time to time. We will notify you of any
+                                changes by posting the new Privacy Policy on this page and updating the &quot;Last
+                                updated&quot; date. We encourage you to review this Privacy Policy periodically for
                                 any changes.
                             </p>
                         </div>
@@ -153,12 +153,12 @@ export default function PrivacyPage() {
                                 9. Contact Us
                             </h2>
                             <p className="text-gray-300 leading-relaxed mb-4">
-                                If you have any questions about this Privacy Policy or our privacy practices, 
+                                If you have any questions about this Privacy Policy or our privacy practices,
                                 please contact us at:
                             </p>
                             <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-lg p-6">
                                 <p className="text-white mb-2">
-                                    <span className="text-yellow font-semibold">Email:</span> senu@senu.studio
+                                    <span className="text-yellow font-semibold">Email:</span> info@senu.studio
                                 </p>
                                 <p className="text-white mb-2">
                                     <span className="text-yellow font-semibold">Address:</span> [Your Company Address]
