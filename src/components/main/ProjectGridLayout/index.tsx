@@ -3,6 +3,8 @@
 import React from 'react';
 import ProjectCard from '../ProjectCard';
 import { Project } from '@/lib/types';
+import StaggerContainer from '@/components/animations/StaggerContainer';
+import StaggerItem from '@/components/animations/StaggerItem';
 
 interface ProjectGridLayoutProps {
     projects: Project[];
@@ -22,17 +24,17 @@ const ProjectGridLayout: React.FC<ProjectGridLayoutProps> = ({
             <div className="w-full max-w-[1000px] md:max-w-[1000px] lg:max-w-[1100px] xl:max-w-[1400px] 2xl:max-w-[1600px] overflow-visible">
                 {/* Mobile: Single column for all */}
                 <div className="block md:hidden">
-                    <div className="flex flex-col items-center gap-8">
+                    <StaggerContainer staggerDelay={0.15} className="flex flex-col items-center gap-8">
                         {projects.map((project, index) => {
                             if (project.type === 'horizontal') {
                                 return (
-                                    <div key={project.id} className="w-full relative overflow-visible">
+                                    <StaggerItem key={project.id} direction="up" className="w-full relative overflow-visible">
                                         <ProjectCard 
                                             project={project} 
                                             index={index}
                                             layout="fullwidth"
                                         />
-                                    </div>
+                                    </StaggerItem>
                                 );
                             }
                             
@@ -41,17 +43,17 @@ const ProjectGridLayout: React.FC<ProjectGridLayoutProps> = ({
                             const isLeft = zigzagIndex % 2 === 0;
                             
                             return (
-                                <div key={project.id} className="w-full max-w-[400px]">
+                                <StaggerItem key={project.id} direction="up" className="w-full max-w-[400px]">
                                     <ProjectCard 
                                         project={project} 
                                         index={index}
                                         isLeft={isLeft}
                                         layout="zigzag"
                                     />
-                                </div>
+                                </StaggerItem>
                             );
                         })}
-                    </div>
+                    </StaggerContainer>
                 </div>
 
                 {/* Desktop: Exact DB order with proper zigzag */}
@@ -66,26 +68,26 @@ const ProjectGridLayout: React.FC<ProjectGridLayoutProps> = ({
                                 if (currentZigzagBatch.length > 0) {
                                     elements.push(
                                         <div key={`zigzag-${index}`} className="grid grid-cols-2 gap-x-6 md:gap-x-8 lg:gap-x-12 xl:gap-x-16 mb-20">
-                                            <div className="flex flex-col items-end gap-10 md:gap-12">
+                                            <StaggerContainer staggerDelay={0.15} className="flex flex-col items-end gap-10 md:gap-12">
                                                 {currentZigzagBatch.map((p, i) => {
                                                     if (i % 2 !== 0) return null;
                                                     return (
-                                                        <div key={p.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
+                                                        <StaggerItem key={p.id} direction="left" className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
                                                             <ProjectCard project={p} index={projects.indexOf(p)} isLeft={true} layout="zigzag" />
-                                                        </div>
+                                                        </StaggerItem>
                                                     );
                                                 })}
-                                            </div>
-                                            <div className="flex flex-col items-start gap-10 md:gap-12 mt-16 md:mt-20 lg:mt-24 xl:mt-32">
+                                            </StaggerContainer>
+                                            <StaggerContainer staggerDelay={0.15} className="flex flex-col items-start gap-10 md:gap-12 mt-16 md:mt-20 lg:mt-24 xl:mt-32">
                                                 {currentZigzagBatch.map((p, i) => {
                                                     if (i % 2 === 0) return null;
                                                     return (
-                                                        <div key={p.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
+                                                        <StaggerItem key={p.id} direction="right" className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
                                                             <ProjectCard project={p} index={projects.indexOf(p)} isLeft={false} layout="zigzag" />
-                                                        </div>
+                                                        </StaggerItem>
                                                     );
                                                 })}
-                                            </div>
+                                            </StaggerContainer>
                                         </div>
                                     );
                                     currentZigzagBatch = [];
@@ -93,9 +95,9 @@ const ProjectGridLayout: React.FC<ProjectGridLayoutProps> = ({
                                 
                                 // Render horizontal video
                                 elements.push(
-                                    <div key={project.id} className="w-full mb-20">
+                                    <StaggerItem key={project.id} direction="up" className="w-full mb-20">
                                         <ProjectCard project={project} index={index} layout="fullwidth" />
-                                    </div>
+                                    </StaggerItem>
                                 );
                             } else {
                                 // Add to zigzag batch
@@ -107,26 +109,26 @@ const ProjectGridLayout: React.FC<ProjectGridLayoutProps> = ({
                         if (currentZigzagBatch.length > 0) {
                             elements.push(
                                 <div key="zigzag-final" className="grid grid-cols-2 gap-x-6 md:gap-x-8 lg:gap-x-12 xl:gap-x-16">
-                                    <div className="flex flex-col items-end gap-10 md:gap-12">
+                                    <StaggerContainer staggerDelay={0.15} className="flex flex-col items-end gap-10 md:gap-12">
                                         {currentZigzagBatch.map((p, i) => {
                                             if (i % 2 !== 0) return null;
                                             return (
-                                                <div key={p.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
+                                                <StaggerItem key={p.id} direction="left" className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
                                                     <ProjectCard project={p} index={projects.indexOf(p)} isLeft={true} layout="zigzag" />
-                                                </div>
+                                                </StaggerItem>
                                             );
                                         })}
-                                    </div>
-                                    <div className="flex flex-col items-start gap-10 md:gap-12 mt-16 md:mt-20 lg:mt-24 xl:mt-32">
+                                    </StaggerContainer>
+                                    <StaggerContainer staggerDelay={0.15} className="flex flex-col items-start gap-10 md:gap-12 mt-16 md:mt-20 lg:mt-24 xl:mt-32">
                                         {currentZigzagBatch.map((p, i) => {
                                             if (i % 2 === 0) return null;
                                             return (
-                                                <div key={p.id} className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
+                                                <StaggerItem key={p.id} direction="right" className="w-full max-w-[450px] lg:max-w-[480px] xl:max-w-[500px]">
                                                     <ProjectCard project={p} index={projects.indexOf(p)} isLeft={false} layout="zigzag" />
-                                                </div>
+                                                </StaggerItem>
                                             );
                                         })}
-                                    </div>
+                                    </StaggerContainer>
                                 </div>
                             );
                         }

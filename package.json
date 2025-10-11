@@ -13,7 +13,7 @@
   "dependencies": {
     "@cloudflare/next-on-pages": "^1.13.12",
     "@microsoft/clarity": "^1.0.0",
-    "framer-motion": "^12.12.1",
+    "framer-motion": "^12.23.24",
     "libphonenumber-js": "^1.12.23",
     "next": "15.5.3",
     "react": "19.1.1",

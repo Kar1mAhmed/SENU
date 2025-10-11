@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useProjects } from '@/lib/hooks/useProjects';
 import { useCategories } from '@/lib/hooks/useCategories';
 import ProjectGridLayout from '../../main/ProjectGridLayout';
+import FadeIn from '@/components/animations/FadeIn';
 
 const ProjectHighlight: React.FC = () => {
     const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
@@ -28,9 +29,11 @@ const ProjectHighlight: React.FC = () => {
             {/* Full width container for everything */}
             <div className="w-full">
                 {/* Title */}
-                <h2 className="font-new-black text-white text-4xl font-light sm:text-5xl md:text-6xl text-center mb-12">
-                    Our Projects <span className="font-medium">Highlight</span>
-                </h2>
+                <FadeIn direction="up" duration={0.8}>
+                    <h2 className="font-new-black text-white text-4xl font-light sm:text-5xl md:text-6xl text-center mb-12">
+                        Our Projects <span className="font-medium">Highlight</span>
+                    </h2>
+                </FadeIn>
                 
                 {/* Category buttons - centered */}
                 {categoriesLoading ? (
@@ -38,8 +41,9 @@ const ProjectHighlight: React.FC = () => {
                         <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
                     </div>
                 ) : (
-                    <div className="flex justify-center mb-16">
-                        <div className="flex overflow-x-auto md:flex-wrap md:justify-center gap-4 no-scrollbar px-4" id="category-buttons">
+                    <FadeIn direction="up" delay={0.2}>
+                        <div className="flex justify-center mb-16">
+                            <div className="flex overflow-x-auto md:flex-wrap md:justify-center gap-4 no-scrollbar px-4" id="category-buttons">
                             {categoryOptions.map((categoryName) => (
                                 <button
                                     key={categoryName}
@@ -59,8 +63,9 @@ const ProjectHighlight: React.FC = () => {
                                     {categoryName}
                                 </button>
                             ))}
+                            </div>
                         </div>
-                    </div>
+                    </FadeIn>
                 )}
 
                 {/* Loading state */}

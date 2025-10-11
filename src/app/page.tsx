@@ -11,6 +11,7 @@ import FAQSection from '@/components/landing/FAQSection';
 import Footer from '@/components/main/Footer';
 import Navbar from '@/components/main/Navbar';
 import { generateServiceSchema } from '@/lib/metadata';
+import FadeIn from '@/components/animations/FadeIn';
 
 export default function Home() {
   // Generate service schema for homepage
@@ -28,18 +29,40 @@ export default function Home() {
       ))}
       <main>
         <Navbar />
-        <HeroSection />
-        <EmailSignup />
-        <Ribbon />
-        <WhatWeDo />
-        <OurClients />
-        <ProjectHighlight />
-        <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]" />
-        <MetricsSection />
-        <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]" />
+        <FadeIn direction="down" duration={0.8}>
+          <HeroSection />
+        </FadeIn>
+        <FadeIn direction="up" delay={0.2}>
+          <EmailSignup />
+        </FadeIn>
+        <FadeIn direction="left" delay={0.1}>
+          <Ribbon />
+        </FadeIn>
+        <FadeIn direction="up" delay={0.2}>
+          <WhatWeDo />
+        </FadeIn>
+        <FadeIn direction="up" delay={0.2}>
+          <OurClients />
+        </FadeIn>
+        <FadeIn direction="up" delay={0.2}>
+          <ProjectHighlight />
+        </FadeIn>
+        <FadeIn direction="right" delay={0.1}>
+          <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]" />
+        </FadeIn>
+        <FadeIn direction="up" delay={0.2}>
+          <MetricsSection />
+        </FadeIn>
+        <FadeIn direction="left" delay={0.1}>
+          <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]" />
+        </FadeIn>
         {/* <ClientsSection /> */}
-        <FAQSection />
-        <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]" />
+        <FadeIn direction="up" delay={0.2}>
+          <FAQSection />
+        </FadeIn>
+        <FadeIn direction="right" delay={0.1}>
+          <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]" />
+        </FadeIn>
         <Footer />
       </main>
     </div>

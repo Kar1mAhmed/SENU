@@ -1,6 +1,9 @@
 'use client';
 import React from 'react';
 import Icon from '../../main/Icon';
+import FadeIn from '@/components/animations/FadeIn';
+import StaggerContainer from '@/components/animations/StaggerContainer';
+import StaggerItem from '@/components/animations/StaggerItem';
 
 
 interface Metric {
@@ -59,16 +62,19 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({ className = '' }) => {
         <section className={`py-16 md:py-20 ${className}`}>
             <div className="w-full">
                 {/* Title */}
-                <h2 className="font-new-black text-white text-4xl font-light sm:text-5xl md:text-6xl text-center mb-12">
-                    Our <span className="font-medium">Impact</span>
-                </h2>
+                <FadeIn direction="up" duration={0.8}>
+                    <h2 className="font-new-black text-white text-4xl font-light sm:text-5xl md:text-6xl text-center mb-12">
+                        Our <span className="font-medium">Impact</span>
+                    </h2>
+                </FadeIn>
 
                 {/* Metrics Grid - Aligned with BackgroundGrid */}
                 <div className="w-full h-full">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-rows-2 md:grid-rows-1 gap-y-8 md:gap-y-0 h-full w-full">
+                    <StaggerContainer staggerDelay={0.15} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 grid-rows-2 md:grid-rows-1 gap-y-8 md:gap-y-0 h-full w-full">
                         {metrics.map((metric, index) => (
-                            <div
+                            <StaggerItem
                                 key={metric.id}
+                                direction="up"
                                 className="flex justify-center items-center px-3 md:px-4 lg:px-6 group"
                             >
                                 <div className="bg-black border-[#474747]/20 border rounded-lg mt-4 md:mt-2 p-4 md:p-6 lg:p-8 flex flex-col items-center justify-center text-center w-full max-w-[260px] md:max-w-[300px] lg:max-w-[360px] h-[200px] md:h-[240px] lg:h-[280px] 
@@ -98,9 +104,9 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({ className = '' }) => {
                                         {metric.description}
                                     </p>
                                 </div>
-                            </div>
+                            </StaggerItem>
                         ))}
-                    </div>
+                    </StaggerContainer>
                 </div>
             </div>
         </section>

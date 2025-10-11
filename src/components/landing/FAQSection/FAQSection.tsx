@@ -4,6 +4,9 @@ import React, { useState } from 'react';
 import { FAQ, WithClassName } from '@/lib/types';
 import { mockFAQs } from '@/lib/mock-data';
 import Link from "next/link";
+import FadeIn from '@/components/animations/FadeIn';
+import StaggerContainer from '@/components/animations/StaggerContainer';
+import StaggerItem from '@/components/animations/StaggerItem';
 
 interface FAQItemProps {
     faq: FAQ;
@@ -78,46 +81,51 @@ const FAQSection: React.FC<FAQSectionProps> = ({
             {/* Header Section - Full Width like Navbar */}
             <div className="flex justify-center w-full px-4 mb-16">
                 <div className="w-full max-w-[1000px] lg:max-w-[1100px] xl:max-w-[1280px]">
-                    <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-8">
-                        {/* Left: Title and Description */}
-                        <div>
-                            <h2 className="mx-4 lg:mx-0 text-4xl lg:text-5xl font-semibold text-white mb-6 new-black">
-                                Design FAQs
-                            </h2>
-                            <p className="mx-4 lg:mx-0 text-gray-400 text-sm md:text-lg leading-relaxed max-w-lg font-alexandria">
-                                As a leading Design agency, we are dedicated to providing
-                                comprehensive educational resources and answering frequently
-                                asked questions to help our clients.
-                            </p>
-                        </div>
+                    <FadeIn direction="up" duration={0.8}>
+                        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-8">
+                            {/* Left: Title and Description */}
+                            <div>
+                                <h2 className="mx-4 lg:mx-0 text-4xl lg:text-5xl font-semibold text-white mb-6 new-black">
+                                    Design FAQs
+                                </h2>
+                                <p className="mx-4 lg:mx-0 text-gray-400 text-sm md:text-lg leading-relaxed max-w-lg font-alexandria">
+                                    As a leading Design agency, we are dedicated to providing
+                                    comprehensive educational resources and answering frequently
+                                    asked questions to help our clients.
+                                </p>
+                            </div>
 
-                        {/* Right: Button */}
-                        <div className="flex justify-center md:justify-end md:flex-shrink-0">
-                            <Link href="/contact" className="w-full sm:w-auto">
-                                <button className="w-full sm:w-auto bg-blue hover:bg-blue-700 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-600/25">
-                                    Ask Us
-                                </button>
-                            </Link>
+                            {/* Right: Button */}
+                            <div className="flex justify-center md:justify-end md:flex-shrink-0">
+                                <Link href="/contact" className="w-full sm:w-auto">
+                                    <button className="w-full sm:w-auto bg-blue hover:bg-blue-700 text-white px-8 py-4 rounded-full font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-600/25">
+                                        Ask Us
+                                    </button>
+                                </Link>
+                            </div>
                         </div>
-                    </div>
+                    </FadeIn>
                 </div>
             </div>
 
             {/* FAQ Items Section */}
             <div className="flex justify-center w-full px-4">
                 <div className="w-full max-w-[1000px] lg:max-w-[1100px] xl:max-w-[1280px]">
-                    <div className="bg-glass-fill-clients backdrop-blur-md p-8 backdrop-blur-sm">
-                        <div className="space-y-0">
-                            {faqs.map((faq) => (
-                                <FAQItem
-                                    key={faq.id}
-                                    faq={faq}
-                                    isOpen={openFAQ === faq.id}
-                                    onToggle={() => handleToggle(faq.id)}
-                                />
-                            ))}
+                    <FadeIn direction="up" delay={0.2}>
+                        <div className="bg-glass-fill-clients backdrop-blur-md p-8 backdrop-blur-sm">
+                            <StaggerContainer staggerDelay={0.1} className="space-y-0">
+                                {faqs.map((faq) => (
+                                    <StaggerItem key={faq.id} direction="up">
+                                        <FAQItem
+                                            faq={faq}
+                                            isOpen={openFAQ === faq.id}
+                                            onToggle={() => handleToggle(faq.id)}
+                                        />
+                                    </StaggerItem>
+                                ))}
+                            </StaggerContainer>
                         </div>
-                    </div>
+                    </FadeIn>
                 </div>
             </div>
         </section>
