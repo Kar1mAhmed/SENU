@@ -1,5 +1,7 @@
 'use client';
 import React from 'react';
+import FadeIn from '@/components/animations/FadeIn';
+import ScaleIn from '@/components/animations/ScaleIn';
 
 const ServiceSection = () => {
     console.log('🛠️ Service section rendering - showcasing our diverse talents!');
@@ -78,7 +80,8 @@ const ServiceSection = () => {
             <div className="max-w-[1280px] mx-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     {/* Left Content */}
-                    <div className="space-y-6 text-center lg:text-left ml-0 lg:ml-8">
+                    <FadeIn direction="left" duration={0.8}>
+                        <div className="space-y-6 text-center lg:text-left ml-0 lg:ml-8">
                         <div className="space-y-2">
                             <h2 className="font-new-black text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold" style={{ color: '#4d4d4d' }}>
                                 SHOWCASING DIVERSITY
@@ -92,15 +95,17 @@ const ServiceSection = () => {
                             Our community is made up of talented artists from around the world who share their passion for contemporary art. We seek to showcase the diversity of artistic expressions and provide a platform for emerging artists to promote their work. With a focus on collaboration and innovation, we strive to push the boundaries of creativity and inspire future generations of artists.
                         </p>
 
-                        <div className="flex justify-center lg:justify-start">
-                            <button className="bg-blue hover:bg-blue-40 text-white font-new-black font-bold px-8 py-3 rounded-full transition-colors duration-300">
-                                Join us
-                            </button>
+                            <div className="flex justify-center lg:justify-start">
+                                <button className="bg-blue hover:bg-blue-40 text-white font-new-black font-bold px-8 py-3 rounded-full transition-colors duration-300">
+                                    Join us
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    </FadeIn>
 
                     {/* Right Service Tags */}
-                    <div className="relative h-[400px] sm:h-[500px] lg:h-[600px] mt-0 lg:mt-0">
+                    <ScaleIn delay={0.3} duration={0.8}>
+                        <div className="relative h-[400px] sm:h-[500px] lg:h-[600px] mt-0 lg:mt-0">
                         {services.map((service, index) => {
                             // Calculate distance from center for opacity effect
                             const centerDistance = Math.abs(index - services.length / 2) / (services.length / 2);
@@ -176,7 +181,8 @@ const ServiceSection = () => {
                                 </div>
                             );
                         })}
-                    </div>
+                        </div>
+                    </ScaleIn>
                 </div>
             </div>
         </section>

@@ -7,6 +7,7 @@ import { FiCopy, FiCheck, FiChevronDown, FiX, FiAlertCircle } from 'react-icons/
 import { contactAPI } from '@/lib/api-client';
 import { isValidPhoneNumber, getCountries, getCountryCallingCode } from 'libphonenumber-js';
 import type { CountryCode } from 'libphonenumber-js';
+import FadeIn from '@/components/animations/FadeIn';
 
 
 
@@ -334,21 +335,24 @@ export default function GetInTouchSection() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
             {/* Left Side - Heading */}
-            <div className="text-left">
-              <h2 className="font-new-black text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-white leading-tight">
-                GET YOUR PROJECT
-                <br />
-                <span className="text-blue">IN THE NEXT LEVEL</span>
-              </h2>
-              <p className="text-gray-400 text-lg md:text-xl mt-6 font-alexandria">
-                Ready to bring your vision to life? Let&apos;s start the conversation.
-              </p>
-            </div>
+            <FadeIn direction="left" duration={0.8}>
+              <div className="text-left">
+                <h2 className="font-new-black text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-white leading-tight">
+                  GET YOUR PROJECT
+                  <br />
+                  <span className="text-blue">IN THE NEXT LEVEL</span>
+                </h2>
+                <p className="text-gray-400 text-lg md:text-xl mt-6 font-alexandria">
+                  Ready to bring your vision to life? Let&apos;s start the conversation.
+                </p>
+              </div>
+            </FadeIn>
 
             {/* Right Side - Contact Form */}
-            <div className="relative">
-              {/* Header with Email and Actions */}
-              <div className="mb-8">
+            <FadeIn direction="right" delay={0.2} duration={0.8}>
+              <div className="relative">
+                {/* Header with Email and Actions */}
+                <div className="mb-8">
                 <div className="flex justify-between items-start mb-4">
                   <p className="text-gray-400 text-sm font-alexandria uppercase tracking-wider">
                     DROP A LINE
@@ -550,7 +554,8 @@ export default function GetInTouchSection() {
                   {isSubmitting ? 'SENDING...' : 'HIT US'}
                 </button>
               </form>
-            </div>
+              </div>
+            </FadeIn>
           </div>
         </div>
       </section>

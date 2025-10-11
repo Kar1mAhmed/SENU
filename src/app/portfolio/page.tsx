@@ -11,6 +11,7 @@ import Footer from '@/components/main/Footer';
 import Navbar from '@/components/main/Navbar';
 import SEOHead from '@/components/SEOHead';
 import { siteConfig } from '@/lib/seo-config';
+import FadeIn from '@/components/animations/FadeIn';
 
 // Helper function to convert category name to URL-friendly slug
 const categoryToSlug = (categoryName: string): string => {
@@ -85,9 +86,11 @@ const PortfolioContent: React.FC = () => {
                 <section className="py-16 md:py-20">
                     <div className="w-full">
                         {/* Title */}
-                        <h1 className="font-new-black text-white text-4xl font-light sm:text-5xl md:text-6xl lg:text-7xl text-center mb-12">
-                            Our <span className="font-medium">Portfolio</span>
-                        </h1>
+                        <FadeIn direction="down" duration={0.8}>
+                            <h1 className="font-new-black text-white text-4xl font-light sm:text-5xl md:text-6xl lg:text-7xl text-center mb-12">
+                                Our <span className="font-medium">Portfolio</span>
+                            </h1>
+                        </FadeIn>
 
                         {/* Category Filter */}
                         {categoriesLoading ? (
@@ -95,23 +98,25 @@ const PortfolioContent: React.FC = () => {
                                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
                             </div>
                         ) : (
-                            <CategoryFilter
-                                categories={categoryOptions}
-                                activeCategory={activeCategoryName}
-                                onCategoryChange={(categoryName) => {
-                                    if (categoryName === 'All') {
-                                        setActiveCategoryId(null);
-                                        router.push(pathname);
-                                    } else {
-                                        const category = categories.find(c => c.name === categoryName);
-                                        if (category) {
-                                            setActiveCategoryId(category.id);
-                                            const slug = categoryToSlug(categoryName);
-                                            router.push(`${pathname}?category=${slug}`);
+                            <FadeIn direction="up" delay={0.2}>
+                                <CategoryFilter
+                                    categories={categoryOptions}
+                                    activeCategory={activeCategoryName}
+                                    onCategoryChange={(categoryName) => {
+                                        if (categoryName === 'All') {
+                                            setActiveCategoryId(null);
+                                            router.push(pathname);
+                                        } else {
+                                            const category = categories.find(c => c.name === categoryName);
+                                            if (category) {
+                                                setActiveCategoryId(category.id);
+                                                const slug = categoryToSlug(categoryName);
+                                                router.push(`${pathname}?category=${slug}`);
+                                            }
                                         }
-                                    }
-                                }}
-                            />
+                                    }}
+                                />
+                            </FadeIn>
                         )}
 
                         {/* Loading state */}

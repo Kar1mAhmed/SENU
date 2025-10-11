@@ -18,13 +18,16 @@ const ProjectGridLayout: React.FC<ProjectGridLayoutProps> = ({
     console.log('📊 ProjectGridLayout rendering with layout:', layout, 'projects:', projects.length);
     console.log('📊 Projects order received:', projects.map(p => p.name));
 
+    // Create a unique key based on project IDs to prevent re-animation on same content
+    const projectsKey = projects.map(p => p.id).join('-');
+
     return (
         <div className="flex justify-center w-full px-4 overflow-visible">
             {/* Container with proper overflow handling */}
             <div className="w-full max-w-[1000px] md:max-w-[1000px] lg:max-w-[1100px] xl:max-w-[1400px] 2xl:max-w-[1600px] overflow-visible">
                 {/* Mobile: Single column for all */}
                 <div className="block md:hidden">
-                    <StaggerContainer staggerDelay={0.15} className="flex flex-col items-center gap-8">
+                    <StaggerContainer key={`mobile-${projectsKey}`} staggerDelay={0.15} className="flex flex-col items-center gap-8">
                         {projects.map((project, index) => {
                             if (project.type === 'horizontal') {
                                 return (
@@ -66,9 +69,10 @@ const ProjectGridLayout: React.FC<ProjectGridLayoutProps> = ({
                             if (project.type === 'horizontal') {
                                 // Render any accumulated zigzag projects first
                                 if (currentZigzagBatch.length > 0) {
+                                    const batchKey = currentZigzagBatch.map(p => p.id).join('-');
                                     elements.push(
                                         <div key={`zigzag-${index}`} className="grid grid-cols-2 gap-x-6 md:gap-x-8 lg:gap-x-12 xl:gap-x-16 mb-20">
-                                            <StaggerContainer staggerDelay={0.15} className="flex flex-col items-end gap-10 md:gap-12">
+                                            <StaggerContainer key={`left-${batchKey}`} staggerDelay={0.15} className="flex flex-col items-end gap-10 md:gap-12">
                                                 {currentZigzagBatch.map((p, i) => {
                                                     if (i % 2 !== 0) return null;
                                                     return (
@@ -78,7 +82,7 @@ const ProjectGridLayout: React.FC<ProjectGridLayoutProps> = ({
                                                     );
                                                 })}
                                             </StaggerContainer>
-                                            <StaggerContainer staggerDelay={0.15} className="flex flex-col items-start gap-10 md:gap-12 mt-16 md:mt-20 lg:mt-24 xl:mt-32">
+                                            <StaggerContainer key={`right-${batchKey}`} staggerDelay={0.15} className="flex flex-col items-start gap-10 md:gap-12 mt-16 md:mt-20 lg:mt-24 xl:mt-32">
                                                 {currentZigzagBatch.map((p, i) => {
                                                     if (i % 2 === 0) return null;
                                                     return (
@@ -107,9 +111,10 @@ const ProjectGridLayout: React.FC<ProjectGridLayoutProps> = ({
                         
                         // Render any remaining zigzag projects
                         if (currentZigzagBatch.length > 0) {
+                            const finalBatchKey = currentZigzagBatch.map(p => p.id).join('-');
                             elements.push(
                                 <div key="zigzag-final" className="grid grid-cols-2 gap-x-6 md:gap-x-8 lg:gap-x-12 xl:gap-x-16">
-                                    <StaggerContainer staggerDelay={0.15} className="flex flex-col items-end gap-10 md:gap-12">
+                                    <StaggerContainer key={`final-left-${finalBatchKey}`} staggerDelay={0.15} className="flex flex-col items-end gap-10 md:gap-12">
                                         {currentZigzagBatch.map((p, i) => {
                                             if (i % 2 !== 0) return null;
                                             return (
@@ -119,7 +124,7 @@ const ProjectGridLayout: React.FC<ProjectGridLayoutProps> = ({
                                             );
                                         })}
                                     </StaggerContainer>
-                                    <StaggerContainer staggerDelay={0.15} className="flex flex-col items-start gap-10 md:gap-12 mt-16 md:mt-20 lg:mt-24 xl:mt-32">
+                                    <StaggerContainer key={`final-right-${finalBatchKey}`} staggerDelay={0.15} className="flex flex-col items-start gap-10 md:gap-12 mt-16 md:mt-20 lg:mt-24 xl:mt-32">
                                         {currentZigzagBatch.map((p, i) => {
                                             if (i % 2 === 0) return null;
                                             return (
