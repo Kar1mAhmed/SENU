@@ -39,7 +39,7 @@ export default function RootLayout({
   const organizationSchema = generateOrganizationSchema();
 
   return (
-    <html lang="en" className={`${newBlack.variable} ${alexandria.variable}`}>
+    <html lang="en" className={`${newBlack.variable} ${alexandria.variable} overflow-x-hidden`}>
       <head>
         <script
           type="application/ld+json"
@@ -58,7 +58,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>
+      <body className="overflow-x-hidden">
         <ScrollRestoration />
         <BackgroundGrid />
         <div className="">

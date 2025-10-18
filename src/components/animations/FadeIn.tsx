@@ -24,10 +24,10 @@ export default function FadeIn({
   const isInView = useInView(ref, { once, margin: '-100px' });
 
   const directions = {
-    up: { y: 40, x: 0 },
-    down: { y: -40, x: 0 },
-    left: { y: 0, x: 40 },
-    right: { y: 0, x: -40 },
+    up: { y: 20, x: 0 },
+    down: { y: -20, x: 0 },
+    left: { y: 0, x: 20 },
+    right: { y: 0, x: -20 },
   };
 
   return (
