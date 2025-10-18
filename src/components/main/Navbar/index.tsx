@@ -7,6 +7,7 @@ import { FaInstagram, FaBehance, FaVimeo } from 'react-icons/fa';
 import { SiX } from 'react-icons/si';
 import { FiMenu } from 'react-icons/fi';
 import Link from "next/link";
+import { usePathname } from 'next/navigation';
 
 interface NavbarProps {
   hideOnSectionId?: string; // Optional: ID of section to hide navbar when reached
@@ -15,6 +16,15 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ hideOnSectionId }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const pathname = usePathname();
+
+  // Helper function to check if a link is active
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return pathname === '/';
+    }
+    return pathname.startsWith(path);
+  };
 
   useEffect(() => {
     console.log('🧭 Navbar scroll detection activated - playing hide and seek with the footer!');
@@ -73,15 +83,27 @@ const Navbar: React.FC<NavbarProps> = ({ hideOnSectionId }) => {
 
             {/* Center: Nav Links (Desktop) */}
             <div className="hidden lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-              <div className="flex items-center gap-x-8 font-alexandria text-xs uppercase font-normal text-neutral-300">
+              <div className="flex items-center gap-x-8 font-alexandria text-xs uppercase font-normal">
                 <Link href="/">
-                  <p className="hover:text-white transition-colors">Home</p>
+                  <p className={`transition-all ${
+                    isActive('/') 
+                      ? 'text-yellow opacity-100' 
+                      : 'text-white opacity-50 hover:opacity-100'
+                  }`}>Home</p>
                 </Link>
                 <Link href="/portfolio">
-                  <p className="hover:text-white transition-colors">Portfolio</p>
+                  <p className={`transition-all ${
+                    isActive('/portfolio') 
+                      ? 'text-yellow opacity-100' 
+                      : 'text-white opacity-50 hover:opacity-100'
+                  }`}>Portfolio</p>
                 </Link>
                 <Link href="/about">
-                  <p className="hover:text-white transition-colors">About</p>
+                  <p className={`transition-all ${
+                    isActive('/about') 
+                      ? 'text-yellow opacity-100' 
+                      : 'text-white opacity-50 hover:opacity-100'
+                  }`}>About</p>
                 </Link>
 
               </div>
@@ -114,15 +136,27 @@ const Navbar: React.FC<NavbarProps> = ({ hideOnSectionId }) => {
       {isMenuOpen && (
         <div className="lg:hidden fixed top-[140px] left-0 w-full z-50 px-4">
           <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-3xl p-8">
-            <nav className="flex flex-col items-center text-center gap-y-6 text-neutral-300">
+            <nav className="flex flex-col items-center text-center gap-y-6">
               <Link href="/">
-                <p className="hover:text-white transition-colors">Home</p>
+                <p className={`transition-all ${
+                  isActive('/') 
+                    ? 'text-yellow opacity-100' 
+                    : 'text-white opacity-50 hover:opacity-100'
+                }`}>Home</p>
               </Link>
               <Link href="/portfolio">
-                <p className="hover:text-white transition-colors">Portfolio</p>
+                <p className={`transition-all ${
+                  isActive('/portfolio') 
+                    ? 'text-yellow opacity-100' 
+                    : 'text-white opacity-50 hover:opacity-100'
+                }`}>Portfolio</p>
               </Link>
               <Link href="/about">
-                <p className="hover:text-white transition-colors">About</p>
+                <p className={`transition-all ${
+                  isActive('/about') 
+                    ? 'text-yellow opacity-100' 
+                    : 'text-white opacity-50 hover:opacity-100'
+                }`}>About</p>
               </Link>
 
             </nav>
