@@ -6,7 +6,6 @@ import { useThumbnails } from '@/lib/hooks/useThumbnails';
 
 const HeroSection = () => {
   const { thumbnails, loading } = useThumbnails(12);
-  const [imagesLoaded, setImagesLoaded] = React.useState(false);
 
   // Transform thumbnails to gallery format with direct links
   const galleryItems = thumbnails.map(thumb => {
@@ -18,45 +17,6 @@ const HeroSection = () => {
       link: `/portfolio/${urlFriendlyName}`
     };
   });
-
-  // Preload images with timeout fallback
-  React.useEffect(() => {
-    if (thumbnails.length === 0) return;
-    
-    let loadedCount = 0;
-    const totalImages = thumbnails.length;
-    
-    // Set a timeout to show gallery even if some images fail
-    const timeout = setTimeout(() => {
-      console.log('⏱️ Image loading timeout - showing gallery anyway');
-      setImagesLoaded(true);
-    }, 5000); // 5 second timeout
-    
-    const checkComplete = () => {
-      loadedCount++;
-      console.log(`📸 Loaded ${loadedCount}/${totalImages} images`);
-      if (loadedCount === totalImages) {
-        clearTimeout(timeout);
-        setImagesLoaded(true);
-      }
-    };
-    
-    thumbnails.forEach((thumb, index) => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous'; // Enable CORS for CDN images
-      img.onload = () => {
-        console.log(`✅ Image ${index + 1} loaded:`, thumb.name);
-        checkComplete();
-      };
-      img.onerror = (error) => {
-        console.error(`❌ Image ${index + 1} failed:`, thumb.name, error);
-        checkComplete();
-      };
-      img.src = thumb.thumbnailUrl;
-    });
-    
-    return () => clearTimeout(timeout);
-  }, [thumbnails]);
 
   return (
     <section className="md:h-screen w-full flex flex-col md:justify-center px-4 lg:px-8 mt-32 py-8 md:py-0">
@@ -76,8 +36,8 @@ const HeroSection = () => {
         </div>
 
         {/* WebGL Gallery - Project Thumbnails */}
-        <div className="w-full h-[300px] md:h-[400px] xl:h-[500px]">
-          {loading || !imagesLoaded ? (
+        <div className="w-full h-[400px] md:h-[400px] xl:h-[500px]">
+          {loading ? (
             <div className="flex items-center justify-center h-full">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
               <p className="text-white/50 text-sm ml-4">Loading projects...</p>

@@ -230,78 +230,109 @@ class Media {
 
   createShader() {
     const texture = new Texture(this.gl, {
-      generateMipmaps: true
+      generateMipmaps: true,
+      minFilter: this.gl.LINEAR_MIPMAP_LINEAR,
+      magFilter: this.gl.LINEAR
     });
     this.program = new Program(this.gl, {
       depthTest: false,
       depthWrite: false,
       vertex: `
         precision highp float;
-        attribute vec3 position;
+        precision highp int;
         attribute vec2 uv;
+        attribute vec2 position;
         uniform mat4 modelViewMatrix;
         uniform mat4 projectionMatrix;
-        uniform float uTime;
-        uniform float uSpeed;
         varying vec2 vUv;
         void main() {
           vUv = uv;
-          vec3 p = position;
-          // Disabled wiggle effect - keep images flat
-          // p.z = (sin(p.x * 4.0 + uTime) * 1.5 + cos(p.y * 2.0 + uTime) * 1.5) * (0.1 + uSpeed * 0.5);
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 0, 1);
         }
       `,
       fragment: `
         precision highp float;
-        uniform vec2 uImageSizes;
-        uniform vec2 uPlaneSizes;
         uniform sampler2D tMap;
+        uniform vec2 uPlaneSizes;
+        uniform vec2 uImageSizes;
         uniform float uBorderRadius;
+        uniform float uImageLoaded;
         varying vec2 vUv;
         
-        float roundedBoxSDF(vec2 p, vec2 b, float r) {
-          vec2 d = abs(p) - b;
-          return length(max(d, vec2(0.0))) + min(max(d.x, d.y), 0.0) - r;
+        float roundedBoxSDF(vec2 centerPos, vec2 size, float radius) {
+          return length(max(abs(centerPos) - size + radius, 0.0)) - radius;
         }
         
         void main() {
+          vec2 uv = vUv;
+          
+          // Show black if image not loaded yet
+          if (uImageLoaded < 0.5) {
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+            return;
+          }
+          
+          vec4 tex = texture2D(tMap, uv);
+          
+          float planeAspect = uPlaneSizes.x / uPlaneSizes.y;
+          float imageAspect = uImageSizes.x / uImageSizes.y;
+          
           vec2 ratio = vec2(
-            min((uPlaneSizes.x / uPlaneSizes.y) / (uImageSizes.x / uImageSizes.y), 1.0),
-            min((uPlaneSizes.y / uPlaneSizes.x) / (uImageSizes.y / uImageSizes.x), 1.0)
+            min(planeAspect / imageAspect, 1.0),
+            min(imageAspect / planeAspect, 1.0)
           );
-          vec2 uv = vec2(
-            vUv.x * ratio.x + (1.0 - ratio.x) * 0.5,
-            vUv.y * ratio.y + (1.0 - ratio.y) * 0.5
-          );
-          vec4 color = texture2D(tMap, uv);
           
-          float d = roundedBoxSDF(vUv - 0.5, vec2(0.5 - uBorderRadius), uBorderRadius);
+          vec2 adjustedUv = vUv * ratio + (1.0 - ratio) * 0.5;
+          vec4 image = texture2D(tMap, adjustedUv);
           
-          // Smooth antialiasing for edges
-          float edgeSmooth = 0.002;
-          float alpha = 1.0 - smoothstep(-edgeSmooth, edgeSmooth, d);
+          vec2 halfRes = uPlaneSizes * 0.5;
+          vec2 pos = (vUv - 0.5) * uPlaneSizes;
+          float distance = roundedBoxSDF(pos, halfRes, uBorderRadius * min(uPlaneSizes.x, uPlaneSizes.y));
+          float smoothedAlpha = 1.0 - smoothstep(0.0, 2.0, distance);
           
-          gl_FragColor = vec4(color.rgb, alpha);
+          gl_FragColor = vec4(image.rgb, image.a * smoothedAlpha);
         }
       `,
       uniforms: {
         tMap: { value: texture },
         uPlaneSizes: { value: [0, 0] },
         uImageSizes: { value: [0, 0] },
-        uSpeed: { value: 0 },
-        uTime: { value: 100 * Math.random() },
-        uBorderRadius: { value: this.borderRadius }
+        uBorderRadius: { value: this.borderRadius },
+        uImageLoaded: { value: 0 }
       },
       transparent: true
     });
+    
+    // Load image with better error handling
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.src = this.image;
+    
     img.onload = () => {
-      texture.image = img;
-      this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
+      try {
+        texture.image = img;
+        this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
+        this.program.uniforms.uImageLoaded.value = 1;
+        console.log('✅ WebGL texture loaded:', this.text);
+      } catch (error) {
+        console.error('❌ Error setting texture:', this.text, error);
+      }
     };
+    
+    img.onerror = (error) => {
+      console.error('❌ Failed to load image:', this.image, error);
+      // Still mark as loaded to avoid black screen
+      this.program.uniforms.uImageLoaded.value = 1;
+    };
+    
+    // Add timeout fallback
+    setTimeout(() => {
+      if (this.program.uniforms.uImageLoaded.value === 0) {
+        console.warn('⏱️ Image load timeout:', this.text);
+        this.program.uniforms.uImageLoaded.value = 1;
+      }
+    }, 3000);
+    
+    img.src = this.image;
   }
 
   createMesh() {
