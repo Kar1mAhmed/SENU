@@ -436,7 +436,7 @@ class App {
     last: number;
     position?: number;
   };
-  onCheckDebounce: (...args: any[]) => void;
+  onCheckDebounce: () => void;
   renderer!: Renderer;
   gl!: GL;
   camera!: Camera;
@@ -652,7 +652,9 @@ class App {
 
   onWheel(e: Event) {
     const wheelEvent = e as WheelEvent;
-    const delta = wheelEvent.deltaY || (wheelEvent as any).wheelDelta || (wheelEvent as any).detail;
+    // Handle cross-browser wheel event properties
+    const legacyEvent = wheelEvent as WheelEvent & { wheelDelta?: number; detail?: number };
+    const delta = wheelEvent.deltaY || legacyEvent.wheelDelta || legacyEvent.detail || 0;
     this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2;
     this.onCheckDebounce();
   }

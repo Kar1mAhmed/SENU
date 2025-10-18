@@ -5,7 +5,7 @@ import WebGLGallery from '@/components/animations/WebGLGallery';
 import { useThumbnails } from '@/lib/hooks/useThumbnails';
 
 const HeroSection = () => {
-  const { thumbnails, loading } = useThumbnails(12);
+  const { thumbnails, loading } = useThumbnails(15);
 
   // Transform thumbnails to gallery format with direct links
   const galleryItems = thumbnails.map(thumb => {
