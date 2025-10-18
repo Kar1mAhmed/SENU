@@ -4,6 +4,7 @@ import Icon from '../../main/Icon';
 import FadeIn from '@/components/animations/FadeIn';
 import StaggerContainer from '@/components/animations/StaggerContainer';
 import StaggerItem from '@/components/animations/StaggerItem';
+import CountUp from '@/components/animations/CountUp';
 
 
 interface Metric {
@@ -20,6 +21,16 @@ interface MetricsSectionProps {
 
 const MetricsSection: React.FC<MetricsSectionProps> = ({ className = '' }) => {
     console.log('🚀 MetricsSection rendering with style that hits harder than our coffee');
+    
+    // Parse metric value to extract number and suffix (e.g., "70M+" -> 70, "M+")
+    const parseMetricValue = (value: string) => {
+        const match = value.match(/^(\d+)(.*)$/);
+        if (match) {
+            return { value: parseInt(match[1], 10), suffix: match[2] };
+        }
+        return { value: 0, suffix: value };
+    };
+    
     const icons = ['/Icons/eye.svg', '/Icons/bird.svg', '/Icons/crown.svg', '/Icons/columns.svg'];
     const colorVariations = [
         { bg: 'bg-green', iconColor: 'bg-green-40' },
@@ -91,7 +102,12 @@ const MetricsSection: React.FC<MetricsSectionProps> = ({ className = '' }) => {
 
                                     {/* Value */}
                                     <h3 className="text-xl md:text-2xl lg:text-4xl text-white font-light mb-2">
-                                        {metric.value}
+                                        <CountUp 
+                                            value={parseMetricValue(metric.value).value} 
+                                            suffix={parseMetricValue(metric.value).suffix}
+                                            duration={2.5}
+                                            delay={index * 0.15}
+                                        />
                                     </h3>
 
                                     {/* Label */}

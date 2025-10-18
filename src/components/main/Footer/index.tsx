@@ -6,6 +6,7 @@ import { FaInstagram, FaBehance, FaVimeo } from 'react-icons/fa';
 import { SiX } from 'react-icons/si';
 import { WithClassName } from '@/lib/types';
 import Link from "next/link";
+import ShuffleText from '@/components/animations/ShuffleText';
 
 const Footer: React.FC<WithClassName> = ({ className }) => {
   console.log('ðŸ¦¶ Footer component rendering - time to put our best foot forward!');
@@ -34,14 +35,14 @@ const Footer: React.FC<WithClassName> = ({ className }) => {
         <div className="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
           <div className="text-center">
             <h2 className="font-new-black text-4xl lg:text-6xl xl:text-8xl leading-tight mb-16 transition-transform duration-300">
-              <span className="text-orange animate-pulse">LET'S BOOST</span>
+              <span className="text-orange">LET&apos;S <ShuffleText text="BOOST" trigger="hover" /></span>
               <br />
-              <span className="text-white">YOUR BRAND</span>
+              <span className="text-white">YOUR <ShuffleText text="BRAND" trigger="hover" /></span>
             </h2>
             <div className="flex justify-center">
               <div className="transform hover:scale-110 transition-transform duration-300">
                 <Link href="/contact">
-                  <Button className="w-auto px-16 py-4  font-bold shadow-2xl hover:shadow-orange/20 !text-[13px] h-auto">Let's Create</Button>
+                  <Button className="w-auto px-16 py-4  font-bold shadow-2xl hover:shadow-orange/20 !text-[13px] h-auto">Let&apos;s Create</Button>
                 </Link>
               </div>
             </div>

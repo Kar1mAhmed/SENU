@@ -2,6 +2,7 @@
 import React from 'react';
 import type { Service, WithClassName } from '@/lib/types';
 import { FiArrowUpRight } from 'react-icons/fi';
+import CountUp from '@/components/animations/CountUp';
 
 interface ServiceCardProps {
   service: Service;
@@ -9,6 +10,17 @@ interface ServiceCardProps {
 
 const ServiceCard: React.FC<WithClassName<ServiceCardProps>> = ({ service, className }) => {
   const { title, description, imageSrc, projectsCount, accentColor } = service;
+
+  // Parse projectsCount to extract number and suffix (e.g., "20+" -> 20, "+")
+  const parseCount = (count: string) => {
+    const match = count.match(/^(\d+)(.*)$/);
+    if (match) {
+      return { value: parseInt(match[1], 10), suffix: match[2] };
+    }
+    return { value: 0, suffix: count };
+  };
+
+  const { value, suffix } = parseCount(projectsCount);
 
   return (
     <div className={`w-full h-[260px] md:h-[280px] lg:h-[315px] group ${className}`} style={{ transform: 'translateZ(0)' }}>
@@ -44,7 +56,9 @@ const ServiceCard: React.FC<WithClassName<ServiceCardProps>> = ({ service, class
 
           {/* Bottom: big count and description */}
           <div className="mt-auto overflow-hidden">
-            <div className="font-new-black font-extrabold text-[96px] md:text-[108px] lg:text-[128px] leading-none">{projectsCount}</div>
+            <div className="font-new-black font-extrabold text-[96px] md:text-[108px] lg:text-[128px] leading-none">
+              <CountUp value={value} suffix={suffix} duration={2.5} />
+            </div>
             <p className="mt-2 text-white/80 text-sm max-w-[85%]">{description}</p>
           </div>
         </div>

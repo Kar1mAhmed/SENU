@@ -2,8 +2,7 @@
 import React from 'react';
 import QuestionCard from './QuestionCard';
 import { mockAboutCards } from '@/lib/mock-data';
-import StaggerContainer from '@/components/animations/StaggerContainer';
-import StaggerItem from '@/components/animations/StaggerItem';
+import ScrollStack from '@/components/animations/ScrollStack';
 
 const QuestionsSection = () => {
     console.log('❓ Questions section loading - time to answer the burning questions!');
@@ -11,16 +10,20 @@ const QuestionsSection = () => {
     return (
         <section className="w-full px-4 lg:px-0 mb-2">
             <div className="max-w-[1280px] lg:mx-auto mx-4">
-                <StaggerContainer staggerDelay={0.2} className="flex flex-col gap-8">
+                <div className="relative" style={{ minHeight: `${mockAboutCards.length * 600}px` }}>
                     {mockAboutCards.map((card, index) => (
-                        <StaggerItem key={card.id} direction="up">
+                        <ScrollStack 
+                            key={card.id} 
+                            index={index}
+                            totalCards={mockAboutCards.length}
+                        >
                             <QuestionCard
                                 card={card}
                                 index={index}
                             />
-                        </StaggerItem>
+                        </ScrollStack>
                     ))}
-                </StaggerContainer>
+                </div>
             </div>
         </section>
     );

@@ -28,7 +28,7 @@ const AboutPage = () => {
         <QuestionsSection />
         <ServiceSection />
         {/* <TeamSection /> */}
-        <SingleRibbon bgClass="bg-green" iconColorClass="bg-green-soft" heightClass="h-[35px] md:h-[45px]" />
+        <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]" />
         <Footer />
       </main>
     </div>

@@ -18,7 +18,7 @@ const serviceData = [
         projectCount: "20+"
     },
     {
-        description: 'Creating cinematic, story-driven YouTube videos that hook viewers from the first second.',
+        description: 'Creating cinematic YouTube videos that hook viewers from the first second.',
         imageSrc: '/images/covers/8.jpg',
         projectCount: "150+"
 
