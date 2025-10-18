@@ -6,6 +6,7 @@ import { useThumbnails } from '@/lib/hooks/useThumbnails';
 
 const HeroSection = () => {
   const { thumbnails, loading } = useThumbnails(12);
+  const [imagesLoaded, setImagesLoaded] = React.useState(false);
 
   // Transform thumbnails to gallery format with direct links
   const galleryItems = thumbnails.map(thumb => {
@@ -17,6 +18,31 @@ const HeroSection = () => {
       link: `/portfolio/${urlFriendlyName}`
     };
   });
+
+  // Preload images
+  React.useEffect(() => {
+    if (thumbnails.length === 0) return;
+    
+    let loadedCount = 0;
+    const totalImages = thumbnails.length;
+    
+    thumbnails.forEach(thumb => {
+      const img = new Image();
+      img.onload = () => {
+        loadedCount++;
+        if (loadedCount === totalImages) {
+          setImagesLoaded(true);
+        }
+      };
+      img.onerror = () => {
+        loadedCount++;
+        if (loadedCount === totalImages) {
+          setImagesLoaded(true);
+        }
+      };
+      img.src = thumb.thumbnailUrl;
+    });
+  }, [thumbnails]);
 
   return (
     <section className="md:h-screen w-full flex flex-col md:justify-center px-4 lg:px-8 mt-32 py-8 md:py-0">
@@ -37,9 +63,10 @@ const HeroSection = () => {
 
         {/* WebGL Gallery - Project Thumbnails */}
         <div className="w-full h-[300px] md:h-[400px] xl:h-[500px]">
-          {loading ? (
+          {loading || !imagesLoaded ? (
             <div className="flex items-center justify-center h-full">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+              <p className="text-white/50 text-sm ml-4">Loading projects...</p>
             </div>
           ) : (
             <>
@@ -51,8 +78,8 @@ const HeroSection = () => {
                   textColor="#ffffff"
                   borderRadius={0.08}
                   font="bold 14px Alexandria"
-                  scrollSpeed={1.5}
-                  scrollEase={0.05}
+                  scrollSpeed={3}
+                  scrollEase={0.15}
                 />
               </div>
               {/* Desktop Gallery - With curve */}
