@@ -744,11 +744,23 @@ export default function WebGLGallery({
     // 2. Click was less than 300ms (not a long press)
     if (deltaX < 10 && deltaY < 10 && deltaTime < 300) {
       const app = appRef.current;
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      
+      // Get click position relative to container
+      const clickX = e.clientX - rect.left;
+      const containerWidth = rect.width;
+      const containerCenter = containerWidth / 2;
+      
+      // Find the media closest to where the user clicked
       let closestMedia: Media | null = null;
       let minDistance = Infinity;
       
       for (const media of app.medias) {
-        const distance = Math.abs(media.plane.position.x);
+        // Get media position in screen space
+        const mediaScreenX = containerCenter + (media.plane.position.x * containerWidth / app.viewport.width);
+        const distance = Math.abs(clickX - mediaScreenX);
+        
         if (distance < minDistance) {
           minDistance = distance;
           closestMedia = media;
@@ -757,7 +769,7 @@ export default function WebGLGallery({
       
       if (closestMedia && items[closestMedia.index % items.length]?.link) {
         const link = items[closestMedia.index % items.length].link!;
-        console.log('🎯 Navigating to:', link);
+        console.log('🎯 Clicked on:', items[closestMedia.index % items.length].text, '- Navigating to:', link);
         router.push(link);
       }
     }
