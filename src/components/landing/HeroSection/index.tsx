@@ -14,10 +14,10 @@ const HeroSection = () => {
   }));
 
   return (
-    <section className="h-screen w-full flex flex-col justify-center px-4 lg:px-8 mt-24">
+    <section className="h-screen w-full flex flex-col justify-center px-4 lg:px-8 mt-28">
       <div className="max-w-[1400px] mx-auto w-full">
         {/* Hero Text with Rotating Animation */}
-        <div className="text-center mb-12 lg:mb-16">
+        <div className="text-center mb-0 ">
           <h1 className="font-new-black text-3xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl text-white font-light leading-tight">
             YOUR PROJECTS ARE
           </h1>
@@ -31,7 +31,7 @@ const HeroSection = () => {
         </div>
 
         {/* WebGL Gallery - Project Thumbnails */}
-        <div className="w-full h-[500px]">
+        <div className="w-full h-[400px] xl:h-[500px]">
           {loading ? (
             <div className="flex items-center justify-center h-full">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
