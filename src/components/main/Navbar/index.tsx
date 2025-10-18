@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Button from '@/components/main/Button';
+import ShapeBlur from '@/components/animations/ShapeBlur';
 import { FaInstagram, FaBehance, FaVimeo } from 'react-icons/fa';
 import { SiX } from 'react-icons/si';
 import { FiMenu } from 'react-icons/fi';
@@ -118,7 +119,9 @@ const Navbar: React.FC<NavbarProps> = ({ hideOnSectionId }) => {
                 <a href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><SiX /></a>
               </div>
               <Link href="/contact">
-                <Button >Get in touch</Button>
+                <ShapeBlur blur="80px" size={150} duration={0.4}>
+                  <Button>Get in touch</Button>
+                </ShapeBlur>
               </Link>
             </div>
 

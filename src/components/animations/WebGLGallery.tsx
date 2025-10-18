@@ -1,6 +1,7 @@
 "use client";
 import { Camera, Mesh, Plane, Program, Renderer, Texture, Transform } from 'ogl';
 import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 type GL = Renderer['gl'];
 
@@ -153,8 +154,8 @@ interface MediaProps {
   textColor: string;
   borderRadius?: number;
   font?: string;
-  id?: number;
-  onItemClick?: (id: number) => void;
+  id?: string;
+  onItemClick?: (id: string) => void;
 }
 
 class Media {
@@ -173,8 +174,8 @@ class Media {
   textColor: string;
   borderRadius: number;
   font?: string;
-  id?: number;
-  onItemClick?: (id: number) => void;
+  id?: string;
+  onItemClick?: (id: string) => void;
   program!: Program;
   plane!: Mesh;
   title!: Title;
@@ -384,14 +385,14 @@ class Media {
 }
 
 interface AppConfig {
-  items?: { image: string; text: string; id?: number }[];
+  items?: { image: string; text: string; id?: string }[];
   bend?: number;
   textColor?: string;
   borderRadius?: number;
   font?: string;
   scrollSpeed?: number;
   scrollEase?: number;
-  onItemClick?: (id: number) => void;
+  onItemClick?: (id: string) => void;
 }
 
 class App {
@@ -411,8 +412,8 @@ class App {
   scene!: Transform;
   planeGeometry!: Plane;
   medias: Media[] = [];
-  mediasImages: { image: string; text: string; id?: number }[] = [];
-  onItemClick?: (id: number) => void;
+  mediasImages: { image: string; text: string; id?: string }[] = [];
+  onItemClick?: (id: string) => void;
   screen!: { width: number; height: number };
   viewport!: { width: number; height: number };
   raf: number = 0;
@@ -484,7 +485,7 @@ class App {
   }
 
   createMedias(
-    items: { image: string; text: string; id?: number }[] | undefined,
+    items: { image: string; text: string; id?: string }[] | undefined,
     bend: number = 1,
     textColor: string,
     borderRadius: number,
@@ -596,19 +597,24 @@ class App {
   handleClick(_e: MouseEvent | TouchEvent) {
     if (!this.onItemClick) return;
     
-    // Find the media closest to center (most visible)
+    // Find the media closest to center of viewport (most visible)
     let closestMedia: Media | null = null;
     let minDistance = Infinity;
     
     for (const media of this.medias) {
-      const distance = Math.abs(media.plane.position.x);
-      if (distance < minDistance) {
+      // Calculate distance from center of viewport
+      // The center is at x = 0 in the scene coordinate system
+      const mediaCenter = media.plane.position.x;
+      const distance = Math.abs(mediaCenter);
+      
+      if (distance < minDistance && media.id !== undefined) {
         minDistance = distance;
         closestMedia = media;
       }
     }
     
-    if (closestMedia !== null && closestMedia.id !== undefined) {
+    if (closestMedia !== null && closestMedia.id !== undefined && closestMedia.id !== null) {
+      console.log('🖱️ Clicked project ID:', closestMedia.id, 'Distance from center:', minDistance);
       this.onItemClick(closestMedia.id);
     }
   }
@@ -692,14 +698,13 @@ class App {
 }
 
 interface CircularGalleryProps {
-  items?: { image: string; text: string; id?: number }[];
+  items?: { image: string; text: string; link?: string }[];
   bend?: number;
   textColor?: string;
   borderRadius?: number;
   font?: string;
   scrollSpeed?: number;
   scrollEase?: number;
-  onItemClick?: (id: number) => void;
 }
 
 export default function WebGLGallery({
@@ -709,10 +714,57 @@ export default function WebGLGallery({
   borderRadius = 0.05,
   font = 'bold 30px Figtree',
   scrollSpeed = 2,
-  scrollEase = 0.05,
-  onItemClick
+  scrollEase = 0.05
 }: CircularGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const appRef = useRef<App | null>(null);
+  const mouseDownPos = useRef<{ x: number; y: number; time: number } | null>(null);
+
+  // Track mouse down to detect drag vs click
+  const handleMouseDown = (e: React.MouseEvent) => {
+    mouseDownPos.current = {
+      x: e.clientX,
+      y: e.clientY,
+      time: Date.now()
+    };
+  };
+
+  // Handle click - only navigate if it's a quick click, not a drag
+  const handleClick = (e: React.MouseEvent) => {
+    if (!appRef.current || !items || !mouseDownPos.current) return;
+    
+    // Calculate distance moved and time held
+    const deltaX = Math.abs(e.clientX - mouseDownPos.current.x);
+    const deltaY = Math.abs(e.clientY - mouseDownPos.current.y);
+    const deltaTime = Date.now() - mouseDownPos.current.time;
+    
+    // Only navigate if:
+    // 1. Mouse moved less than 10px (not a drag)
+    // 2. Click was less than 300ms (not a long press)
+    if (deltaX < 10 && deltaY < 10 && deltaTime < 300) {
+      const app = appRef.current;
+      let closestMedia: Media | null = null;
+      let minDistance = Infinity;
+      
+      for (const media of app.medias) {
+        const distance = Math.abs(media.plane.position.x);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestMedia = media;
+        }
+      }
+      
+      if (closestMedia && items[closestMedia.index % items.length]?.link) {
+        const link = items[closestMedia.index % items.length].link!;
+        console.log('🎯 Navigating to:', link);
+        router.push(link);
+      }
+    }
+    
+    mouseDownPos.current = null;
+  };
+
   useEffect(() => {
     if (!containerRef.current) return;
     const app = new App(containerRef.current, {
@@ -722,12 +774,21 @@ export default function WebGLGallery({
       borderRadius,
       font,
       scrollSpeed,
-      scrollEase,
-      onItemClick
+      scrollEase
     });
+    appRef.current = app;
     return () => {
       app.destroy();
+      appRef.current = null;
     };
-  }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase, onItemClick]);
-  return <div className="w-full h-full overflow-hidden cursor-grab active:cursor-grabbing" ref={containerRef} />;
+  }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
+  
+  return (
+    <div 
+      className="w-full h-full overflow-hidden cursor-pointer" 
+      ref={containerRef}
+      onMouseDown={handleMouseDown}
+      onClick={handleClick}
+    />
+  );
 }

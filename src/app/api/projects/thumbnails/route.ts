@@ -10,7 +10,7 @@ export const runtime = 'edge';
 console.log('🖼️ Thumbnails API loaded - ready to serve beautiful project previews!');
 
 interface ThumbnailData {
-    id: number;
+    id: string;
     name: string;
     thumbnailUrl: string;
 }
@@ -54,15 +54,17 @@ export async function GET(request: NextRequest) {
             .filter(project => project.thumbnail_key) // Only include projects with thumbnails
             .map(project => {
                 const url = keyToUrl(project.thumbnail_key!);
-                return {
-                    id: Number(project.id),
+                const thumbnail = {
+                    id: String(project.id),
                     name: project.name,
                     thumbnailUrl: url || '' // Fallback to empty string if null
                 };
+                console.log('📦 Thumbnail data:', thumbnail);
+                return thumbnail;
             })
             .filter(thumb => thumb.thumbnailUrl); // Remove any with empty URLs
 
-        console.log(`✅ Returning ${thumbnails.length} thumbnails`);
+        console.log(`✅ Returning ${thumbnails.length} thumbnails:`, thumbnails);
 
         const response: APIResponse<ThumbnailData[]> = {
             success: true,

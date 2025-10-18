@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 interface ThumbnailData {
-    id: number;
+    id: string;
     name: string;
     thumbnailUrl: string;
 }
