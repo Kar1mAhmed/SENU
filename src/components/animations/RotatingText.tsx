@@ -6,6 +6,7 @@ interface RotatingTextProps {
   words: string[];
   duration?: number;
   className?: string;
+  colors?: string[];
 }
 
 /**
@@ -16,7 +17,8 @@ interface RotatingTextProps {
 const RotatingText: React.FC<RotatingTextProps> = ({ 
   words, 
   duration = 2500,
-  className = ''
+  className = '',
+  colors = []
 }) => {
   const [index, setIndex] = useState(0);
 
@@ -27,6 +29,9 @@ const RotatingText: React.FC<RotatingTextProps> = ({
 
     return () => clearInterval(interval);
   }, [words.length, duration]);
+
+  // Get current color if colors array is provided
+  const currentColor = colors.length > 0 ? colors[index % colors.length] : undefined;
 
   return (
     <span className={`inline-block ${className}`}>
@@ -40,7 +45,8 @@ const RotatingText: React.FC<RotatingTextProps> = ({
             duration: 0.3,
             ease: "easeInOut"
           }}
-          className="inline-block"
+          className="inline-block font-bold"
+          style={{ color: currentColor }}
         >
           {words[index]}
         </motion.span>
