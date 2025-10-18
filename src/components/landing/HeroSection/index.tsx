@@ -1,17 +1,31 @@
 'use client';
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import RotatingText from '@/components/animations/RotatingText';
 import WebGLGallery from '@/components/animations/WebGLGallery';
 import { useThumbnails } from '@/lib/hooks/useThumbnails';
 
 const HeroSection = () => {
+  const router = useRouter();
   const { thumbnails, loading } = useThumbnails(12);
 
   // Transform thumbnails to gallery format
   const galleryItems = thumbnails.map(thumb => ({
     image: thumb.thumbnailUrl,
-    text: thumb.name
+    text: thumb.name,
+    id: thumb.id
   }));
+
+  // Handle project click - navigate to project page
+  const handleProjectClick = (id: number) => {
+    // Find the project by ID to get its name
+    const project = thumbnails.find(thumb => thumb.id === id);
+    if (project) {
+      // Convert project name to URL-friendly format (spaces to hyphens)
+      const urlFriendlyName = project.name.replace(/\s+/g, '-');
+      router.push(`/portfolio/${urlFriendlyName}`);
+    }
+  };
 
   return (
     <section className="h-screen w-full flex flex-col justify-center px-4 lg:px-8 mt-28">
@@ -45,6 +59,7 @@ const HeroSection = () => {
               font="bold 24px Alexandria"
               scrollSpeed={2}
               scrollEase={0.05}
+              onItemClick={handleProjectClick}
             />
           )}
         </div>

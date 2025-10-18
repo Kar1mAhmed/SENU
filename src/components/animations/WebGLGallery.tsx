@@ -153,6 +153,8 @@ interface MediaProps {
   textColor: string;
   borderRadius?: number;
   font?: string;
+  id?: number;
+  onItemClick?: (id: number) => void;
 }
 
 class Media {
@@ -171,6 +173,8 @@ class Media {
   textColor: string;
   borderRadius: number;
   font?: string;
+  id?: number;
+  onItemClick?: (id: number) => void;
   program!: Program;
   plane!: Mesh;
   title!: Title;
@@ -197,7 +201,9 @@ class Media {
     bend,
     textColor,
     borderRadius = 0,
-    font
+    font,
+    id,
+    onItemClick
   }: MediaProps) {
     this.geometry = geometry;
     this.gl = gl;
@@ -213,6 +219,8 @@ class Media {
     this.textColor = textColor;
     this.borderRadius = borderRadius;
     this.font = font;
+    this.id = id;
+    this.onItemClick = onItemClick;
     this.createShader();
     this.createMesh();
     this.createTitle();
@@ -376,13 +384,14 @@ class Media {
 }
 
 interface AppConfig {
-  items?: { image: string; text: string }[];
+  items?: { image: string; text: string; id?: number }[];
   bend?: number;
   textColor?: string;
   borderRadius?: number;
   font?: string;
   scrollSpeed?: number;
   scrollEase?: number;
+  onItemClick?: (id: number) => void;
 }
 
 class App {
@@ -402,7 +411,8 @@ class App {
   scene!: Transform;
   planeGeometry!: Plane;
   medias: Media[] = [];
-  mediasImages: { image: string; text: string }[] = [];
+  mediasImages: { image: string; text: string; id?: number }[] = [];
+  onItemClick?: (id: number) => void;
   screen!: { width: number; height: number };
   viewport!: { width: number; height: number };
   raf: number = 0;
@@ -411,7 +421,7 @@ class App {
   boundOnWheel!: (e: Event) => void;
   boundOnTouchDown!: (e: MouseEvent | TouchEvent) => void;
   boundOnTouchMove!: (e: MouseEvent | TouchEvent) => void;
-  boundOnTouchUp!: () => void;
+  boundOnTouchUp!: (e: MouseEvent | TouchEvent) => void;
 
   isDown: boolean = false;
   start: number = 0;
@@ -425,13 +435,15 @@ class App {
       borderRadius = 0,
       font = 'bold 30px Figtree',
       scrollSpeed = 2,
-      scrollEase = 0.05
+      scrollEase = 0.05,
+      onItemClick
     }: AppConfig
   ) {
     document.documentElement.classList.remove('no-js');
     this.container = container;
     this.scrollSpeed = scrollSpeed;
     this.scroll = { ease: scrollEase, current: 0, target: 0, last: 0 };
+    this.onItemClick = onItemClick;
     this.onCheckDebounce = debounce(this.onCheck.bind(this), 200);
     this.createRenderer();
     this.createCamera();
@@ -472,7 +484,7 @@ class App {
   }
 
   createMedias(
-    items: { image: string; text: string }[] | undefined,
+    items: { image: string; text: string; id?: number }[] | undefined,
     bend: number = 1,
     textColor: string,
     borderRadius: number,
@@ -545,7 +557,9 @@ class App {
         bend,
         textColor,
         borderRadius,
-        font
+        font,
+        id: data.id,
+        onItemClick: this.onItemClick
       });
     });
   }
@@ -563,9 +577,40 @@ class App {
     this.scroll.target = (this.scroll.position ?? 0) + distance;
   }
 
-  onTouchUp() {
+  onTouchUp(e: MouseEvent | TouchEvent) {
+    const wasDragging = this.isDown;
     this.isDown = false;
+    
+    // Only trigger click if user didn't drag
+    const endX = 'touches' in e && e.changedTouches ? e.changedTouches[0].clientX : (e as MouseEvent).clientX;
+    const dragDistance = Math.abs(this.start - endX);
+    
+    if (wasDragging && dragDistance < 5 && this.onItemClick) {
+      // User clicked without dragging - find which media was clicked
+      this.handleClick(e);
+    }
+    
     this.onCheck();
+  }
+  
+  handleClick(_e: MouseEvent | TouchEvent) {
+    if (!this.onItemClick) return;
+    
+    // Find the media closest to center (most visible)
+    let closestMedia: Media | null = null;
+    let minDistance = Infinity;
+    
+    this.medias.forEach(media => {
+      const distance = Math.abs(media.plane.position.x);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestMedia = media;
+      }
+    });
+    
+    if (closestMedia && closestMedia.id !== undefined) {
+      this.onItemClick(closestMedia.id);
+    }
   }
 
   onWheel(e: Event) {
@@ -647,13 +692,14 @@ class App {
 }
 
 interface CircularGalleryProps {
-  items?: { image: string; text: string }[];
+  items?: { image: string; text: string; id?: number }[];
   bend?: number;
   textColor?: string;
   borderRadius?: number;
   font?: string;
   scrollSpeed?: number;
   scrollEase?: number;
+  onItemClick?: (id: number) => void;
 }
 
 export default function WebGLGallery({
@@ -663,7 +709,8 @@ export default function WebGLGallery({
   borderRadius = 0.05,
   font = 'bold 30px Figtree',
   scrollSpeed = 2,
-  scrollEase = 0.05
+  scrollEase = 0.05,
+  onItemClick
 }: CircularGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -675,11 +722,12 @@ export default function WebGLGallery({
       borderRadius,
       font,
       scrollSpeed,
-      scrollEase
+      scrollEase,
+      onItemClick
     });
     return () => {
       app.destroy();
     };
-  }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
+  }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase, onItemClick]);
   return <div className="w-full h-full overflow-hidden cursor-grab active:cursor-grabbing" ref={containerRef} />;
 }
