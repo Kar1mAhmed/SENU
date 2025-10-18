@@ -19,29 +19,43 @@ const HeroSection = () => {
     };
   });
 
-  // Preload images
+  // Preload images with timeout fallback
   React.useEffect(() => {
     if (thumbnails.length === 0) return;
     
     let loadedCount = 0;
     const totalImages = thumbnails.length;
     
-    thumbnails.forEach(thumb => {
+    // Set a timeout to show gallery even if some images fail
+    const timeout = setTimeout(() => {
+      console.log('⏱️ Image loading timeout - showing gallery anyway');
+      setImagesLoaded(true);
+    }, 5000); // 5 second timeout
+    
+    const checkComplete = () => {
+      loadedCount++;
+      console.log(`📸 Loaded ${loadedCount}/${totalImages} images`);
+      if (loadedCount === totalImages) {
+        clearTimeout(timeout);
+        setImagesLoaded(true);
+      }
+    };
+    
+    thumbnails.forEach((thumb, index) => {
       const img = new Image();
+      img.crossOrigin = 'anonymous'; // Enable CORS for CDN images
       img.onload = () => {
-        loadedCount++;
-        if (loadedCount === totalImages) {
-          setImagesLoaded(true);
-        }
+        console.log(`✅ Image ${index + 1} loaded:`, thumb.name);
+        checkComplete();
       };
-      img.onerror = () => {
-        loadedCount++;
-        if (loadedCount === totalImages) {
-          setImagesLoaded(true);
-        }
+      img.onerror = (error) => {
+        console.error(`❌ Image ${index + 1} failed:`, thumb.name, error);
+        checkComplete();
       };
       img.src = thumb.thumbnailUrl;
     });
+    
+    return () => clearTimeout(timeout);
   }, [thumbnails]);
 
   return (
@@ -77,7 +91,7 @@ const HeroSection = () => {
                   bend={0}
                   textColor="#ffffff"
                   borderRadius={0.08}
-                  font="bold 14px Alexandria"
+                  font="600 16px 'New Black Typeface', sans-serif"
                   scrollSpeed={3}
                   scrollEase={0.15}
                 />
@@ -89,7 +103,7 @@ const HeroSection = () => {
                   bend={3}
                   textColor="#ffffff"
                   borderRadius={0.05}
-                  font="bold 24px Alexandria"
+                  font="600 24px 'New Black Typeface', sans-serif"
                   scrollSpeed={2}
                   scrollEase={0.05}
                 />
