@@ -600,15 +600,15 @@ class App {
     let closestMedia: Media | null = null;
     let minDistance = Infinity;
     
-    this.medias.forEach(media => {
+    for (const media of this.medias) {
       const distance = Math.abs(media.plane.position.x);
       if (distance < minDistance) {
         minDistance = distance;
         closestMedia = media;
       }
-    });
+    }
     
-    if (closestMedia && closestMedia.id !== undefined) {
+    if (closestMedia !== null && closestMedia.id !== undefined) {
       this.onItemClick(closestMedia.id);
     }
   }
