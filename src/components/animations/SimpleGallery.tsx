@@ -78,7 +78,7 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
       {items.map((item, index) => (
         <div
           key={index}
-          className="flex-shrink-0 w-[200px] flex flex-col gap-3 cursor-pointer"
+          className="flex-shrink-0 w-[200px] flex flex-col gap-2 cursor-pointer"
           onClick={() => handleClick(item.link)}
         >
           <div className="relative w-[200px] h-[250px] rounded-2xl overflow-hidden bg-neutral-900">
@@ -92,7 +92,7 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
               unoptimized
             />
           </div>
-          <p className="font-new-black font-light text-white text-base text-center px-2">
+          <p className="font-new-black font-light text-white text-sm text-center px-2 leading-tight">
             {item.text}
           </p>
         </div>
