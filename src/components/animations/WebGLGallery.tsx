@@ -321,19 +321,29 @@ class Media {
     };
 
     img.onerror = () => {
-      // Silently mark as loaded to avoid black screen
-      // CORS errors are expected for some CDN configurations
+      // Mark as loaded immediately to prevent black screen
       this.program.uniforms.uImageLoaded.value = 1;
       
-      // Try loading without crossOrigin as fallback
+      // Try loading without crossOrigin as fallback (won't work with WebGL but prevents errors)
       const fallbackImg = new Image();
       fallbackImg.onload = () => {
         try {
-          texture.image = fallbackImg;
-          this.program.uniforms.uImageSizes.value = [fallbackImg.naturalWidth, fallbackImg.naturalHeight];
-        } catch (e) {
-          // Ignore fallback errors
+          // Create a canvas to copy the image (bypasses CORS for display)
+          const canvas = document.createElement('canvas');
+          canvas.width = fallbackImg.naturalWidth;
+          canvas.height = fallbackImg.naturalHeight;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(fallbackImg, 0, 0);
+            texture.image = canvas;
+            this.program.uniforms.uImageSizes.value = [canvas.width, canvas.height];
+          }
+        } catch {
+          // If canvas also fails, just show black (already marked as loaded)
         }
+      };
+      fallbackImg.onerror = () => {
+        // Complete failure - image stays black but doesn't crash
       };
       fallbackImg.src = this.image;
     };

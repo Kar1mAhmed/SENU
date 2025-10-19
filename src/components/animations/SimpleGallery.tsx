@@ -1,7 +1,6 @@
 'use client';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 
 interface GalleryItem {
   image: string;
@@ -59,10 +58,36 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
     }
   };
 
+  // Triple the items for infinite scroll
+  const infiniteItems = [...items, ...items, ...items];
+
+  // Handle infinite scroll
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const scrollWidth = container.scrollWidth / 3;
+      const scrollLeft = container.scrollLeft;
+
+      if (scrollLeft >= scrollWidth * 2) {
+        container.scrollLeft = scrollLeft - scrollWidth;
+      } else if (scrollLeft <= 0) {
+        container.scrollLeft = scrollWidth + scrollLeft;
+      }
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    // Start in the middle
+    container.scrollLeft = container.scrollWidth / 3;
+
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [items]);
+
   return (
     <div
       ref={scrollRef}
-      className="flex gap-4 overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing select-none h-full py-4 "
+      className="flex gap-4 overflow-x-auto scrollbar-hide cursor-grab active:cursor-grabbing select-none h-full py-4"
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -75,21 +100,21 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
         msOverflowStyle: 'none',
       }}
     >
-      {items.map((item, index) => (
+      {infiniteItems.map((item, index) => (
         <div
           key={index}
           className="flex-shrink-0 w-[200px] flex flex-col gap-2 cursor-pointer"
           onClick={() => handleClick(item.link)}
         >
           <div className="relative w-[200px] h-[250px] rounded-2xl overflow-hidden bg-neutral-900">
-            <Image
+            <img
               src={item.image}
               alt={item.text}
-              fill
-              className="object-cover"
+              className="w-full h-full object-cover"
               draggable={false}
-              priority
-              unoptimized
+              loading="eager"
+              crossOrigin="anonymous"
+              decoding="async"
             />
           </div>
           <p className="font-new-black font-light text-white text-sm text-center px-2 leading-tight">
