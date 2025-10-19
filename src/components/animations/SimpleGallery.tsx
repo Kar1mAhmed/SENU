@@ -12,12 +12,34 @@ interface SimpleGalleryProps {
   items: GalleryItem[];
 }
 
+// Preload and cache images
+const preloadImages = async (items: GalleryItem[]) => {
+  const promises = items.map(item => {
+    return new Promise<void>((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve();
+      img.onerror = () => resolve(); // Still resolve on error
+      img.crossOrigin = 'anonymous';
+      img.src = item.image;
+    });
+  });
+  await Promise.all(promises);
+};
+
 export default function SimpleGallery({ items }: SimpleGalleryProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
   const router = useRouter();
+
+  // Preload all images on mount
+  useEffect(() => {
+    preloadImages(items).then(() => {
+      setImagesLoaded(true);
+    });
+  }, [items]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!scrollRef.current) return;
