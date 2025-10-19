@@ -298,40 +298,53 @@ class Media {
         uPlaneSizes: { value: [0, 0] },
         uImageSizes: { value: [0, 0] },
         uBorderRadius: { value: this.borderRadius },
-        uImageLoaded: { value: 0 }
+        uImageLoaded: { value: 0 },
+        uTime: { value: 0 },
+        uSpeed: { value: 0 }
       },
       transparent: true
     });
-    
+
     // Load image with better error handling
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    
+
     img.onload = () => {
       try {
         texture.image = img;
         this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
         this.program.uniforms.uImageLoaded.value = 1;
-        console.log('✅ WebGL texture loaded:', this.text);
       } catch (error) {
         console.error('❌ Error setting texture:', this.text, error);
+        this.program.uniforms.uImageLoaded.value = 1;
       }
     };
-    
-    img.onerror = (error) => {
-      console.error('❌ Failed to load image:', this.image, error);
-      // Still mark as loaded to avoid black screen
+
+    img.onerror = () => {
+      // Silently mark as loaded to avoid black screen
+      // CORS errors are expected for some CDN configurations
       this.program.uniforms.uImageLoaded.value = 1;
+      
+      // Try loading without crossOrigin as fallback
+      const fallbackImg = new Image();
+      fallbackImg.onload = () => {
+        try {
+          texture.image = fallbackImg;
+          this.program.uniforms.uImageSizes.value = [fallbackImg.naturalWidth, fallbackImg.naturalHeight];
+        } catch (e) {
+          // Ignore fallback errors
+        }
+      };
+      fallbackImg.src = this.image;
     };
-    
+
     // Add timeout fallback
     setTimeout(() => {
       if (this.program.uniforms.uImageLoaded.value === 0) {
-        console.warn('⏱️ Image load timeout:', this.text);
         this.program.uniforms.uImageLoaded.value = 1;
       }
     }, 3000);
-    
+
     img.src = this.image;
   }
 
@@ -612,38 +625,38 @@ class App {
   onTouchUp(e: MouseEvent | TouchEvent) {
     const wasDragging = this.isDown;
     this.isDown = false;
-    
+
     // Only trigger click if user didn't drag
     const endX = 'touches' in e && e.changedTouches ? e.changedTouches[0].clientX : (e as MouseEvent).clientX;
     const dragDistance = Math.abs(this.start - endX);
-    
+
     if (wasDragging && dragDistance < 5 && this.onItemClick) {
       // User clicked without dragging - find which media was clicked
       this.handleClick(e);
     }
-    
+
     this.onCheck();
   }
-  
+
   handleClick(_e: MouseEvent | TouchEvent) {
     if (!this.onItemClick) return;
-    
+
     // Find the media closest to center of viewport (most visible)
     let closestMedia: Media | null = null;
     let minDistance = Infinity;
-    
+
     for (const media of this.medias) {
       // Calculate distance from center of viewport
       // The center is at x = 0 in the scene coordinate system
       const mediaCenter = media.plane.position.x;
       const distance = Math.abs(mediaCenter);
-      
+
       if (distance < minDistance && media.id !== undefined) {
         minDistance = distance;
         closestMedia = media;
       }
     }
-    
+
     if (closestMedia !== null && closestMedia.id !== undefined && closestMedia.id !== null) {
       console.log('🖱️ Clicked project ID:', closestMedia.id, 'Distance from center:', minDistance);
       this.onItemClick(closestMedia.id);
@@ -652,9 +665,7 @@ class App {
 
   onWheel(e: Event) {
     const wheelEvent = e as WheelEvent;
-    // Handle cross-browser wheel event properties
-    const legacyEvent = wheelEvent as WheelEvent & { wheelDelta?: number; detail?: number };
-    const delta = wheelEvent.deltaY || legacyEvent.wheelDelta || legacyEvent.detail || 0;
+    const delta = wheelEvent.deltaY || (wheelEvent as any).wheelDelta || (wheelEvent as any).detail;
     this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2;
     this.onCheckDebounce();
   }
@@ -766,12 +777,12 @@ export default function WebGLGallery({
   // Handle click - only navigate if it's a quick click, not a drag
   const handleClick = (e: React.MouseEvent) => {
     if (!appRef.current || !items || !mouseDownPos.current) return;
-    
+
     // Calculate distance moved and time held
     const deltaX = Math.abs(e.clientX - mouseDownPos.current.x);
     const deltaY = Math.abs(e.clientY - mouseDownPos.current.y);
     const deltaTime = Date.now() - mouseDownPos.current.time;
-    
+
     // Only navigate if:
     // 1. Mouse moved less than 10px (not a drag)
     // 2. Click was less than 300ms (not a long press)
@@ -779,34 +790,34 @@ export default function WebGLGallery({
       const app = appRef.current;
       const rect = containerRef.current?.getBoundingClientRect();
       if (!rect) return;
-      
+
       // Get click position relative to container
       const clickX = e.clientX - rect.left;
       const containerWidth = rect.width;
       const containerCenter = containerWidth / 2;
-      
+
       // Find the media closest to where the user clicked
       let closestMedia: Media | null = null;
       let minDistance = Infinity;
-      
+
       for (const media of app.medias) {
         // Get media position in screen space
         const mediaScreenX = containerCenter + (media.plane.position.x * containerWidth / app.viewport.width);
         const distance = Math.abs(clickX - mediaScreenX);
-        
+
         if (distance < minDistance) {
           minDistance = distance;
           closestMedia = media;
         }
       }
-      
+
       if (closestMedia && items[closestMedia.index % items.length]?.link) {
         const link = items[closestMedia.index % items.length].link!;
         console.log('🎯 Clicked on:', items[closestMedia.index % items.length].text, '- Navigating to:', link);
         router.push(link);
       }
     }
-    
+
     mouseDownPos.current = null;
   };
 
@@ -827,10 +838,10 @@ export default function WebGLGallery({
       appRef.current = null;
     };
   }, [items, bend, textColor, borderRadius, font, scrollSpeed, scrollEase]);
-  
+
   return (
-    <div 
-      className="w-full h-full overflow-hidden cursor-pointer" 
+    <div
+      className="w-full h-full overflow-hidden cursor-pointer"
       ref={containerRef}
       onMouseDown={handleMouseDown}
       onClick={handleClick}
