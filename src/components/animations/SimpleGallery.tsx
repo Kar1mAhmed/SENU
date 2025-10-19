@@ -135,8 +135,14 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
               className="w-full h-full object-cover"
               draggable={false}
               loading="eager"
-              crossOrigin="anonymous"
               decoding="async"
+              onError={(e) => {
+                // Fallback to proxy if direct load fails
+                const target = e.target as HTMLImageElement;
+                if (!target.src.includes('/api/image-proxy')) {
+                  target.src = `/api/image-proxy?url=${encodeURIComponent(item.image)}`;
+                }
+              }}
             />
           </div>
           <p className="font-new-black font-light text-white text-sm text-center px-2 leading-tight">
