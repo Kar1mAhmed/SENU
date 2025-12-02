@@ -71,7 +71,16 @@ export async function GET(request: NextRequest) {
             data: thumbnails
         };
 
-        return NextResponse.json(response);
+        return NextResponse.json(response, {
+            headers: {
+                // Cache for 1 hour in browser, 24 hours in CDN
+                'Cache-Control': 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800',
+                // Allow caching
+                'CDN-Cache-Control': 'max-age=86400',
+                // Vary by query parameters
+                'Vary': 'Accept-Encoding',
+            },
+        });
 
     } catch (error) {
         console.error('❌ Error fetching thumbnails:', error);

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import useSWR from 'swr';
 
 interface ThumbnailData {
     id: string;
@@ -13,37 +13,51 @@ interface UseThumbnailsResult {
 }
 
 /**
- * Hook to fetch project thumbnails from the API
+ * Fetcher function for SWR
+ */
+const fetcher = async (url: string) => {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (!data.success) {
+        throw new Error(data.error || 'Failed to fetch thumbnails');
+    }
+
+    return data.data;
+};
+
+/**
+ * Hook to fetch project thumbnails from the API with SWR caching
+ * 
+ * Features:
+ * - Automatic caching and deduplication
+ * - Revalidation on focus/reconnect
+ * - Optimistic updates
+ * - Shared cache across components
  */
 export function useThumbnails(limit: number = 12): UseThumbnailsResult {
-    const [thumbnails, setThumbnails] = useState<ThumbnailData[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { data, error, isLoading } = useSWR<ThumbnailData[]>(
+        `/api/projects/thumbnails?limit=${limit}`,
+        fetcher,
+        {
+            // Cache for 5 minutes
+            dedupingInterval: 300000,
+            // Don't revalidate on focus to prevent unnecessary requests
+            revalidateOnFocus: false,
+            // Revalidate on reconnect to get fresh data if network was down
+            revalidateOnReconnect: true,
+            // Keep previous data while revalidating
+            keepPreviousData: true,
+            // Retry on error
+            shouldRetryOnError: true,
+            errorRetryCount: 3,
+            errorRetryInterval: 1000,
+        }
+    );
 
-    useEffect(() => {
-        const fetchThumbnails = async () => {
-            try {
-                setLoading(true);
-                setError(null);
-
-                const response = await fetch(`/api/projects/thumbnails?limit=${limit}`);
-                const data = await response.json();
-
-                if (data.success) {
-                    setThumbnails(data.data);
-                } else {
-                    setError(data.error || 'Failed to fetch thumbnails');
-                }
-            } catch (err) {
-                console.error('Error fetching thumbnails:', err);
-                setError('Failed to fetch thumbnails');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchThumbnails();
-    }, [limit]);
-
-    return { thumbnails, loading, error };
+    return {
+        thumbnails: data || [],
+        loading: isLoading,
+        error: error ? error.message : null,
+    };
 }

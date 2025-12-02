@@ -1,6 +1,7 @@
 'use client';
 import React, { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface GalleryItem {
   image: string;
@@ -29,6 +30,9 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
   // Track image loading states
   const [imageStates, setImageStates] = useState<Record<string, ImageState>>({});
 
+  // Track which images are in viewport for lazy loading
+  const [visibleImages, setVisibleImages] = useState<Set<number>>(new Set());
+
   // Initialize image states
   useEffect(() => {
     const states: Record<string, ImageState> = {};
@@ -42,6 +46,36 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
       };
     });
     setImageStates(states);
+
+    // Mark first 5 images as visible for priority loading
+    setVisibleImages(new Set([0, 1, 2, 3, 4]));
+  }, [items]);
+
+  // Intersection Observer for lazy loading
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = parseInt(entry.target.getAttribute('data-index') || '0');
+            setVisibleImages(prev => new Set([...prev, index]));
+          }
+        });
+      },
+      {
+        root: scrollRef.current,
+        rootMargin: '50px', // Start loading 50px before entering viewport
+        threshold: 0.01,
+      }
+    );
+
+    // Observe all items
+    const items = scrollRef.current?.querySelectorAll('[data-index]');
+    items?.forEach(item => observer.observe(item));
+
+    return () => observer.disconnect();
   }, [items]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -179,12 +213,16 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
       }}
     >
       {infiniteItems.map((item, index) => {
-        const key = `${index % items.length}-${item.image}`;
+        const itemIndex = index % items.length;
+        const key = `${itemIndex}-${item.image}`;
         const imageState = imageStates[key] || { src: item.image, loading: true, error: false, retryCount: 0 };
+        const isVisible = visibleImages.has(itemIndex);
+        const isPriority = itemIndex < 3; // First 3 images get priority
 
         return (
           <div
             key={index}
+            data-index={itemIndex}
             className="flex-shrink-0 w-[200px] flex flex-col gap-2 cursor-pointer"
             onClick={() => handleClick(item.link)}
           >
@@ -204,18 +242,22 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
                 </div>
               )}
 
-              {/* Actual image */}
-              {!imageState.error && (
-                <img
+              {/* Actual image - only render if visible or priority */}
+              {!imageState.error && (isVisible || isPriority) && (
+                <Image
                   src={imageState.src}
                   alt={item.text}
-                  className={`w-full h-full object-cover transition-opacity duration-300 ${imageState.loading ? 'opacity-0' : 'opacity-100'
+                  fill
+                  sizes="200px"
+                  className={`object-cover transition-opacity duration-300 ${imageState.loading ? 'opacity-0' : 'opacity-100'
                     }`}
                   draggable={false}
-                  loading="lazy"
-                  decoding="async"
+                  priority={isPriority}
+                  loading={isPriority ? undefined : 'lazy'}
+                  quality={85}
                   onLoad={() => handleImageLoad(key)}
                   onError={() => handleImageError(key, item.image)}
+                  unoptimized={imageState.src.includes('/api/image-proxy')} // Don't double-optimize proxy images
                 />
               )}
             </div>
