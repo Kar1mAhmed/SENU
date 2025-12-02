@@ -304,39 +304,116 @@ class Media {
       },
       transparent: true
     });
-    
-    // Load image with caching
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    
-    // Set cache control
-    img.decoding = 'async';
-    
-    img.onload = () => {
-      try {
-        texture.image = img;
-        this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
-        this.program.uniforms.uImageLoaded.value = 1;
-      } catch (error) {
-        console.error('❌ Error setting texture:', this.text, error);
-        this.program.uniforms.uImageLoaded.value = 1;
-      }
+
+    // Load image with retry logic and fallback
+    const loadImageWithRetry = (src: string, attempt: number = 0): void => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.decoding = 'async';
+
+      const maxRetries = 3;
+      const timeout = 8000; // 8 seconds
+      let timeoutId: NodeJS.Timeout;
+
+      // Timeout handler
+      const handleTimeout = () => {
+        console.warn(`⏱️ Image load timeout (attempt ${attempt + 1}/${maxRetries}):`, this.text, src);
+        img.src = ''; // Cancel loading
+        handleError(new Error('Timeout'));
+      };
+
+      const handleError = (error?: Error) => {
+        clearTimeout(timeoutId);
+
+        if (attempt < maxRetries) {
+          const delay = 500 * Math.pow(2, attempt); // Exponential backoff
+          console.log(`🔄 Retrying image (attempt ${attempt + 2}/${maxRetries}) in ${delay}ms:`, this.text);
+
+          setTimeout(() => {
+            // Try with proxy on second attempt
+            if (attempt === 0) {
+              const proxySrc = `/api/image-proxy?url=${encodeURIComponent(this.image)}`;
+              loadImageWithRetry(proxySrc, attempt + 1);
+            } else {
+              loadImageWithRetry(this.image, attempt + 1);
+            }
+          }, delay);
+        } else {
+          // All retries exhausted - create fallback texture
+          console.error(`❌ Image failed after ${maxRetries} attempts:`, this.text, error);
+
+          // Create a fallback SVG texture
+          const canvas = document.createElement('canvas');
+          canvas.width = 800;
+          canvas.height = 600;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            // Dark background
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, 800, 600);
+
+            // Error icon (X in circle)
+            ctx.strokeStyle = '#555';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(400, 280, 60, 0, 2 * Math.PI);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(370, 250);
+            ctx.lineTo(430, 310);
+            ctx.moveTo(430, 250);
+            ctx.lineTo(370, 310);
+            ctx.stroke();
+
+            // Text
+            ctx.fillStyle = '#666';
+            ctx.font = '18px system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Image unavailable', 400, 400);
+
+            ctx.fillStyle = '#444';
+            ctx.font = '14px system-ui, sans-serif';
+            ctx.fillText(this.text, 400, 430);
+          }
+
+          texture.image = canvas;
+          this.program.uniforms.uImageSizes.value = [800, 600];
+          this.program.uniforms.uImageLoaded.value = 1;
+        }
+      };
+
+      img.onload = () => {
+        clearTimeout(timeoutId);
+        try {
+          texture.image = img;
+          this.program.uniforms.uImageSizes.value = [img.naturalWidth, img.naturalHeight];
+          this.program.uniforms.uImageLoaded.value = 1;
+          if (attempt > 0) {
+            console.log(`✅ Image loaded successfully on attempt ${attempt + 1}:`, this.text);
+          }
+        } catch (error) {
+          console.error('❌ Error setting texture:', this.text, error);
+          handleError(error instanceof Error ? error : new Error('Unknown error'));
+        }
+      };
+
+      img.onerror = (event) => {
+        console.warn(`❌ Image load error (attempt ${attempt + 1}/${maxRetries}):`, this.text, event);
+        handleError(new Error('Load error'));
+      };
+
+      // Set timeout
+      timeoutId = setTimeout(handleTimeout, timeout);
+
+      // Start loading
+      img.src = src;
     };
-    
-    img.onerror = () => {
-      // Silently mark as loaded to avoid black screen
-      this.program.uniforms.uImageLoaded.value = 1;
-    };
-    
-    // Add timeout fallback
-    setTimeout(() => {
-      if (this.program.uniforms.uImageLoaded.value === 0) {
-        this.program.uniforms.uImageLoaded.value = 1;
-      }
-    }, 3000);
-    
-    img.src = this.image;
+
+    // Start loading with retry logic
+    loadImageWithRetry(this.image);
   }
+
 
   createMesh() {
     this.plane = new Mesh(this.gl, {

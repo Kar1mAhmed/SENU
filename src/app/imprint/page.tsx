@@ -32,18 +32,6 @@ export default function ImprintPage() {
                                     <p className="text-gray-400 text-sm mb-1">Company Name</p>
                                     <p className="text-white text-xl">SENU Studio</p>
                                 </div>
-                                <div>
-                                    <p className="text-gray-400 text-sm mb-1">Legal Form</p>
-                                    <p className="text-white">[Your Legal Form - e.g., LLC, GmbH, etc.]</p>
-                                </div>
-                                <div>
-                                    <p className="text-gray-400 text-sm mb-1">Registration Number</p>
-                                    <p className="text-white">[Your Registration Number]</p>
-                                </div>
-                                <div>
-                                    <p className="text-gray-400 text-sm mb-1">VAT ID</p>
-                                    <p className="text-white">[Your VAT Identification Number]</p>
-                                </div>
                             </div>
                         </div>
 
@@ -55,9 +43,9 @@ export default function ImprintPage() {
                             <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-lg p-8 space-y-4">
                                 <div>
                                     <p className="text-gray-400 text-sm mb-1">Address</p>
-                                    <p className="text-white">[Your Street Address]</p>
-                                    <p className="text-white">[Your City, Postal Code]</p>
-                                    <p className="text-white">[Your Country]</p>
+                                    <p className="text-white">Westren Union St</p>
+                                    <p className="text-white">Cairo</p>
+                                    <p className="text-white">Egypt</p>
                                 </div>
                                 <div>
                                     <p className="text-gray-400 text-sm mb-1">Email</p>
@@ -67,7 +55,7 @@ export default function ImprintPage() {
                                 </div>
                                 <div>
                                     <p className="text-gray-400 text-sm mb-1">Phone</p>
-                                    <p className="text-white">[Your Phone Number]</p>
+                                    <p className="text-white">+20 15 55018424</p>
                                 </div>
                                 <div>
                                     <p className="text-gray-400 text-sm mb-1">Website</p>
@@ -85,10 +73,10 @@ export default function ImprintPage() {
                             </h2>
                             <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-lg p-8">
                                 <p className="text-white mb-2">
-                                    <span className="text-gray-400">Managing Director:</span> [Your Name]
+                                    <span className="text-gray-400">Managing Director:</span> Karim Ahmed
                                 </p>
                                 <p className="text-white">
-                                    <span className="text-gray-400">Position:</span> [Your Position/Title]
+                                    <span className="text-gray-400">Position:</span>General Manager
                                 </p>
                             </div>
                         </div>
@@ -99,10 +87,9 @@ export default function ImprintPage() {
                                 Responsible for Content
                             </h2>
                             <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-lg p-8">
-                                <p className="text-white mb-2">[Your Name]</p>
-                                <p className="text-gray-300">[Your Address]</p>
-                                <p className="text-gray-300">[Your City, Postal Code]</p>
-                                <p className="text-gray-300">[Your Country]</p>
+                                <p className="text-white mb-2">Karim Ahmed</p>
+                                <p className="text-gray-300">Cairo</p>
+                                <p className="text-gray-300">Egypt</p>
                             </div>
                         </div>
 

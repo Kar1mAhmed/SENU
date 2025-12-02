@@ -161,10 +161,10 @@ export default function PrivacyPage() {
                                     <span className="text-yellow font-semibold">Email:</span> info@senu.studio
                                 </p>
                                 <p className="text-white mb-2">
-                                    <span className="text-yellow font-semibold">Address:</span> [Your Company Address]
+                                    <span className="text-yellow font-semibold">Address:</span> Egypt, Cairo, Western Union st
                                 </p>
                                 <p className="text-white">
-                                    <span className="text-yellow font-semibold">Phone:</span> [Your Phone Number]
+                                    <span className="text-yellow font-semibold">Phone:</span> +20 15 55018424
                                 </p>
                             </div>
                         </div>

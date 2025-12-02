@@ -12,33 +12,36 @@ interface SimpleGalleryProps {
   items: GalleryItem[];
 }
 
-// Preload and cache images
-const preloadImages = async (items: GalleryItem[]) => {
-  const promises = items.map(item => {
-    return new Promise<void>((resolve) => {
-      const img = new Image();
-      img.onload = () => resolve();
-      img.onerror = () => resolve(); // Still resolve on error
-      img.crossOrigin = 'anonymous';
-      img.src = item.image;
-    });
-  });
-  await Promise.all(promises);
-};
+interface ImageState {
+  src: string;
+  loading: boolean;
+  error: boolean;
+  retryCount: number;
+}
 
 export default function SimpleGallery({ items }: SimpleGalleryProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const [imagesLoaded, setImagesLoaded] = useState(false);
   const router = useRouter();
 
-  // Preload all images on mount
+  // Track image loading states
+  const [imageStates, setImageStates] = useState<Record<string, ImageState>>({});
+
+  // Initialize image states
   useEffect(() => {
-    preloadImages(items).then(() => {
-      setImagesLoaded(true);
+    const states: Record<string, ImageState> = {};
+    items.forEach((item, idx) => {
+      const key = `${idx}-${item.image}`;
+      states[key] = {
+        src: item.image,
+        loading: true,
+        error: false,
+        retryCount: 0,
+      };
     });
+    setImageStates(states);
   }, [items]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -78,6 +81,59 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
     if (!isDragging && link) {
       router.push(link);
     }
+  };
+
+  // Handle image load success
+  const handleImageLoad = (key: string) => {
+    setImageStates(prev => ({
+      ...prev,
+      [key]: { ...prev[key], loading: false, error: false },
+    }));
+  };
+
+  // Handle image load error with retry logic
+  const handleImageError = (key: string, originalSrc: string) => {
+    setImageStates(prev => {
+      const state = prev[key];
+      if (!state) return prev;
+
+      const newRetryCount = state.retryCount + 1;
+      const maxRetries = 3;
+
+      if (newRetryCount < maxRetries) {
+        // Retry with exponential backoff
+        const delay = 500 * Math.pow(2, newRetryCount - 1);
+        console.log(`Retrying image ${key} (attempt ${newRetryCount}/${maxRetries}) in ${delay}ms`);
+
+        setTimeout(() => {
+          // Try with image proxy as fallback
+          const proxySrc = `/api/image-proxy?url=${encodeURIComponent(originalSrc)}`;
+          setImageStates(prevStates => ({
+            ...prevStates,
+            [key]: {
+              ...prevStates[key],
+              src: newRetryCount === 1 ? proxySrc : originalSrc,
+              retryCount: newRetryCount,
+              loading: true,
+            },
+          }));
+        }, delay);
+
+        return prev;
+      } else {
+        // All retries exhausted - show error state
+        console.error(`Image ${key} failed after ${maxRetries} attempts`);
+        return {
+          ...prev,
+          [key]: {
+            ...state,
+            loading: false,
+            error: true,
+            retryCount: newRetryCount,
+          },
+        };
+      }
+    });
   };
 
   // Triple the items for infinite scroll
@@ -122,34 +178,53 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
         msOverflowStyle: 'none',
       }}
     >
-      {infiniteItems.map((item, index) => (
-        <div
-          key={index}
-          className="flex-shrink-0 w-[200px] flex flex-col gap-2 cursor-pointer"
-          onClick={() => handleClick(item.link)}
-        >
-          <div className="relative w-[200px] h-[250px] rounded-2xl overflow-hidden bg-neutral-900">
-            <img
-              src={item.image}
-              alt={item.text}
-              className="w-full h-full object-cover"
-              draggable={false}
-              loading="eager"
-              decoding="async"
-              onError={(e) => {
-                // Fallback to proxy if direct load fails
-                const target = e.target as HTMLImageElement;
-                if (!target.src.includes('/api/image-proxy')) {
-                  target.src = `/api/image-proxy?url=${encodeURIComponent(item.image)}`;
-                }
-              }}
-            />
+      {infiniteItems.map((item, index) => {
+        const key = `${index % items.length}-${item.image}`;
+        const imageState = imageStates[key] || { src: item.image, loading: true, error: false, retryCount: 0 };
+
+        return (
+          <div
+            key={index}
+            className="flex-shrink-0 w-[200px] flex flex-col gap-2 cursor-pointer"
+            onClick={() => handleClick(item.link)}
+          >
+            <div className="relative w-[200px] h-[250px] rounded-2xl overflow-hidden bg-neutral-900">
+              {/* Loading shimmer */}
+              {imageState.loading && (
+                <div className="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 animate-pulse" />
+              )}
+
+              {/* Error state */}
+              {imageState.error && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-neutral-900 text-neutral-600">
+                  <svg className="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <p className="text-xs text-center px-2">Image unavailable</p>
+                </div>
+              )}
+
+              {/* Actual image */}
+              {!imageState.error && (
+                <img
+                  src={imageState.src}
+                  alt={item.text}
+                  className={`w-full h-full object-cover transition-opacity duration-300 ${imageState.loading ? 'opacity-0' : 'opacity-100'
+                    }`}
+                  draggable={false}
+                  loading="lazy"
+                  decoding="async"
+                  onLoad={() => handleImageLoad(key)}
+                  onError={() => handleImageError(key, item.image)}
+                />
+              )}
+            </div>
+            <p className="font-new-black font-light text-white text-sm text-center px-2 leading-tight">
+              {item.text}
+            </p>
           </div>
-          <p className="font-new-black font-light text-white text-sm text-center px-2 leading-tight">
-            {item.text}
-          </p>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
