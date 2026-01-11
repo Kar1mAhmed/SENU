@@ -9,9 +9,9 @@ const clientLogos = [
     { name: 'lego', src: '/images/clients/4.svg' },
     { name: 'tanoreen', src: '/images/clients/5.svg' },
     { name: 'havana', src: '/images/clients/6.svg' },
-    { name: 'oryx', src: '/images/clients/7.svg' },
-    { name: 'khazna', src: '/images/clients/8.svg' },
     { name: 'lego', src: '/images/clients/9.svg' },
+    { name: 'ilo', src: '/images/clients/ilo.svg' },
+    { name: 'talabat', src: '/images/clients/talabat.svg' },
 ];
 
 const OurClients: React.FC = () => {
