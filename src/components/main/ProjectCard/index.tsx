@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Icon from '../Icon';
 import VideoPlayer from '../VideoPlayer';
+import ViewProjectButton from '../ViewProjectButton';
 import { Project } from '@/lib/types';
 
 interface ProjectCardProps {
@@ -49,12 +50,12 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     ];
 
     const defaultColors = colorVariations[index % colorVariations.length];
-    
+
     // Use custom colors from project if available, otherwise use Tailwind classes
     const hasCustomColors = project.iconBarBgColor && project.iconBarIconColor;
     const iconBarBgColor = project.iconBarBgColor;
     const iconBarIconColor = project.iconBarIconColor;
-    
+
     // Helper to get icon bar style
     const getIconBarStyle = () => hasCustomColors ? { backgroundColor: iconBarBgColor } : {};
     const getIconBarClass = () => hasCustomColors ? '' : defaultColors.bg;
@@ -79,7 +80,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
         <div className="w-full bg-transparent flex flex-col mb-8 group">
             <div className="relative w-full px-6">
                 <div className="relative w-full aspect-[560/620] max-w-full md:max-w-[450px] lg:max-w-[480px] xl:max-w-[560px] mx-auto">
-                    <div 
+                    <div
                         className="absolute inset-0 rounded-lg overflow-hidden cursor-pointer"
                         onClick={handleProjectClick}
                     >
@@ -99,9 +100,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     </div>
 
                     {/* Icons Sidebar - Mobile */}
-                    <div 
+                    <div
                         className={`absolute sm:hidden ${index % 2 === 0 ? 'left-[-10px] top-16' : 'right-[-10px] bottom-16'
-                        } w-[10%] bg-opacity-90 ${getIconBarClass()} rounded-full flex flex-col items-center justify-center gap-[8%]
+                            } w-[10%] bg-opacity-90 ${getIconBarClass()} rounded-full flex flex-col items-center justify-center gap-[8%]
                         transition-all duration-500 ease-out aspect-[1/4] group-hover:aspect-[1/5]`}
                         style={getIconBarStyle()}
                     >
@@ -117,10 +118,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     </div>
 
                     {/* Icons Sidebar - Desktop */}
-                    <div 
+                    <div
                         className={`absolute hidden sm:flex ${isLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
-                        } ${isLeft ? 'top-[10%]' : 'bottom-[10%]'
-                        } w-[7%] min-w-[30px] max-w-[40px] ${getIconBarClass()} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90
+                            } ${isLeft ? 'top-[10%]' : 'bottom-[10%]'
+                            } w-[7%] min-w-[30px] max-w-[40px] ${getIconBarClass()} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90
                         transition-all duration-500 ease-out aspect-[1/5] min-h-[90px] max-h-[180px]
                         group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[240px]`}
                         style={getIconBarStyle()}
@@ -149,7 +150,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     {project.videoUrl ? (
                         renderVideoPlayer()
                     ) : (
-                        <div 
+                        <div
                             className="absolute inset-0 rounded-lg overflow-hidden bg-black cursor-pointer"
                             onClick={handleProjectClick}
                         >
@@ -170,9 +171,9 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     )}
 
                     {/* Icons Sidebar - Mobile */}
-                    <div 
+                    <div
                         className={`absolute sm:hidden ${index % 2 === 0 ? 'left-[-10px] top-16' : 'right-[-10px] bottom-16'
-                        } w-[10%] bg-opacity-90 ${getIconBarClass()} rounded-full flex flex-col items-center justify-center gap-[8%]
+                            } w-[10%] bg-opacity-90 ${getIconBarClass()} rounded-full flex flex-col items-center justify-center gap-[8%]
                         transition-all duration-500 ease-out aspect-[1/4] group-hover:aspect-[1/5] z-10`}
                         style={getIconBarStyle()}
                     >
@@ -188,10 +189,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     </div>
 
                     {/* Icons Sidebar - Desktop */}
-                    <div 
+                    <div
                         className={`absolute hidden sm:flex ${isLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
-                        } ${isLeft ? 'top-[10%]' : 'bottom-[10%]'
-                        } w-[7%] min-w-[30px] max-w-[40px] ${getIconBarClass()} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90
+                            } ${isLeft ? 'top-[10%]' : 'bottom-[10%]'
+                            } w-[7%] min-w-[30px] max-w-[40px] ${getIconBarClass()} rounded-full flex-col items-center justify-center gap-[8%] bg-opacity-90
                         transition-all duration-500 ease-out aspect-[1/5] min-h-[90px] max-h-[180px]
                         group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[240px] z-10`}
                         style={getIconBarStyle()}
@@ -223,7 +224,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     <div className="relative w-full px-6">
                         <div className="relative w-full aspect-[16/9] mx-auto">
                             {project.videoUrl ? renderVideoPlayer() : (
-                                <div 
+                                <div
                                     className="absolute inset-0 rounded-lg overflow-hidden bg-black cursor-pointer"
                                     onClick={handleProjectClick}
                                 >
@@ -254,7 +255,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         <div className="flex-1 max-w-[600px] xl:max-w-[650px] relative">
                             <div className="relative w-full aspect-[16/9]">
                                 {project.videoUrl ? renderVideoPlayer() : (
-                                    <div 
+                                    <div
                                         className="absolute inset-0 rounded-lg overflow-hidden bg-black cursor-pointer"
                                         onClick={handleProjectClick}
                                     >
@@ -276,10 +277,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                             </div>
 
                             {/* Icons Sidebar for horizontal videos */}
-                            <div 
+                            <div
                                 className={`absolute ${shouldTextBeOnLeft ? 'left-0 -translate-x-1/2' : 'right-0 translate-x-1/2'
-                                } ${shouldTextBeOnLeft ? 'top-[15%]' : 'bottom-[15%]'
-                                } w-[5%] min-w-[30px] max-w-[40px] ${getIconBarClass()} rounded-full flex flex-col items-center justify-center gap-[8%] bg-opacity-90
+                                    } ${shouldTextBeOnLeft ? 'top-[15%]' : 'bottom-[15%]'
+                                    } w-[5%] min-w-[30px] max-w-[40px] ${getIconBarClass()} rounded-full flex flex-col items-center justify-center gap-[8%] bg-opacity-90
                                 transition-all duration-500 ease-out aspect-[1/5] min-h-[90px] max-h-[160px]
                                 group-hover:aspect-[1/6] group-hover:min-h-[120px] group-hover:max-h-[200px] z-10`}
                                 style={getIconBarStyle()}
@@ -303,23 +304,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                                     <h3 className="text-2xl lg:text-3xl xl:text-6xl text-white  leading-tight font-new-black-medium flex-1">
                                         {project.name}
                                     </h3>
-                                    <svg
-                                        width="32"
-                                        height="32"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
+                                    <ViewProjectButton
                                         onClick={handleProjectClick}
-                                        className="flex-shrink-0 w-6 h-6 lg:w-8 lg:h-8 xl:w-10 xl:h-10 transition-transform duration-300 ease-out hover:scale-125 cursor-pointer mt-1"
-                                    >
-                                        <path
-                                            d="M15 3H21M21 3V9M21 3L14 10"
-                                            stroke="white"
-                                            strokeWidth="1.5"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                    </svg>
+                                        size="md"
+                                        className="flex-shrink-0 mt-1"
+                                    />
                                 </div>
                                 <div className="space-y-3">
                                     <p className="text-gray-400 text-sm lg:text-base text-white">
@@ -378,24 +367,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                                     )} */}
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 md:gap-2 lg:gap-3 xl:gap-4 ml-4">
-                                <svg
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
+                            <div className="flex items-center ml-4">
+                                <ViewProjectButton
                                     onClick={handleProjectClick}
-                                    className="sm:w-[16px] sm:h-[16px] md:w-[14px] md:h-[14px] lg:w-6 lg:h-6 xl:w-8 xl:h-8 transition-transform duration-300 ease-out hover:scale-125 cursor-pointer"
-                                >
-                                    <path
-                                        d="M15 3H21M21 3V9M21 3L14 10"
-                                        stroke="white"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-                                </svg>
+                                    size="sm"
+                                />
                             </div>
                         </div>
                     </div>
@@ -425,31 +401,11 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                             )} */}
                         </div>
                     </div>
-                    <div className="flex items-center gap-2 md:gap-2 lg:gap-3 xl:gap-4 ml-4">
-                        <Image
-                            src="/Icons/columns.svg"
-                            alt="details"
-                            width={16}
-                            height={16}
-                            className="sm:w-[16px] sm:h-[16px] md:w-[14px] md:h-[14px] lg:w-5 lg:h-5 xl:w-6 xl:h-6"
-                        />
-                        <svg
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
+                    <div className="flex items-center ml-4">
+                        <ViewProjectButton
                             onClick={handleProjectClick}
-                            className="sm:w-[16px] sm:h-[16px] md:w-[14px] md:h-[14px] lg:w-6 lg:h-6 xl:w-8 xl:h-8 transition-transform duration-300 ease-out hover:scale-125 cursor-pointer"
-                        >
-                            <path
-                                d="M15 3H21M21 3V9M21 3L14 10"
-                                stroke="white"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
+                            size="sm"
+                        />
                     </div>
                 </div>
             )}
