@@ -13,7 +13,14 @@ console.log('📱 VerticalSlides component loaded - ready to showcase vertical v
 const VerticalSlides: React.FC<VerticalSlidesProps> = ({ slides }) => {
   console.log('📱 Vertical slides received:', slides.length, 'slides ready to rock like TikTok stars!');
 
-  if (slides.length === 0) {
+  // Filter and sort slides to handle missing ones in the middle
+  const sortedSlides = [...slides]
+    .filter(slide => slide && slide.mediaKey)
+    .sort((a, b) => a.order - b.order);
+
+  console.log('📱 Sorted and filtered vertical slides:', sortedSlides.length);
+
+  if (sortedSlides.length === 0) {
     return (
       <section className="py-16">
         <div className="max-w-[1280px] mx-auto px-4 lg:px-0">
@@ -30,7 +37,7 @@ const VerticalSlides: React.FC<VerticalSlidesProps> = ({ slides }) => {
       <div className="max-w-[1280px] mx-auto px-4 lg:px-0">
         {/* Vertical slides - 9:16 mobile video format */}
         <div className="space-y-20">
-          {slides.map((slide, index) => {
+          {sortedSlides.map((slide, index) => {
             const hasText = slide.text && slide.text.trim().length > 0;
             // Alternate text position: even index = left, odd index = right
             const isTextLeft = index % 2 === 0;

@@ -11,11 +11,13 @@ interface ImageSlidesProps {
 console.log('🖼️ ImageSlides component loaded - ready to showcase image slides like Behance!');
 
 const ImageSlides: React.FC<ImageSlidesProps> = ({ slides }) => {
-  // Filter only image slides
-  const imageSlides = slides.filter(slide => slide.type === 'image');
+  // Filter and sort slides to handle missing ones in the middle
+  const imageSlides = [...slides]
+    .filter(slide => slide && slide.type === 'image' && slide.mediaKey)
+    .sort((a, b) => a.order - b.order);
 
   console.log('🖼️ Image slides found:', imageSlides.length);
-  
+
   // Preload all images on mount to keep them in memory
   useEffect(() => {
     console.log('🎨 Preloading all slide images to keep in memory');

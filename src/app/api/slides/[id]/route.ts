@@ -4,11 +4,11 @@ import { getRequestContext } from '@cloudflare/next-on-pages';
 import { SlideDB, dbSlideToSlide } from '@/lib/db-utils';
 import { uploadMedia, deleteMedia } from '@/lib/media';
 import { getSlideTypeFromFile } from '@/lib/file-utils';
-import { 
-  CloudflareEnv, 
-  APIResponse, 
+import {
+  CloudflareEnv,
+  APIResponse,
   ProjectSlide,
-  SlideType 
+  SlideType
 } from '@/lib/types';
 
 export const runtime = 'edge';
@@ -22,7 +22,7 @@ export async function GET(
 ) {
   const { id } = await params;
   console.log('🔍 GET /api/slides/[id] - fetching slide:', id);
-  
+
   try {
     // Get Cloudflare bindings from request context
     const env = getRequestContext().env as CloudflareEnv;
@@ -56,16 +56,16 @@ export async function PUT(
 ) {
   const { id } = await params;
   console.log('✏️ PUT /api/slides/[id] - updating slide:', id);
-  
+
   try {
     // Get Cloudflare bindings from request context
-    const env = process.env as unknown as CloudflareEnv;
+    const env = getRequestContext().env as CloudflareEnv;
     if (!env.DB || !env.R2) {
       throw new Error('Database or R2 storage not available');
     }
 
     const formData = await request.formData();
-    
+
     // Extract form data
     const orderString = formData.get('order') as string || undefined;
     const slideType = formData.get('type') as SlideType || undefined;
@@ -93,7 +93,7 @@ export async function PUT(
 
     if (mediaFile && mediaFile.size > 0) {
       console.log('📁 Uploading new media file:', mediaFile.name);
-      
+
       // Get current slide to delete old media
       try {
         const currentSlide = await slideDB.getById(id);
@@ -157,10 +157,10 @@ export async function DELETE(
 ) {
   const { id } = await params;
   console.log('🗑️ DELETE /api/slides/[id] - deleting slide:', id);
-  
+
   try {
     // Get Cloudflare bindings from request context
-    const env = process.env as unknown as CloudflareEnv;
+    const env = getRequestContext().env as CloudflareEnv;
     if (!env.DB || !env.R2) {
       throw new Error('Database or R2 storage not available');
     }

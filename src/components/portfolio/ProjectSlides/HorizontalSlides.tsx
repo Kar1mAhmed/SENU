@@ -11,8 +11,10 @@ interface HorizontalSlidesProps {
 console.log('🎥 HorizontalSlides component loaded - ready to showcase horizontal videos in style!');
 
 const HorizontalSlides: React.FC<HorizontalSlidesProps> = ({ slides }) => {
-  // Filter only horizontal slides
-  const horizontalSlides = slides.filter(slide => slide.type === 'horizontal');
+  // Filter and sort slides to handle missing ones in the middle
+  const horizontalSlides = [...slides]
+    .filter(slide => slide && slide.type === 'horizontal' && slide.mediaKey)
+    .sort((a, b) => a.order - b.order);
 
   console.log('🎥 Horizontal slides found:', horizontalSlides.length);
 
