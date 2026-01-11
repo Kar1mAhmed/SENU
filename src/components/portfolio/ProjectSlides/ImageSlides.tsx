@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { ProjectSlide } from '@/lib/types';
 import { keyToUrl } from '@/lib/media';
@@ -11,6 +11,9 @@ interface ImageSlidesProps {
 console.log('🖼️ ImageSlides component loaded - ready to showcase image slides like Behance!');
 
 const ImageSlides: React.FC<ImageSlidesProps> = ({ slides }) => {
+  // Track slides with broken/missing images
+  const [brokenImages, setBrokenImages] = useState<Set<string>>(new Set());
+
   // Filter and sort slides to handle missing ones in the middle
   const imageSlides = [...slides]
     .filter(slide => slide && slide.type === 'image' && slide.mediaKey)
@@ -18,16 +21,26 @@ const ImageSlides: React.FC<ImageSlidesProps> = ({ slides }) => {
 
   console.log('🖼️ Image slides found:', imageSlides.length);
 
-  // Preload all images on mount to keep them in memory
+  // Handle image load error - hide broken images
+  const handleImageError = useCallback((slideId: string) => {
+    console.warn('⚠️ Image failed to load for slide:', slideId);
+    setBrokenImages(prev => new Set(prev).add(slideId));
+  }, []);
+
+  // Filter out broken images from display
+  const validImageSlides = imageSlides.filter(slide => !brokenImages.has(slide.id));
+
+  // Preload all images on mount to detect broken ones early
   useEffect(() => {
-    console.log('🎨 Preloading all slide images to keep in memory');
+    console.log('🎨 Preloading all slide images to detect broken ones');
     imageSlides.forEach((slide) => {
       const img = new window.Image();
+      img.onerror = () => handleImageError(slide.id);
       img.src = keyToUrl(slide.mediaKey) || '';
     });
-  }, [imageSlides]);
+  }, [imageSlides, handleImageError]);
 
-  if (imageSlides.length === 0) {
+  if (validImageSlides.length === 0) {
     return (
       <section className="py-16">
         <div className="max-w-[1280px] mx-auto px-4 lg:px-0">
@@ -43,7 +56,7 @@ const ImageSlides: React.FC<ImageSlidesProps> = ({ slides }) => {
     <section className="w-full">
       {/* Full-width image presentation - no gaps between images */}
       <div className="w-full">
-        {imageSlides.map((slide, index) => (
+        {validImageSlides.map((slide, index) => (
           <div key={slide.id} className="w-full block">
             <Image
               src={keyToUrl(slide.mediaKey) || ''}
@@ -55,6 +68,7 @@ const ImageSlides: React.FC<ImageSlidesProps> = ({ slides }) => {
               loading={index < 3 ? 'eager' : 'lazy'} // Load first 3 eagerly, rest lazily
               quality={95}
               unoptimized={false} // Keep optimization for better caching
+              onError={() => handleImageError(slide.id)}
             />
           </div>
         ))}

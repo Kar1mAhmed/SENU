@@ -1,5 +1,8 @@
 'use client';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useId } from 'react';
+
+// Custom event name for video coordination
+const VIDEO_PLAY_EVENT = 'senu-video-play';
 
 interface VideoPlayerProps {
   videoUrl: string;
@@ -26,6 +29,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   lazyLoad = false,
   autoGeneratePoster = true
 }) => {
+  // Generate unique ID for this video player instance
+  const playerId = useId();
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [volume, setVolume] = useState(1);
@@ -47,6 +53,34 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
+
+  // Listen for other videos playing and pause this one
+  useEffect(() => {
+    const handleOtherVideoPlay = (event: CustomEvent<{ playerId: string }>) => {
+      // If another video started playing, pause this one
+      if (event.detail.playerId !== playerId && videoRef.current && !videoRef.current.paused) {
+        console.log('🎬 Pausing video because another started playing:', playerId);
+        videoRef.current.pause();
+        setIsPlaying(false);
+      }
+    };
+
+    // Add event listener for custom video play events
+    window.addEventListener(VIDEO_PLAY_EVENT, handleOtherVideoPlay as EventListener);
+
+    return () => {
+      window.removeEventListener(VIDEO_PLAY_EVENT, handleOtherVideoPlay as EventListener);
+    };
+  }, [playerId]);
+
+  // Broadcast when this video starts playing
+  const broadcastPlay = () => {
+    console.log('🎬 Broadcasting video play event:', playerId);
+    const event = new CustomEvent(VIDEO_PLAY_EVENT, {
+      detail: { playerId }
+    });
+    window.dispatchEvent(event);
+  };
 
   useEffect(() => {
     if (isFullscreen) {
@@ -126,31 +160,31 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     const generatePoster = () => {
       try {
         const seekTime = Math.min(3, video.duration * 0.1);
-        
+
         const captureFrame = () => {
           try {
             const canvas = document.createElement('canvas');
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             const ctx = canvas.getContext('2d');
-            
+
             if (ctx && video.videoWidth > 0) {
               ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
               const posterDataUrl = canvas.toDataURL('image/jpeg', 0.8);
               setGeneratedPoster(posterDataUrl);
               video.currentTime = 0;
             }
-          } catch (error) {}
+          } catch (error) { }
         };
-        
+
         const handleSeeked = () => {
           captureFrame();
           video.removeEventListener('seeked', handleSeeked);
         };
-        
+
         video.addEventListener('seeked', handleSeeked);
         video.currentTime = seekTime;
-      } catch (error) {}
+      } catch (error) { }
     };
 
     const handleCanGenerate = () => {
@@ -170,14 +204,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
   const handleTimeUpdate = () => {
     if (!videoRef.current || isDragging) return;
-    
+
     const current = videoRef.current.currentTime;
     const total = videoRef.current.duration;
-    
+
     if (duration === 0 && !isNaN(total) && isFinite(total) && total > 0) {
       setDuration(total);
     }
-    
+
     setCurrentTime(current);
     if (total > 0) {
       setProgress((current / total) * 100);
@@ -201,6 +235,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         videoRef.current.pause();
         setIsPlaying(false);
       } else {
+        // Broadcast that this video is starting to play (pauses all others)
+        broadcastPlay();
         videoRef.current.play();
         setIsPlaying(true);
       }
@@ -240,12 +276,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
   const handleProgressBarInteraction = (clientX: number) => {
     if (!progressRef.current || !videoRef.current || !duration) return;
-    
+
     const rect = progressRef.current.getBoundingClientRect();
     const clickPosition = clientX - rect.left;
     const percentage = Math.max(0, Math.min(1, clickPosition / rect.width));
     const targetTime = percentage * duration;
-    
+
     videoRef.current.currentTime = targetTime;
     setCurrentTime(targetTime);
     setProgress(percentage * 100);
@@ -261,11 +297,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative rounded-lg overflow-hidden bg-black ${
-        isFullscreen
+      className={`relative rounded-lg overflow-hidden bg-black ${isFullscreen
           ? 'fixed inset-0 z-50 rounded-none flex items-center justify-center bg-black'
           : 'w-full h-full'
-      } ${className}`}
+        } ${className}`}
       onMouseMove={() => {
         if (isFullscreen) setShowControls(true);
       }}
@@ -276,13 +311,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
           ref={videoRef}
           src={videoUrl}
           poster={posterUrl || generatedPoster || undefined}
-          className={`${
-            isFullscreen
+          className={`${isFullscreen
               ? projectType === 'vertical'
                 ? 'h-full w-auto max-w-none object-contain'
                 : 'w-full h-full object-contain'
               : 'absolute inset-0 w-full h-full object-cover'
-          }`}
+            }`}
           muted={isMuted}
           loop
           playsInline
@@ -354,9 +388,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       )}
 
       <div
-        className={`absolute bottom-0 left-0 right-0 transition-all duration-300 pointer-events-none ${
-          showControls || !isFullscreen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full'
-        }`}
+        className={`absolute bottom-0 left-0 right-0 transition-all duration-300 pointer-events-none ${showControls || !isFullscreen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full'
+          }`}
       >
         <div className="bg-gradient-to-r from-black/70 via-black/50 to-black/70 backdrop-blur-md border-t border-white/10 px-3 py-2 pointer-events-auto">
           <div className="flex items-center gap-3">
@@ -374,7 +407,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
             </button>
 
             {/* Volume Control Group */}
-            <div 
+            <div
               className="flex items-center gap-2 group relative"
               onMouseEnter={() => setShowVolumeSlider(true)}
               onMouseLeave={() => setShowVolumeSlider(false)}
@@ -397,7 +430,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                   </svg>
                 )}
               </button>
-              
+
               {/* Volume Slider - Shows on hover */}
               <div className={`transition-all duration-200 overflow-hidden ${showVolumeSlider ? 'w-16 opacity-100' : 'w-0 opacity-0'}`}>
                 <input
@@ -433,7 +466,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
               onMouseDown={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                
+
                 setIsDragging(true);
                 handleProgressBarInteraction(e.clientX);
 
@@ -484,9 +517,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
       {isFullscreen && showProjectInfo && projectName && (
         <div
-          className={`absolute top-0 left-0 right-0 transition-all duration-300 pointer-events-none ${
-            showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
-          }`}
+          className={`absolute top-0 left-0 right-0 transition-all duration-300 pointer-events-none ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
+            }`}
         >
           <div className="bg-gradient-to-b from-black/70 via-black/40 to-transparent backdrop-blur-md p-6 pointer-events-auto">
             <div className="flex items-start justify-between">
