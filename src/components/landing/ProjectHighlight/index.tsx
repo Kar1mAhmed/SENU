@@ -14,11 +14,11 @@ const ProjectHighlight: React.FC = () => {
     // Fetch projects from backend with limit of 6 for highlights
     const { projects, loading, error } = useProjects({ 
         categoryId: activeCategoryId || undefined,
-        limit: 6 
+        limit: 12 
     });
 
     // Take only first 6 projects for highlights
-    const filteredProjects = projects.slice(0, 6);
+    const filteredProjects = projects.slice(0, 12);
 
     // Build categories array with 'All' option
     const categoryOptions = ['All', ...categories.map(cat => cat.name)];
