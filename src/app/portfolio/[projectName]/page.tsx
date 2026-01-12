@@ -63,7 +63,7 @@ const ProjectDetail: React.FC = () => {
         name: project.name,
         client: project.client || '',
         category: project.category,
-        description: project.description || `${project.name} - ${project.category} project by SENU`,
+        description: project.description || `${project.name} - ${project.category} project by Senu`,
         logo: project.clientLogo || '',
     });
     const dynamicOgImage = `${siteConfig.url}/api/og?${ogImageParams.toString()}`;
@@ -71,7 +71,7 @@ const ProjectDetail: React.FC = () => {
     // Generate structured data
     const creativeWorkSchema = generateCreativeWorkSchema({
         name: project.name,
-        description: project.description || `${project.name} - ${project.category} project by SENU`,
+        description: project.description || `${project.name} - ${project.category} project by Senu`,
         thumbnailUrl: project.thumbnailUrl,
         category: project.category,
         client: project.client
@@ -86,8 +86,8 @@ const ProjectDetail: React.FC = () => {
     return (
         <>
         <SEOHead 
-            title={`${project.name} - ${project.category} Project | SENU`}
-            description={project.description || `${project.name} - ${project.category} project by SENU creative studio`}
+            title={`${project.name} - ${project.category} Project | Senu`}
+            description={project.description || `${project.name} - ${project.category} project by Senu creative studio`}
             keywords={[project.category, project.type, 'creative project', project.client || ''].filter(Boolean)}
             ogImage={dynamicOgImage}
             canonicalUrl={`${siteConfig.url}/portfolio/${projectName}`}

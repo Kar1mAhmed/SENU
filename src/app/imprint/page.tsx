@@ -30,7 +30,7 @@ export default function ImprintPage() {
                             <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-lg p-8 space-y-4">
                                 <div>
                                     <p className="text-gray-400 text-sm mb-1">Company Name</p>
-                                    <p className="text-white text-xl">SENU Studio</p>
+                                    <p className="text-white text-xl">Senu Studio</p>
                                 </div>
                             </div>
                         </div>
@@ -180,7 +180,7 @@ export default function ImprintPage() {
                                 Image Credits
                             </h2>
                             <p className="text-gray-300 leading-relaxed">
-                                All images, graphics, and videos on this website are either created by SENU Studio
+                                All images, graphics, and videos on this website are either created by Senu Studio
                                 or used with proper licensing. If you believe any content infringes on your copyright,
                                 please contact us immediately at info@senu.studio.
                             </p>

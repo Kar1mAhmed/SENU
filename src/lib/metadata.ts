@@ -110,7 +110,7 @@ export function generateOrganizationSchema() {
         '@context': 'https://schema.org',
         '@type': ['Organization', 'CreativeWork'],
         name: siteConfig.name,
-        alternateName: 'SENU Studio',
+        alternateName: 'Senu Studio',
         url: siteConfig.url,
         logo: {
             '@type': 'ImageObject',

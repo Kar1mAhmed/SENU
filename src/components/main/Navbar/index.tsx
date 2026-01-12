@@ -120,7 +120,7 @@ const Navbar: React.FC<NavbarProps> = ({ hideOnSectionId }) => {
               </div>
               <Link href="/contact">
                 <ShapeBlur blur="80px" size={150} duration={0.4}>
-                  <Button>Get in touch</Button>
+                  <Button>Contact us</Button>
                 </ShapeBlur>
               </Link>
             </div>
@@ -172,7 +172,7 @@ const Navbar: React.FC<NavbarProps> = ({ hideOnSectionId }) => {
                 <a href="https://x.com/SenuStudio?t=aOfXFTohTylen_owLZcawQ&s=09" className="hover:text-white transition-colors" target="_blank" rel="noopener noreferrer"><SiX /></a>
               </div>
               <Link href="/contact">
-                <Button className="w-full h-[20px] p-6">Get in touch</Button>
+                <Button className="w-full h-[20px] p-6">Contact us</Button>
               </Link>
             </div>
           </div>

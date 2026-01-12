@@ -76,7 +76,7 @@ const PortfolioContent: React.FC = () => {
     return (
         <>
             <SEOHead
-                title={activeCategoryName !== 'All' ? `${activeCategoryName} Portfolio - SENU` : "Portfolio - Creative Projects & Work | SENU"}
+                title={activeCategoryName !== 'All' ? `${activeCategoryName} Portfolio - Senu` : "Portfolio - Creative Projects & Work | Senu"}
                 description="Explore our portfolio of creative projects including video editing, motion graphics, 3D animation, graphic design, social media content, and advertising campaigns."
                 keywords={['portfolio', 'creative projects', 'video portfolio', 'design work', 'motion graphics portfolio']}
                 canonicalUrl={canonicalUrl}

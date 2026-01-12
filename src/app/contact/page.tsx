@@ -8,7 +8,7 @@ import { generateMetadata as generatePageMetadata } from '@/lib/metadata';
 
 export const metadata: Metadata = generatePageMetadata({
   title: 'Contact Us - Get In Touch',
-  description: 'Contact SENU creative studio for your video editing, motion graphics, graphic design, and creative content needs. Let\'s bring your vision to life.',
+  description: 'Contact Senu creative studio for your video editing, motion graphics, graphic design, and creative content needs. Let\'s bring your vision to life.',
   path: '/contact',
   keywords: ['contact', 'get in touch', 'hire creative studio', 'video editing services', 'design inquiry']
 });

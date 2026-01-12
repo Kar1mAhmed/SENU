@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
 
     // Get project details from query params
-    const projectName = searchParams.get('name') || 'SENU Project';
+    const projectName = searchParams.get('name') || 'Senu Project';
     const clientName = searchParams.get('client') || '';
     const category = searchParams.get('category') || 'Creative Project';
     const description = searchParams.get('description') || '';

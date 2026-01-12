@@ -9,9 +9,9 @@ export const getSiteUrl = () => {
 };
 
 export const siteConfig = {
-    name: 'SENU',
-    title: 'SENU - Creative Design Studio | Video Editing, Motion Graphics & 3D modeling',
-    description: 'Award-winning creative design studio crafting stunning video content, motion graphics, 3D modeling, and graphic design. From viral social media shorts to cinematic ads - we bring your vision to life with our expert creative team.',
+    name: 'Senu',
+    title: 'Senu - Creative Design Studio | Video Editing, Motion Graphics & 3D modeling',
+    description: 'Creative design studio crafting stunning video content, motion graphics, 3D modeling, and graphic design. From viral social media shorts to cinematic ads - we bring your vision to life with our expert creative team.',
     url: getSiteUrl(),
     ogImage: '/images/og-image.jpg',
     links: {
@@ -89,7 +89,7 @@ export const siteConfig = {
     ],
     
     // Additional SEO metadata
-    author: 'SENU Creative Studio',
+    author: 'Senu Creative Studio',
     locale: 'en_US',
     alternateLocales: ['ar_EG'], // If you serve Arabic content
     

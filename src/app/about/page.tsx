@@ -11,7 +11,7 @@ import { generateMetadata as generatePageMetadata } from '@/lib/metadata';
 
 export const metadata: Metadata = generatePageMetadata({
   title: 'About Us - Creative Design Team',
-  description: 'Meet SENU, a professional creative design studio with an expert team specializing in video editing, motion graphics, 3D animation, and graphic design. Learn about our creative process and services.',
+  description: 'Meet Senu, a professional creative design studio with an expert team specializing in video editing, motion graphics, 3D animation, and graphic design. Learn about our creative process and services.',
   path: '/about',
   keywords: ['about us', 'creative team', 'design studio', 'video editing team', 'creative agency']
 });
