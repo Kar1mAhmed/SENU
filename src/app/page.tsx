@@ -29,9 +29,8 @@ export default function Home() {
       ))}
       <main>
         <Navbar />
-        <FadeIn direction="down" duration={0.8}>
-          <HeroSection />
-        </FadeIn>
+        {/* Hero renders immediately - no FadeIn to avoid delaying LCP */}
+        <HeroSection />
         <FadeIn direction="up" delay={0.2}>
           <EmailSignup />
         </FadeIn>

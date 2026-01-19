@@ -18,7 +18,7 @@ const OurClients: React.FC = () => {
     // Create the content array: logos + "Join us now" + logos (repeated for smooth infinite scroll)
     const createScrollContent = () => {
         const content = [];
-        
+
         // Add all logos
         clientLogos.forEach((logo, index) => {
             content.push({
@@ -27,19 +27,19 @@ const OurClients: React.FC = () => {
                 ...logo
             });
         });
-        
+
         // Add "Join us now" text
         content.push({
             type: 'text',
             key: 'join-text',
             text: 'Add Yours'
         });
-        
+
         return content;
     };
 
     const scrollContent = createScrollContent();
-    
+
     // Duplicate the content for seamless infinite scroll
     const infiniteContent = [...scrollContent, ...scrollContent, ...scrollContent];
 
@@ -58,7 +58,7 @@ const OurClients: React.FC = () => {
                         <div className="mt-8 relative w-full h-[90px] md:h-[142px] bg-glass-fill-clients backdrop-blur-md md:rounded-2xl overflow-hidden">
                             <div className="absolute inset-0 flex items-center">
                                 {/* Smooth infinite scroll animation */}
-                                <div 
+                                <div
                                     className="flex items-center animate-infinite-scroll"
                                     style={{
                                         animation: 'infiniteScroll 20s linear infinite',
@@ -67,20 +67,24 @@ const OurClients: React.FC = () => {
                                     {infiniteContent.map((item: any, index: number) => (
                                         <div key={`${item.key}-${index}`} className="flex-shrink-0 mx-10 flex items-center justify-center">
                                             {item.type === 'logo' ? (
-                                                <div className="w-24 h-24 flex items-center justify-center">
-                                                    <img 
-                                                        src={item.src} 
-                                                        alt={item.name} 
-                                                        className="max-h-full max-w-full object-contain transition-transform duration-300 hover:scale-110" 
+                                                <div className="w-24 h-24 flex items-center justify-center relative">
+                                                    <img
+                                                        src={item.src}
+                                                        alt={item.name}
+                                                        width={96}
+                                                        height={96}
+                                                        loading="lazy"
+                                                        decoding="async"
+                                                        className="max-h-full max-w-full object-contain transition-transform duration-300 hover:scale-110"
                                                     />
                                                 </div>
                                             ) : (
-                                                <a href="/contact"  rel="noopener noreferrer">
-                                                <div className="flex items-center justify-center px-8 py-4">
-                                                    <span className="text-white font-new-black text-4xl md:text-6xl text-yellow cursor-pointer transition-transform duration-300 hover:scale-110 font-bold whitespace-nowrap bg-yellow bg-clip-text text-transparent">
-                                                        {item.text}
-                                                    </span>
-                                                </div>
+                                                <a href="/contact" rel="noopener noreferrer">
+                                                    <div className="flex items-center justify-center px-8 py-4">
+                                                        <span className="text-white font-new-black text-4xl md:text-6xl text-yellow cursor-pointer transition-transform duration-300 hover:scale-110 font-bold whitespace-nowrap bg-yellow bg-clip-text text-transparent">
+                                                            {item.text}
+                                                        </span>
+                                                    </div>
                                                 </a>
                                             )}
                                         </div>

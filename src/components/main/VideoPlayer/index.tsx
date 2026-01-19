@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useRef, useEffect, useId } from 'react';
+import React, { useState, useRef, useEffect, useId, useCallback } from 'react';
 
 // Custom event name for video coordination
 const VIDEO_PLAY_EVENT = 'senu-video-play';
@@ -82,6 +82,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     window.dispatchEvent(event);
   };
 
+  // Auto-hide controls in fullscreen mode
   useEffect(() => {
     if (isFullscreen) {
       const resetTimeout = () => {
@@ -97,6 +98,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       };
 
       const handleMouseMove = () => resetTimeout();
+      const handleTouchStart = () => resetTimeout();
       const handleMouseLeave = () => {
         if (isPlaying) {
           setShowControls(false);
@@ -106,10 +108,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       const container = containerRef.current;
       resetTimeout();
       document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('touchstart', handleTouchStart);
       container?.addEventListener('mouseleave', handleMouseLeave);
 
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('touchstart', handleTouchStart);
         container?.removeEventListener('mouseleave', handleMouseLeave);
         if (controlsTimeoutRef.current) {
           clearTimeout(controlsTimeoutRef.current);
@@ -118,14 +122,52 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     }
   }, [isFullscreen, isPlaying]);
 
+  // Listen for fullscreen changes (cross-browser)
   useEffect(() => {
     const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      const isCurrentlyFullscreen = !!(
+        document.fullscreenElement ||
+        (document as any).webkitFullscreenElement ||
+        (document as any).mozFullScreenElement ||
+        (document as any).msFullscreenElement
+      );
+      setIsFullscreen(isCurrentlyFullscreen);
     };
+
+    // Handle iOS video native fullscreen
+    const handleVideoFullscreenChange = () => {
+      const video = videoRef.current as any;
+      if (video) {
+        const isVideoFullscreen = video.webkitDisplayingFullscreen || false;
+        setIsFullscreen(isVideoFullscreen);
+      }
+    };
+
     document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    // iOS Safari specific
+    const video = videoRef.current;
+    if (video) {
+      video.addEventListener('webkitbeginfullscreen', handleVideoFullscreenChange);
+      video.addEventListener('webkitendfullscreen', handleVideoFullscreenChange);
+    }
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+      if (video) {
+        video.removeEventListener('webkitbeginfullscreen', handleVideoFullscreenChange);
+        video.removeEventListener('webkitendfullscreen', handleVideoFullscreenChange);
+      }
+    };
   }, []);
 
+  // Lazy loading with Intersection Observer
   useEffect(() => {
     if (!lazyLoad || !containerRef.current) return;
 
@@ -151,6 +193,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     };
   }, [lazyLoad]);
 
+  // Auto-generate poster from video frame
   useEffect(() => {
     if (!autoGeneratePoster || posterUrl || !isInView || generatedPoster) return;
 
@@ -228,7 +271,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     }
   };
 
-  const togglePlayPause = (e?: React.MouseEvent) => {
+  const togglePlayPause = (e?: React.MouseEvent | React.TouchEvent) => {
     e?.stopPropagation();
     if (videoRef.current) {
       if (isPlaying) {
@@ -237,13 +280,21 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       } else {
         // Broadcast that this video is starting to play (pauses all others)
         broadcastPlay();
-        videoRef.current.play();
+        videoRef.current.play().catch((err) => {
+          console.warn('Video play failed:', err);
+          // On mobile, try playing muted if autoplay was blocked
+          if (videoRef.current) {
+            videoRef.current.muted = true;
+            setIsMuted(true);
+            videoRef.current.play().catch(() => { });
+          }
+        });
         setIsPlaying(true);
       }
     }
   };
 
-  const toggleMute = (e: React.MouseEvent) => {
+  const toggleMute = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
     if (videoRef.current) {
       videoRef.current.muted = !videoRef.current.muted;
@@ -265,16 +316,62 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     }
   };
 
-  const toggleFullscreen = (e: React.MouseEvent) => {
+  // Cross-browser fullscreen toggle with iOS Safari support
+  const toggleFullscreen = useCallback((e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
-    if (!document.fullscreenElement && containerRef.current) {
-      containerRef.current.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
-  };
 
-  const handleProgressBarInteraction = (clientX: number) => {
+    const container = containerRef.current;
+    const video = videoRef.current;
+
+    if (!container || !video) return;
+
+    // Check if we're in fullscreen (cross-browser)
+    const isCurrentlyFullscreen = !!(
+      document.fullscreenElement ||
+      (document as any).webkitFullscreenElement ||
+      (document as any).mozFullScreenElement ||
+      (document as any).msFullscreenElement
+    );
+
+    if (!isCurrentlyFullscreen) {
+      // Try to enter fullscreen
+      // For iOS Safari, we need to use the video element's webkitEnterFullscreen
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+      if (isIOS && (video as any).webkitEnterFullscreen) {
+        // iOS Safari requires using the video element directly
+        try {
+          (video as any).webkitEnterFullscreen();
+        } catch (err) {
+          console.warn('iOS fullscreen failed:', err);
+        }
+      } else if (container.requestFullscreen) {
+        container.requestFullscreen().catch((err) => {
+          console.warn('Fullscreen failed:', err);
+        });
+      } else if ((container as any).webkitRequestFullscreen) {
+        (container as any).webkitRequestFullscreen();
+      } else if ((container as any).mozRequestFullScreen) {
+        (container as any).mozRequestFullScreen();
+      } else if ((container as any).msRequestFullscreen) {
+        (container as any).msRequestFullscreen();
+      }
+    } else {
+      // Exit fullscreen
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if ((document as any).webkitExitFullscreen) {
+        (document as any).webkitExitFullscreen();
+      } else if ((document as any).mozCancelFullScreen) {
+        (document as any).mozCancelFullScreen();
+      } else if ((document as any).msExitFullscreen) {
+        (document as any).msExitFullscreen();
+      }
+    }
+  }, []);
+
+  // Handle progress bar interaction (mouse and touch)
+  const handleProgressBarInteraction = useCallback((clientX: number) => {
     if (!progressRef.current || !videoRef.current || !duration) return;
 
     const rect = progressRef.current.getBoundingClientRect();
@@ -285,7 +382,52 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     videoRef.current.currentTime = targetTime;
     setCurrentTime(targetTime);
     setProgress(percentage * 100);
-  };
+  }, [duration]);
+
+  // Touch start handler for progress bar
+  const handleProgressTouchStart = useCallback((e: React.TouchEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsDragging(true);
+
+    const touch = e.touches[0];
+    handleProgressBarInteraction(touch.clientX);
+
+    const onTouchMove = (moveEvent: TouchEvent) => {
+      const moveTouch = moveEvent.touches[0];
+      handleProgressBarInteraction(moveTouch.clientX);
+    };
+
+    const onTouchEnd = () => {
+      setIsDragging(false);
+      document.removeEventListener('touchmove', onTouchMove);
+      document.removeEventListener('touchend', onTouchEnd);
+    };
+
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
+    document.addEventListener('touchend', onTouchEnd);
+  }, [handleProgressBarInteraction]);
+
+  // Mouse down handler for progress bar
+  const handleProgressMouseDown = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsDragging(true);
+    handleProgressBarInteraction(e.clientX);
+
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      handleProgressBarInteraction(moveEvent.clientX);
+    };
+
+    const onMouseUp = () => {
+      setIsDragging(false);
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  }, [handleProgressBarInteraction]);
 
   const formatTime = (time: number) => {
     if (isNaN(time) || !isFinite(time)) return '0:00';
@@ -298,10 +440,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     <div
       ref={containerRef}
       className={`relative rounded-lg overflow-hidden bg-black ${isFullscreen
-          ? 'fixed inset-0 z-50 rounded-none flex items-center justify-center bg-black'
-          : 'w-full h-full'
+        ? 'fixed inset-0 z-50 rounded-none flex items-center justify-center bg-black'
+        : 'w-full h-full'
         } ${className}`}
       onMouseMove={() => {
+        if (isFullscreen) setShowControls(true);
+      }}
+      onTouchStart={() => {
         if (isFullscreen) setShowControls(true);
       }}
       onClick={onVideoClick}
@@ -312,15 +457,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
           src={videoUrl}
           poster={posterUrl || generatedPoster || undefined}
           className={`${isFullscreen
-              ? projectType === 'vertical'
-                ? 'h-full w-auto max-w-none object-contain'
-                : 'w-full h-full object-contain'
-              : 'absolute inset-0 w-full h-full object-cover'
+            ? projectType === 'vertical'
+              ? 'h-full w-auto max-w-none object-contain'
+              : 'w-full h-full object-contain'
+            : 'absolute inset-0 w-full h-full object-cover'
             }`}
           muted={isMuted}
           loop
           playsInline
-          preload="auto"
+          // Use 'metadata' initially for faster load, switch to more when playing
+          preload={isPlaying ? "auto" : "metadata"}
+          // iOS Safari needs this for inline playback
+          webkit-playsinline="true"
+          x5-playsinline="true"
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleLoadedMetadata}
           onDurationChange={() => {
@@ -354,8 +503,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         </div>
       )}
 
-      <div className="absolute inset-0 cursor-pointer" onClick={togglePlayPause} />
+      {/* Clickable area for play/pause */}
+      <div
+        className="absolute inset-0 cursor-pointer"
+        onClick={togglePlayPause}
+        onTouchEnd={(e) => {
+          // Prevent double-tap zoom on mobile
+          if (e.detail > 1) e.preventDefault();
+        }}
+      />
 
+      {/* Buffering indicator */}
       {isBuffering && !hasError && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/30">
           <div className="flex flex-col items-center gap-3">
@@ -365,6 +523,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         </div>
       )}
 
+      {/* Error state */}
       {hasError && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none bg-black/50">
           <div className="flex flex-col items-center gap-3 text-center px-4">
@@ -377,6 +536,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         </div>
       )}
 
+      {/* Play button overlay when paused */}
       {!isPlaying && !isBuffering && !hasError && isVideoLoaded && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className={`${projectType === 'vertical' ? 'w-12 h-12' : 'w-16 h-16'} bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300`}>
@@ -387,13 +547,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         </div>
       )}
 
+      {/* Controls bar */}
       <div
         className={`absolute bottom-0 left-0 right-0 transition-all duration-300 pointer-events-none ${showControls || !isFullscreen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full'
           }`}
       >
         <div className="bg-gradient-to-r from-black/70 via-black/50 to-black/70 backdrop-blur-md border-t border-white/10 px-3 py-2 pointer-events-auto">
           <div className="flex items-center gap-3">
-            <button onClick={togglePlayPause} className="text-white hover:text-blue-400 transition-colors p-1 flex-shrink-0">
+            {/* Play/Pause button */}
+            <button
+              onClick={togglePlayPause}
+              onTouchEnd={(e) => { e.preventDefault(); togglePlayPause(e); }}
+              className="text-white hover:text-blue-400 transition-colors p-1 flex-shrink-0 touch-manipulation"
+            >
               {isPlaying ? (
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <rect x="6" y="4" width="4" height="16" fill="currentColor" />
@@ -412,7 +578,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
               onMouseEnter={() => setShowVolumeSlider(true)}
               onMouseLeave={() => setShowVolumeSlider(false)}
             >
-              <button onClick={toggleMute} className="text-white hover:text-blue-400 transition-colors p-1 flex-shrink-0">
+              <button
+                onClick={toggleMute}
+                onTouchEnd={(e) => { e.preventDefault(); toggleMute(e); }}
+                className="text-white hover:text-blue-400 transition-colors p-1 flex-shrink-0 touch-manipulation"
+              >
                 {isMuted || volume === 0 ? (
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                     <path d="M11 5L6 9H2V15H6L11 19V5Z" stroke="currentColor" strokeWidth="2" fill="none" />
@@ -431,8 +601,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 )}
               </button>
 
-              {/* Volume Slider - Shows on hover */}
-              <div className={`transition-all duration-200 overflow-hidden ${showVolumeSlider ? 'w-16 opacity-100' : 'w-0 opacity-0'}`}>
+              {/* Volume Slider - Shows on hover (desktop only) */}
+              <div className={`hidden sm:block transition-all duration-200 overflow-hidden ${showVolumeSlider ? 'w-16 opacity-100' : 'w-0 opacity-0'}`}>
                 <input
                   type="range"
                   min="0"
@@ -456,33 +626,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
               </div>
             </div>
 
+            {/* Time display */}
             <div className="text-white text-xs flex-shrink-0">
               {formatTime(currentTime)} / {formatTime(duration || 0)}
             </div>
 
+            {/* Progress bar with touch support */}
             <div
               ref={progressRef}
-              className="flex-1 h-1.5 bg-white/20 rounded-full cursor-pointer relative group mx-2"
-              onMouseDown={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-
-                setIsDragging(true);
-                handleProgressBarInteraction(e.clientX);
-
-                const onMouseMove = (moveEvent: MouseEvent) => {
-                  handleProgressBarInteraction(moveEvent.clientX);
-                };
-
-                const onMouseUp = () => {
-                  setIsDragging(false);
-                  document.removeEventListener('mousemove', onMouseMove);
-                  document.removeEventListener('mouseup', onMouseUp);
-                };
-
-                document.addEventListener('mousemove', onMouseMove);
-                document.addEventListener('mouseup', onMouseUp);
-              }}
+              className="flex-1 h-2 sm:h-1.5 bg-white/20 rounded-full cursor-pointer relative group mx-2 touch-manipulation"
+              onMouseDown={handleProgressMouseDown}
+              onTouchStart={handleProgressTouchStart}
               onClick={(e) => {
                 e.stopPropagation();
                 if (!isDragging) {
@@ -495,12 +649,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                 style={{ width: `${progress}%` }}
               />
               <div
-                className="absolute top-1/2 w-3 h-3 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                className="absolute top-1/2 w-4 h-4 sm:w-3 sm:h-3 bg-white rounded-full shadow-lg sm:opacity-0 sm:group-hover:opacity-100 transition-opacity pointer-events-none"
                 style={{ left: `${progress}%`, transform: 'translateX(-50%) translateY(-50%)' }}
               />
             </div>
 
-            <button onClick={toggleFullscreen} className="text-white hover:text-blue-400 transition-colors p-1 flex-shrink-0">
+            {/* Fullscreen button */}
+            <button
+              onClick={toggleFullscreen}
+              onTouchEnd={(e) => { e.preventDefault(); toggleFullscreen(e); }}
+              className="text-white hover:text-blue-400 transition-colors p-1 flex-shrink-0 touch-manipulation"
+            >
               {isFullscreen ? (
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                   <path d="M8 3V5H5V8H3V3H8ZM21 3V8H19V5H16V3H21ZM21 16V21H16V19H19V16H21ZM8 21H3V16H5V19H8V21Z" fill="currentColor" />
@@ -515,6 +674,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
         </div>
       </div>
 
+      {/* Project info overlay in fullscreen */}
       {isFullscreen && showProjectInfo && projectName && (
         <div
           className={`absolute top-0 left-0 right-0 transition-all duration-300 pointer-events-none ${showControls ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-full'
@@ -535,7 +695,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
                   </div>
                 )}
               </div>
-              <button onClick={toggleFullscreen} className="text-white hover:text-red-400 transition-colors p-2">
+              <button
+                onClick={toggleFullscreen}
+                onTouchEnd={(e) => { e.preventDefault(); toggleFullscreen(e); }}
+                className="text-white hover:text-red-400 transition-colors p-2 touch-manipulation"
+              >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" strokeWidth="2" />
                 </svg>
