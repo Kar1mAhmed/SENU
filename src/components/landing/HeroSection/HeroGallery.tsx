@@ -32,6 +32,17 @@ interface HeroGalleryProps {
 }
 
 export default function HeroGallery({ initialItems }: HeroGalleryProps) {
+    const [isMobile, setIsMobile] = React.useState<boolean | null>(null);
+
+    React.useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
+    // Perform specific optimization for mobile - only load 4 thumbnails initially if mobile
+    // Note: We still fetch 15 from API since user might resize to desktop, but we render fewer in DOM
     const { thumbnails, loading } = useThumbnails(15);
 
     // Transform thumbnails to gallery format with direct links
@@ -50,24 +61,39 @@ export default function HeroGallery({ initialItems }: HeroGalleryProps) {
         return <GallerySkeleton />;
     }
 
+    // Don't render until we know the device type to avoid double loading
+    if (isMobile === null) {
+        return <GallerySkeleton />;
+    }
+
     return (
         <>
             {/* Mobile Gallery - Simple HTML/CSS for better performance */}
-            <div className="block md:hidden h-full mt-24">
-                <SimpleGallery items={galleryItems} />
-            </div>
+            {isMobile && (
+                <div className="block md:hidden h-full mt-24">
+                    <SimpleGallery items={galleryItems} />
+                </div>
+            )}
+
             {/* Desktop Gallery - WebGL with curve */}
-            <div className="hidden md:block h-full">
-                <WebGLGallery
-                    items={galleryItems}
-                    bend={3}
-                    textColor="#ffffff"
-                    borderRadius={0.05}
-                    font="600 24px 'New Black Typeface', sans-serif"
-                    scrollSpeed={2}
-                    scrollEase={0.05}
-                />
-            </div>
+            {!isMobile && (
+                <div className="hidden md:block h-full">
+                    <WebGLGallery
+                        items={galleryItems.map(item => ({
+                            ...item,
+                            image: item.image.startsWith('https://media.senu.studio/') && !item.image.includes('/cdn-cgi/image/')
+                                ? `https://media.senu.studio/cdn-cgi/image/width=1024,quality=85,format=auto/${item.image.replace('https://media.senu.studio/', '')}`
+                                : item.image
+                        }))}
+                        bend={3}
+                        textColor="#ffffff"
+                        borderRadius={0.05}
+                        font="600 24px 'New Black Typeface', sans-serif"
+                        scrollSpeed={2}
+                        scrollEase={0.05}
+                    />
+                </div>
+            )}
         </>
     );
 }

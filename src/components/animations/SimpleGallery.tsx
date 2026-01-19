@@ -2,6 +2,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import cfImageLoader from '@/lib/imageLoader';
 
 interface GalleryItem {
   image: string;
@@ -245,19 +246,20 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
               {/* Actual image - only render if visible or priority */}
               {!imageState.error && (isVisible || isPriority) && (
                 <Image
+                  loader={cfImageLoader}
                   src={imageState.src}
                   alt={item.text}
                   fill
-                  sizes="200px"
+                  sizes="(max-width: 768px) 100vw, 200px"
                   className={`object-cover transition-opacity duration-300 ${imageState.loading ? 'opacity-0' : 'opacity-100'
                     }`}
                   draggable={false}
                   priority={isPriority}
                   loading={isPriority ? undefined : 'lazy'}
-                  quality={85}
+                  quality={75}
                   onLoad={() => handleImageLoad(key)}
                   onError={() => handleImageError(key, item.image)}
-                  unoptimized={imageState.src.includes('/api/image-proxy')} // Don't double-optimize proxy images
+                  unoptimized={false} // Ensure we try to optimize
                 />
               )}
             </div>
