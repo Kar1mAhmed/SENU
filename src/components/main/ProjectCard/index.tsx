@@ -2,6 +2,7 @@
 'use client';
 import React from 'react';
 import Image from 'next/image';
+import cfImageLoader, { getOptimizedUrl } from '@/lib/imageLoader';
 import { useRouter } from 'next/navigation';
 import Icon from '../Icon';
 import VideoPlayer from '../VideoPlayer';
@@ -64,7 +65,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
     const renderVideoPlayer = () => (
         <VideoPlayer
             videoUrl={project.videoUrl || ''}
-            posterUrl={project.thumbnailUrl}
+            posterUrl={project.thumbnailUrl ? getOptimizedUrl(project.thumbnailUrl, 1024) : undefined}
             projectName={project.name}
             projectWork={project.work}
             projectType={project.type === 'vertical' ? 'vertical' : 'horizontal'}
@@ -86,11 +87,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                     >
                         {project.thumbnailUrl ? (
                             <Image
+                                loader={cfImageLoader}
                                 src={project.thumbnailUrl}
                                 alt={project.name}
                                 fill
                                 className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                                 sizes="(max-width: 768px) 90vw, (max-width: 1024px) 450px, (max-width: 1280px) 480px, 560px"
+                                quality={80}
+                                unoptimized={false}
                             />
                         ) : (
                             <div className="w-full h-full bg-gray-800 flex items-center justify-center">
@@ -156,11 +160,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                         >
                             {project.thumbnailUrl ? (
                                 <Image
+                                    loader={cfImageLoader}
                                     src={project.thumbnailUrl}
                                     alt={project.name}
                                     fill
                                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                                     sizes="(max-width: 768px) 90vw, (max-width: 1024px) 280px, (max-width: 1280px) 300px, 320px"
+                                    quality={80}
+                                    unoptimized={false}
                                 />
                             ) : (
                                 <div className="w-full h-full bg-gray-800 flex items-center justify-center">
@@ -230,11 +237,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                                 >
                                     {project.thumbnailUrl ? (
                                         <Image
+                                            loader={cfImageLoader}
                                             src={project.thumbnailUrl}
                                             alt={project.name}
                                             fill
                                             className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                                             sizes="(max-width: 1024px) 90vw, 800px"
+                                            quality={80}
+                                            unoptimized={false}
                                         />
                                     ) : (
                                         <div className="w-full h-full bg-gray-800 flex items-center justify-center">
@@ -261,11 +271,14 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                                     >
                                         {project.thumbnailUrl ? (
                                             <Image
+                                                loader={cfImageLoader}
                                                 src={project.thumbnailUrl}
                                                 alt={project.name}
                                                 fill
                                                 className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                                                 sizes="(max-width: 1024px) 90vw, 800px"
+                                                quality={80}
+                                                unoptimized={false}
                                             />
                                         ) : (
                                             <div className="w-full h-full bg-gray-800 flex items-center justify-center">

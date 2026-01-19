@@ -498,8 +498,17 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
           onPause={() => setIsPlaying(false)}
         />
       ) : (
-        <div className="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center">
-          <div className="text-gray-500 text-sm">Loading video...</div>
+        <div className="absolute inset-0 w-full h-full bg-gray-900 flex items-center justify-center overflow-hidden">
+          {posterUrl ? (
+            <img
+              src={posterUrl}
+              alt={projectName || "Video thumbnail"}
+              className="w-full h-full object-cover opacity-60"
+              loading="lazy"
+            />
+          ) : (
+            <div className="text-gray-500 text-sm">Loading video...</div>
+          )}
         </div>
       )}
 

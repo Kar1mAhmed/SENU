@@ -9,3 +9,7 @@ export default function cfImageLoader({ src, width, quality }: { src: string; wi
     // Note: local images in public/ might need standard handling, but usually loader is used for remote
     return src;
 }
+// Helper for manual URL construction (e.g. for video posters or WebGL)
+export function getOptimizedUrl(src: string, width: number, quality: number = 75): string {
+    return cfImageLoader({ src, width, quality });
+}
