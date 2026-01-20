@@ -1,18 +1,15 @@
 'use client';
 import React from 'react';
-import { ProjectSlide, ProjectType } from '@/lib/types';
-import ImageSlides from './ImageSlides';
-import VerticalSlides from './VerticalSlides';
-import HorizontalSlides from './HorizontalSlides';
+import { ProjectSlide } from '@/lib/types';
+import SingleSlide from './SingleSlide';
 
 interface ProjectSlidesProps {
     slides: ProjectSlide[];
-    projectType: ProjectType;
 }
 
 console.log('🎯 ProjectSlides component loaded - ready to route to appropriate slide type!');
 
-const ProjectSlides: React.FC<ProjectSlidesProps> = ({ slides, projectType }) => {
+const ProjectSlides: React.FC<ProjectSlidesProps> = ({ slides }) => {
     // Early return if no slides
     if (!slides || slides.length === 0) {
         return (
@@ -26,41 +23,26 @@ const ProjectSlides: React.FC<ProjectSlidesProps> = ({ slides, projectType }) =>
         );
     }
 
-    // Route to appropriate component based on project type
-    // Wrap each component in a section with ID for navbar scroll detection
-    switch (projectType) {
-        case 'image':
-            return (
-                <section id="projectSlides">
-                    <ImageSlides slides={slides} />
-                </section>
-            );
-        
-        case 'vertical':
-            return (
-                <section id="projectSlides">
-                    <VerticalSlides slides={slides} />
-                </section>
-            );
-        
-        case 'horizontal':
-            return (
-                <section id="projectSlides">
-                    <HorizontalSlides slides={slides} />
-                </section>
-            );
-        
-        default:
-            return (
-                <section id="projectSlides" className="py-16">
-                    <div className="max-w-[1280px] mx-auto px-4 lg:px-0">
-                        <div className="text-center text-gray-400">
-                            <p>Unsupported project type: {projectType}</p>
-                        </div>
+    // Sort slides by order
+    const sortedSlides = [...slides].sort((a, b) => a.order - b.order);
+
+    return (
+        <section id="projectSlides" className="w-full pb-20">
+            <div className="flex flex-col">
+                {sortedSlides.map((slide, index) => (
+                    <div
+                        key={slide.id}
+                        className={`${slide.type === 'image'
+                            ? 'w-full'
+                            : 'max-w-[1280px] mx-auto px-4 lg:px-0 w-full py-16'
+                            }`}
+                    >
+                        <SingleSlide slide={slide} index={index} />
                     </div>
-                </section>
-            );
-    }
+                ))}
+            </div>
+        </section>
+    );
 };
 
 export default ProjectSlides;

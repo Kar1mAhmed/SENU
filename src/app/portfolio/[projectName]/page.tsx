@@ -85,37 +85,36 @@ const ProjectDetail: React.FC = () => {
 
     return (
         <>
-        <SEOHead 
-            title={`${project.name} - ${project.category} Project | Senu`}
-            description={project.description || `${project.name} - ${project.category} project by Senu creative studio`}
-            keywords={[project.category, project.type, 'creative project', project.client || ''].filter(Boolean)}
-            ogImage={dynamicOgImage}
-            canonicalUrl={`${siteConfig.url}/portfolio/${projectName}`}
-        />
-        <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(creativeWorkSchema) }}
-        />
-        <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-        />
-        <Navbar hideOnSectionId="projectSlides" />
-        <div className="min-h-screen  text-white mt-24">
-            {/* Hero Section */}
-            <ProjectHero project={project} />
-
-            {/* Project Information Section */}
-            <ProjectInfo extraFields={projectWithSlides.extraFields} />
-
-            {/* Slides Section */}
-            <ProjectSlides 
-                slides={projectWithSlides.slides} 
-                projectType={project.type} 
+            <SEOHead
+                title={`${project.name} - ${project.category} Project | Senu`}
+                description={project.description || `${project.name} - ${project.category} project by Senu creative studio`}
+                keywords={[project.category, project.type, 'creative project', project.client || ''].filter(Boolean)}
+                ogImage={dynamicOgImage}
+                canonicalUrl={`${siteConfig.url}/portfolio/${projectName}`}
             />
-        </div>
-        <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]"/>
-        <Footer />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(creativeWorkSchema) }}
+            />
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+            />
+            <Navbar hideOnSectionId="projectSlides" />
+            <div className="min-h-screen  text-white mt-24">
+                {/* Hero Section */}
+                <ProjectHero project={project} />
+
+                {/* Project Information Section */}
+                <ProjectInfo extraFields={projectWithSlides.extraFields} />
+
+                {/* Slides Section */}
+                <ProjectSlides
+                    slides={projectWithSlides.slides}
+                />
+            </div>
+            <SingleRibbon bgClass="bg-orange" iconColorClass="bg-yellow" heightClass="h-[35px] md:h-[45px]" />
+            <Footer />
         </>
     );
 };
