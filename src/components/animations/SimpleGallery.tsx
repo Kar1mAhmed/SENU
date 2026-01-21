@@ -218,7 +218,7 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
         const key = `${itemIndex}-${item.image}`;
         const imageState = imageStates[key] || { src: item.image, loading: true, error: false, retryCount: 0 };
         const isVisible = visibleImages.has(itemIndex);
-        const isPriority = itemIndex < 3; // First 3 images get priority
+        const isPriority = itemIndex < 4; // First 4 images get priority
 
         return (
           <div
@@ -227,7 +227,7 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
             className="flex-shrink-0 w-[200px] flex flex-col gap-2 cursor-pointer"
             onClick={() => handleClick(item.link)}
           >
-            <div className="relative w-[200px] h-[250px] rounded-2xl overflow-hidden bg-neutral-900">
+            <div className="relative w-[200px] h-[250px] rounded-xl overflow-hidden bg-neutral-900">
               {/* Loading shimmer */}
               {imageState.loading && (
                 <div className="absolute inset-0 bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 animate-pulse" />
@@ -250,7 +250,7 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
                   src={imageState.src}
                   alt={item.text}
                   fill
-                  sizes="(max-width: 768px) 100vw, 200px"
+                  sizes="200px"
                   className={`object-cover transition-opacity duration-300 ${imageState.loading ? 'opacity-0' : 'opacity-100'
                     }`}
                   draggable={false}

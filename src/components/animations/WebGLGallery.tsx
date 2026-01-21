@@ -156,6 +156,7 @@ interface MediaProps {
   font?: string;
   id?: string;
   onItemClick?: (id: string) => void;
+  priority?: boolean;
 }
 
 class Media {
@@ -176,6 +177,7 @@ class Media {
   font?: string;
   id?: string;
   onItemClick?: (id: string) => void;
+  priority: boolean = false;
   program!: Program;
   plane!: Mesh;
   title!: Title;
@@ -204,7 +206,8 @@ class Media {
     borderRadius = 0,
     font,
     id,
-    onItemClick
+    onItemClick,
+    priority = false
   }: MediaProps) {
     this.geometry = geometry;
     this.gl = gl;
@@ -222,6 +225,7 @@ class Media {
     this.font = font;
     this.id = id;
     this.onItemClick = onItemClick;
+    this.priority = priority;
     this.createShader();
     this.createMesh();
     this.createTitle();
@@ -288,7 +292,7 @@ class Media {
           vec2 halfRes = uPlaneSizes * 0.5;
           vec2 pos = (vUv - 0.5) * uPlaneSizes;
           float distance = roundedBoxSDF(pos, halfRes, uBorderRadius * min(uPlaneSizes.x, uPlaneSizes.y));
-          float smoothedAlpha = 1.0 - smoothstep(0.0, 2.0, distance);
+          float smoothedAlpha = 1.0 - smoothstep(0.0, 0.05, distance);
           
           gl_FragColor = vec4(image.rgb, image.a * smoothedAlpha);
         }
@@ -310,6 +314,9 @@ class Media {
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.decoding = 'async';
+      if (this.priority && attempt === 0) {
+        (img as any).fetchPriority = 'high';
+      }
 
       const maxRetries = 3;
       const timeout = 8000; // 8 seconds
@@ -671,7 +678,8 @@ class App {
         borderRadius,
         font,
         id: data.id,
-        onItemClick: this.onItemClick
+        onItemClick: this.onItemClick,
+        priority: (data as any).isPriority || index < 4
       });
     });
   }

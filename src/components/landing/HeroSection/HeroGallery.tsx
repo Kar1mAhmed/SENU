@@ -2,12 +2,14 @@
 import React from 'react';
 import WebGLGallery from '@/components/animations/WebGLGallery';
 import SimpleGallery from '@/components/animations/SimpleGallery';
+import Head from 'next/head';
 import { useThumbnails } from '@/lib/hooks/useThumbnails';
 
 interface GalleryItem {
     image: string;
     text: string;
     link: string;
+    isPriority?: boolean;
 }
 
 // Skeleton loader for gallery while loading
@@ -47,12 +49,14 @@ export default function HeroGallery({ initialItems }: HeroGalleryProps) {
 
     // Transform thumbnails to gallery format with direct links
     const galleryItems: GalleryItem[] = thumbnails.length > 0
-        ? thumbnails.map(thumb => {
+        ? thumbnails.map((thumb, itemIndex) => { // Added itemIndex to map
             const urlFriendlyName = thumb.name.replace(/\s+/g, '-');
+            const isPriority = itemIndex < 4; // First 4 images get priority
             return {
                 image: thumb.thumbnailUrl,
                 text: thumb.name,
-                link: `/portfolio/${urlFriendlyName}`
+                link: `/portfolio/${urlFriendlyName}`,
+                isPriority: isPriority // Added isPriority to the returned object
             };
         })
         : initialItems || [];
@@ -68,6 +72,11 @@ export default function HeroGallery({ initialItems }: HeroGalleryProps) {
 
     return (
         <>
+            <Head>
+                <link rel="preconnect" href="https://media.senu.studio" crossOrigin="anonymous" />
+                <link rel="dns-prefetch" href="https://media.senu.studio" />
+            </Head>
+
             {/* Mobile Gallery - Simple HTML/CSS for better performance */}
             {isMobile && (
                 <div className="block md:hidden h-full mt-24">
@@ -82,12 +91,13 @@ export default function HeroGallery({ initialItems }: HeroGalleryProps) {
                         items={galleryItems.map(item => ({
                             ...item,
                             image: item.image.startsWith('https://media.senu.studio/') && !item.image.includes('/cdn-cgi/image/')
-                                ? `https://media.senu.studio/cdn-cgi/image/width=1024,quality=85,format=auto/${item.image.replace('https://media.senu.studio/', '')}`
-                                : item.image
+                                ? `https://media.senu.studio/cdn-cgi/image/width=768,quality=85,format=auto/${item.image.replace('https://media.senu.studio/', '')}`
+                                : item.image,
+                            isPriority: item.isPriority
                         }))}
                         bend={3}
                         textColor="#ffffff"
-                        borderRadius={0.05}
+                        borderRadius={0.15}
                         font="600 24px 'New Black Typeface', sans-serif"
                         scrollSpeed={2}
                         scrollEase={0.05}
