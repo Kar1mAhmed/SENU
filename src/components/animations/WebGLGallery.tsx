@@ -570,6 +570,12 @@ class App {
     this.onResize();
     this.createGeometry();
     this.createMedias(items, bend, textColor, borderRadius, font);
+
+    // Initial scroll to position first item at the left edge
+    if (this.medias[0] && this.viewport) {
+      this.scroll.target = this.scroll.current = this.viewport.width / 2 - this.medias[0].plane.scale.x / 2;
+    }
+
     this.update();
     this.addEventListeners();
   }

@@ -191,10 +191,17 @@ export default function SimpleGallery({ items }: SimpleGalleryProps) {
     };
 
     container.addEventListener('scroll', handleScroll);
-    // Start in the middle
-    container.scrollLeft = container.scrollWidth / 3;
 
-    return () => container.removeEventListener('scroll', handleScroll);
+    // Start in the middle (first item of second set at left edge)
+    // Use a small timeout to ensure layout is complete
+    const timeoutId = setTimeout(() => {
+      container.scrollLeft = container.scrollWidth / 3;
+    }, 100);
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      clearTimeout(timeoutId);
+    };
   }, [items]);
 
   return (
