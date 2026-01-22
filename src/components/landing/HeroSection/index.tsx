@@ -17,11 +17,11 @@ function GallerySkeleton({ isMobile = false }: { isMobile?: boolean }) {
     return (
       <div className="space-y-3">
         {[0, 1].map((row) => (
-          <div key={row} className="flex gap-3 overflow-hidden">
+          <div key={row} className="flex gap-3 overflow-hidden px-4">
             {[...Array(4)].map((_, i) => (
               <div
                 key={i}
-                className="flex-shrink-0 w-[140px] aspect-[3/4] rounded-xl bg-neutral-900 animate-pulse"
+                className="flex-shrink-0 w-[130px] aspect-[3/4] rounded-xl bg-neutral-900 animate-pulse"
               />
             ))}
           </div>
@@ -50,7 +50,7 @@ function GallerySkeleton({ isMobile = false }: { isMobile?: boolean }) {
  * HeroSection - Superside-style split layout
  * 
  * Desktop: Text on left (40%), Scrolling cards on right (60%)
- * Mobile: Text on top, then 2-row card grid below
+ * Mobile: Text on top, then 2-row auto-scrolling card grid below
  */
 const HeroSection = () => {
   const [isMobile, setIsMobile] = React.useState<boolean | null>(null);
@@ -85,7 +85,7 @@ const HeroSection = () => {
   }
 
   return (
-    <section className="w-full min-h-screen flex items-center px-4 lg:px-8 pt-32 md:pt-0">
+    <section className="w-full min-h-screen flex items-center px-4 lg:px-8 pt-28 md:pt-0">
       <div className="max-w-[1400px] mx-auto w-full">
         {/* Desktop Layout: Split view */}
         <div className="hidden md:flex md:flex-row gap-8 lg:gap-12 items-center">
@@ -95,7 +95,7 @@ const HeroSection = () => {
           </div>
 
           {/* Right side: Scrolling card columns */}
-          <div className="w-full md:w-[55%] lg:w-[60%] h-[600px] lg:h-[700px]">
+          <div className="w-full md:w-[55%] lg:w-[60%] h-[550px] lg:h-[650px]">
             {loading && galleryItems.length === 0 ? (
               <GallerySkeleton />
             ) : (
@@ -104,13 +104,15 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Mobile Layout: Stacked view */}
-        <div className="flex flex-col md:hidden gap-8">
-          {/* Text content */}
-          <HeroText />
+        {/* Mobile Layout: Stacked view with margin */}
+        <div className="flex flex-col md:hidden gap-6">
+          {/* Text content with padding */}
+          <div className="px-2">
+            <HeroText />
+          </div>
 
-          {/* Two-row card grid */}
-          <div className="w-full -mx-4 px-4">
+          {/* Two-row auto-scrolling card grid - full width for scroll effect */}
+          <div className="w-full -mx-4">
             {loading && galleryItems.length === 0 ? (
               <GallerySkeleton isMobile />
             ) : (

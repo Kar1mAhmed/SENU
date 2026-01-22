@@ -38,10 +38,10 @@ export default function Home() {
           <Ribbon />
         </FadeIn>
         <FadeIn direction="up" delay={0.2}>
-          <WhatWeDo />
+          <OurClients />
         </FadeIn>
         <FadeIn direction="up" delay={0.2}>
-          <OurClients />
+          <WhatWeDo />
         </FadeIn>
         <FadeIn direction="up" delay={0.2}>
           <ProjectHighlight />
