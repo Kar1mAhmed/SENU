@@ -47,11 +47,11 @@ export default function HeroText() {
                 We're a creative team specializing in video editing, motion graphics, and graphic design—bringing your vision to life.
             </p>
 
-            {/* Contact Us Button - centered on desktop */}
-            <div className="mt-6 md:mt-8 flex justify-center">
+            {/* Contact Us Button - LEFT aligned on desktop, bigger */}
+            <div className="mt-6 md:mt-8 flex justify-center md:justify-start">
                 <Link
                     href="/contact"
-                    className="bg-blue text-white font-alexandria rounded-full px-6 md:px-8 py-2.5 md:py-3 text-xs md:text-sm font-semibold tracking-widest hover:bg-blue/90 transition-colors duration-300 inline-flex items-center justify-center"
+                    className="bg-blue text-white font-alexandria rounded-full px-8 md:px-10 py-3 md:py-4 text-sm md:text-base font-semibold tracking-widest hover:bg-blue/90 transition-colors duration-300 inline-flex items-center justify-center"
                 >
                     CONTACT US
                 </Link>

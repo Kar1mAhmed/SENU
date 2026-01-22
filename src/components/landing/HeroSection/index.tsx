@@ -49,7 +49,7 @@ function GallerySkeleton({ isMobile = false }: { isMobile?: boolean }) {
 /**
  * HeroSection - Superside-style split layout
  * 
- * Desktop: Text on left (40%), Scrolling cards on right (60%)
+ * Desktop: Text on left, Scrolling cards on right (screen height)
  * Mobile: Text on top, then 2-row auto-scrolling card grid below
  */
 const HeroSection = () => {
@@ -76,8 +76,8 @@ const HeroSection = () => {
   // Don't render until we know the device type
   if (isMobile === null) {
     return (
-      <section className="w-full min-h-screen flex items-center px-4 lg:px-8 pt-32 md:pt-0">
-        <div className="max-w-[1400px] mx-auto w-full">
+      <section className="w-full h-screen flex items-center px-4 lg:px-6 xl:px-8">
+        <div className="max-w-[1600px] mx-auto w-full">
           <GallerySkeleton />
         </div>
       </section>
@@ -85,17 +85,17 @@ const HeroSection = () => {
   }
 
   return (
-    <section className="w-full min-h-screen flex items-center px-4 lg:px-8 pt-28 md:pt-0">
-      <div className="max-w-[1400px] mx-auto w-full">
-        {/* Desktop Layout: Split view */}
-        <div className="hidden md:flex md:flex-row gap-8 lg:gap-12 items-center">
-          {/* Left side: Text content */}
-          <div className="w-full md:w-[45%] lg:w-[40%] flex-shrink-0">
+    <section className="w-full h-screen flex items-center px-4 lg:px-6 xl:px-8 pt-20 md:pt-0">
+      <div className="max-w-[1600px] mx-auto w-full h-full flex items-center">
+        {/* Desktop Layout: Split view - screen height */}
+        <div className="hidden md:flex md:flex-row gap-6 lg:gap-8 xl:gap-10 items-center w-full h-[85vh]">
+          {/* Left side: Text content - reduced width on laptops */}
+          <div className="w-full md:w-[40%] lg:w-[35%] xl:w-[35%] flex-shrink-0">
             <HeroText />
           </div>
 
-          {/* Right side: Scrolling card columns */}
-          <div className="w-full md:w-[55%] lg:w-[60%] h-[550px] lg:h-[650px]">
+          {/* Right side: Scrolling card columns - fills remaining space and screen height */}
+          <div className="w-full md:w-[60%] lg:w-[65%] xl:w-[65%] h-full">
             {loading && galleryItems.length === 0 ? (
               <GallerySkeleton />
             ) : (
@@ -105,7 +105,7 @@ const HeroSection = () => {
         </div>
 
         {/* Mobile Layout: Stacked view with margin */}
-        <div className="flex flex-col md:hidden gap-6">
+        <div className="flex flex-col md:hidden gap-6 w-full">
           {/* Text content with padding */}
           <div className="px-2">
             <HeroText />
