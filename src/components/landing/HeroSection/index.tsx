@@ -76,8 +76,8 @@ const HeroSection = () => {
   // Don't render until we know the device type
   if (isMobile === null) {
     return (
-      <section className="w-full h-screen flex items-center px-4 lg:px-6 xl:px-8">
-        <div className="max-w-[1600px] mx-auto w-full">
+      <section className="w-full h-screen flex items-center pl-4 md:pl-12 lg:pl-20 xl:pl-28 pr-4 md:pr-8">
+        <div className="max-w-[1700px] w-full">
           <GallerySkeleton />
         </div>
       </section>
@@ -85,17 +85,17 @@ const HeroSection = () => {
   }
 
   return (
-    <section className="w-full h-screen flex items-center px-4 lg:px-6 xl:px-8 pt-20 md:pt-0">
-      <div className="max-w-[1600px] mx-auto w-full h-full flex items-center">
+    <section className="w-full h-screen flex items-center pl-4 md:pl-12 lg:pl-20 xl:pl-28 pr-4 md:pr-8 pt-20 md:pt-0">
+      <div className="max-w-[1700px] w-full h-full flex items-center">
         {/* Desktop Layout: Split view - screen height */}
-        <div className="hidden md:flex md:flex-row gap-10 lg:gap-14 xl:gap-16 items-center w-full h-[85vh]">
+        <div className="hidden md:flex md:flex-row gap-8 lg:gap-12 xl:gap-14 items-center w-full h-[85vh]">
           {/* Left side: Text content - reduced width on laptops */}
-          <div className="w-full md:w-[40%] lg:w-[35%] xl:w-[35%] flex-shrink-0">
+          <div className="w-full md:w-[40%] lg:w-[32%] xl:w-[28%] flex-shrink-0">
             <HeroText />
           </div>
 
           {/* Right side: Scrolling card columns - fills remaining space and screen height */}
-          <div className="w-full md:w-[60%] lg:w-[65%] xl:w-[65%] h-full">
+          <div className="w-full md:w-[60%] lg:w-[68%] xl:w-[72%] h-full">
             {loading && galleryItems.length === 0 ? (
               <GallerySkeleton />
             ) : (

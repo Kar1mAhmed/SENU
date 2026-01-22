@@ -14,7 +14,7 @@ interface MobileCardGridProps {
     items: GalleryItem[];
 }
 
-// Auto-scrolling row component with mouse drag support
+// Auto-scrolling row component with optimized performance
 function AutoScrollRow({
     items,
     direction = 'left',
@@ -24,12 +24,17 @@ function AutoScrollRow({
     direction?: 'left' | 'right';
     onCardClick: (link?: string) => void;
 }) {
-    const rowRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const innerRef = useRef<HTMLDivElement>(null);
     const [imageLoadStates, setImageLoadStates] = useState<Record<number, boolean>>({});
+
+    // Animation & Drag state
     const [isDragging, setIsDragging] = useState(false);
-    const [startX, setStartX] = useState(0);
-    const [scrollLeft, setScrollLeft] = useState(0);
+    const positionRef = useRef(0);
+    const lastTimeRef = useRef(0);
+    const animationRef = useRef<number | null>(null);
     const dragStartX = useRef(0);
+    const dragStartPos = useRef(0);
     const hasDragged = useRef(false);
 
     // Triple items for infinite scroll
@@ -39,159 +44,138 @@ function AutoScrollRow({
         setImageLoadStates(prev => ({ ...prev, [index]: true }));
     };
 
-    // Mouse/touch event handlers for drag scrolling
-    const handleMouseDown = useCallback((e: React.MouseEvent) => {
-        if (!rowRef.current) return;
+    // Touch/Mouse drag handlers
+    const handleStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
         setIsDragging(true);
-        dragStartX.current = e.pageX;
+        const x = 'touches' in e ? e.touches[0].pageX : e.pageX;
+        dragStartX.current = x;
+        dragStartPos.current = positionRef.current;
         hasDragged.current = false;
-        setStartX(e.pageX - rowRef.current.offsetLeft);
-        setScrollLeft(rowRef.current.scrollLeft);
-        rowRef.current.style.cursor = 'grabbing';
+        if (containerRef.current) containerRef.current.style.cursor = 'grabbing';
     }, []);
 
-    const handleTouchStart = useCallback((e: React.TouchEvent) => {
-        if (!rowRef.current) return;
-        setIsDragging(true);
-        dragStartX.current = e.touches[0].pageX;
-        hasDragged.current = false;
-        setStartX(e.touches[0].pageX - rowRef.current.offsetLeft);
-        setScrollLeft(rowRef.current.scrollLeft);
-    }, []);
+    const handleMove = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+        if (!isDragging) return;
+        const x = 'touches' in e ? e.touches[0].pageX : e.pageX;
+        const walk = x - dragStartX.current;
+        if (Math.abs(walk) > 5) hasDragged.current = true;
 
-    const handleMouseMove = useCallback((e: React.MouseEvent) => {
-        if (!isDragging || !rowRef.current) return;
-        e.preventDefault();
-        const x = e.pageX - rowRef.current.offsetLeft;
-        const walk = (x - startX) * 1.5;
-        if (Math.abs(e.pageX - dragStartX.current) > 5) {
-            hasDragged.current = true;
+        positionRef.current = dragStartPos.current + walk;
+        if (innerRef.current) {
+            innerRef.current.style.transform = `translateX(${positionRef.current}px)`;
         }
-        rowRef.current.scrollLeft = scrollLeft - walk;
-    }, [isDragging, startX, scrollLeft]);
-
-    const handleTouchMove = useCallback((e: React.TouchEvent) => {
-        if (!isDragging || !rowRef.current) return;
-        const x = e.touches[0].pageX - rowRef.current.offsetLeft;
-        const walk = (x - startX) * 1.5;
-        if (Math.abs(e.touches[0].pageX - dragStartX.current) > 5) {
-            hasDragged.current = true;
-        }
-        rowRef.current.scrollLeft = scrollLeft - walk;
-    }, [isDragging, startX, scrollLeft]);
+    }, [isDragging]);
 
     const handleEnd = useCallback(() => {
         setIsDragging(false);
-        if (rowRef.current) {
-            rowRef.current.style.cursor = 'grab';
-        }
+        if (containerRef.current) containerRef.current.style.cursor = 'grab';
     }, []);
 
-    const handleCardClick = useCallback((link?: string) => {
+    const handleCardClick = (link?: string) => {
         if (!hasDragged.current && link) {
             onCardClick(link);
         }
-    }, [onCardClick]);
+    };
 
-    // Auto-scroll animation
+    // Auto-scroll animation using transform
     useEffect(() => {
-        const container = rowRef.current;
-        if (!container) return;
-
-        let animationId: number;
-        let lastTime = 0;
-        const speed = direction === 'left' ? 0.5 : -0.5; // Slow auto-scroll
+        const speed = direction === 'left' ? -0.5 : 0.5;
 
         const animate = (currentTime: number) => {
-            if (!isDragging && container) {
-                if (lastTime) {
-                    const delta = currentTime - lastTime;
-                    container.scrollLeft += speed * (delta / 16); // Normalize to ~60fps
+            if (!lastTimeRef.current) lastTimeRef.current = currentTime;
+            const delta = currentTime - lastTimeRef.current;
+            lastTimeRef.current = currentTime;
 
-                    // Infinite scroll loop
-                    const scrollWidth = container.scrollWidth / 3;
-                    if (container.scrollLeft >= scrollWidth * 2) {
-                        container.scrollLeft -= scrollWidth;
-                    } else if (container.scrollLeft <= 0) {
-                        container.scrollLeft += scrollWidth;
+            if (!isDragging && innerRef.current && containerRef.current) {
+                // Apply movement
+                positionRef.current += speed * (delta / 16);
+
+                // Infinite loop logic
+                const rowWidth = innerRef.current.scrollWidth / 3;
+                if (direction === 'left') {
+                    if (positionRef.current <= -rowWidth * 2) {
+                        positionRef.current += rowWidth;
+                    }
+                } else {
+                    if (positionRef.current >= 0) {
+                        positionRef.current -= rowWidth;
                     }
                 }
-                lastTime = currentTime;
-            } else {
-                lastTime = 0;
+
+                innerRef.current.style.transform = `translateX(${positionRef.current}px)`;
             }
-            animationId = requestAnimationFrame(animate);
+
+            animationRef.current = requestAnimationFrame(animate);
         };
 
-        // Initialize scroll position to middle
-        container.scrollLeft = container.scrollWidth / 3;
-        animationId = requestAnimationFrame(animate);
+        // Initial position
+        const rowWidth = innerRef.current ? innerRef.current.scrollWidth / 3 : 0;
+        positionRef.current = direction === 'left' ? -rowWidth : -rowWidth;
 
-        return () => cancelAnimationFrame(animationId);
+        animationRef.current = requestAnimationFrame(animate);
+
+        return () => {
+            if (animationRef.current) cancelAnimationFrame(animationRef.current);
+        };
     }, [direction, isDragging, items]);
 
     return (
-        <div className="relative">
+        <div className="relative w-full overflow-hidden px-0">
             {/* Left fade gradient */}
             <div
-                className="absolute left-0 top-0 bottom-0 w-8 sm:w-12 z-10 pointer-events-none"
-                style={{ background: 'linear-gradient(to right, rgb(7, 7, 7), transparent)' }}
+                className="absolute left-0 top-0 bottom-0 w-12 z-10 pointer-events-none"
+                style={{ background: 'linear-gradient(to right, rgb(7, 7, 7) 0%, transparent 100%)' }}
             />
 
             {/* Right fade gradient */}
             <div
-                className="absolute right-0 top-0 bottom-0 w-8 sm:w-12 z-10 pointer-events-none"
-                style={{ background: 'linear-gradient(to left, rgb(7, 7, 7), transparent)' }}
+                className="absolute right-0 top-0 bottom-0 w-12 z-10 pointer-events-none"
+                style={{ background: 'linear-gradient(to left, rgb(7, 7, 7) 0%, transparent 100%)' }}
             />
 
             <div
-                ref={rowRef}
-                className="flex gap-3 overflow-x-auto scrollbar-hide cursor-grab select-none py-2"
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
+                ref={containerRef}
+                className="cursor-grab select-none py-2"
+                onMouseDown={handleStart}
+                onMouseMove={handleMove}
                 onMouseUp={handleEnd}
                 onMouseLeave={handleEnd}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
+                onTouchStart={handleStart}
+                onTouchMove={handleMove}
                 onTouchEnd={handleEnd}
-                style={{
-                    scrollbarWidth: 'none',
-                    msOverflowStyle: 'none',
-                }}
             >
-                {tripleItems.map((item, index) => {
-                    const originalIndex = index % items.length;
-                    const isLoaded = imageLoadStates[originalIndex];
+                <div
+                    ref={innerRef}
+                    className="flex gap-3 will-change-transform"
+                >
+                    {tripleItems.map((item, index) => {
+                        const originalIndex = index % items.length;
+                        const isLoaded = imageLoadStates[originalIndex];
 
-                    return (
-                        <div
-                            key={`${direction}-${index}`}
-                            className="flex-shrink-0 w-[130px] sm:w-[150px] relative aspect-[3/4] rounded-xl overflow-hidden cursor-pointer group"
-                            onClick={() => handleCardClick(item.link)}
-                        >
-                            {/* Skeleton loader */}
-                            {!isLoaded && (
-                                <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-900 animate-pulse" />
-                            )}
-
-                            <Image
-                                loader={cfImageLoader}
-                                src={item.image}
-                                alt={item.text}
-                                fill
-                                sizes="150px"
-                                className={`
-                  object-cover transition-transform duration-300
-                  group-hover:scale-105
-                  ${isLoaded ? 'opacity-100' : 'opacity-0'}
-                `}
-                                onLoad={() => handleImageLoad(originalIndex)}
-                                priority={originalIndex < 3}
-                                draggable={false}
-                            />
-                        </div>
-                    );
-                })}
+                        return (
+                            <div
+                                key={`${direction}-${index}`}
+                                className="flex-shrink-0 w-[140px] relative aspect-[3/4] rounded-xl overflow-hidden cursor-pointer active:scale-95 transition-transform duration-200"
+                                onClick={() => handleCardClick(item.link)}
+                            >
+                                {!isLoaded && (
+                                    <div className="absolute inset-0 bg-neutral-900 animate-pulse" />
+                                )}
+                                <Image
+                                    loader={cfImageLoader}
+                                    src={item.image}
+                                    alt={item.text}
+                                    fill
+                                    sizes="140px"
+                                    className={`object-cover ${isLoaded ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+                                    onLoad={() => handleImageLoad(originalIndex)}
+                                    priority={originalIndex < 4}
+                                    draggable={false}
+                                />
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );
@@ -204,14 +188,12 @@ export default function MobileCardGrid({ items }: MobileCardGridProps) {
     const row1Items = items.filter((_, i) => i % 2 === 0);
     const row2Items = items.filter((_, i) => i % 2 === 1);
 
-    const handleCardClick = (link?: string) => {
-        if (link) {
-            router.push(link);
-        }
-    };
+    const handleCardClick = useCallback((link?: string) => {
+        if (link) router.push(link);
+    }, [router]);
 
     return (
-        <div className="w-full space-y-3 px-0">
+        <div className="w-full space-y-4">
             <AutoScrollRow items={row1Items} direction="left" onCardClick={handleCardClick} />
             <AutoScrollRow items={row2Items} direction="right" onCardClick={handleCardClick} />
         </div>

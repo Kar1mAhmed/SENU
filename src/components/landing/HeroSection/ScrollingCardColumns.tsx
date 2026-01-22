@@ -20,19 +20,18 @@ function CardColumn({
     direction = 'up',
     onCardClick,
     globalScrollOffset,
-    speedMultiplier = 1,
 }: {
     items: GalleryItem[];
     direction?: 'up' | 'down';
     onCardClick: (link?: string) => void;
     globalScrollOffset: number;
-    speedMultiplier: number;
 }) {
     const columnRef = useRef<HTMLDivElement>(null);
     const [imageLoadStates, setImageLoadStates] = useState<Record<number, boolean>>({});
     const positionRef = useRef(direction === 'down' ? -33.333 : 0);
     const lastTimeRef = useRef(0);
     const animationRef = useRef<number | null>(null);
+    const [isHovered, setIsHovered] = useState(false);
 
     // Per-column drag state
     const [isDragging, setIsDragging] = useState(false);
@@ -89,6 +88,7 @@ function CardColumn({
     // Smooth animation loop
     useEffect(() => {
         const speed = direction === 'up' ? -0.012 : 0.012;
+        const speedMultiplier = isHovered ? 0.25 : 1;
 
         const animate = (currentTime: number) => {
             if (!lastTimeRef.current) lastTimeRef.current = currentTime;
@@ -131,7 +131,7 @@ function CardColumn({
                 cancelAnimationFrame(animationRef.current);
             }
         };
-    }, [direction, speedMultiplier, globalScrollOffset, isDragging, dragDelta]);
+    }, [direction, isHovered, globalScrollOffset, isDragging, dragDelta]);
 
     return (
         <div
@@ -141,7 +141,8 @@ function CardColumn({
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseLeave}
+            onMouseLeave={() => { handleMouseLeave(); setIsHovered(false); }}
+            onMouseEnter={() => setIsHovered(true)}
         >
             {tripleItems.map((item, index) => {
                 const originalIndex = index % items.length;
@@ -186,7 +187,6 @@ function CardColumn({
 export default function ScrollingCardColumns({ items }: ScrollingCardColumnsProps) {
     const router = useRouter();
     const containerRef = useRef<HTMLDivElement>(null);
-    const [isHovered, setIsHovered] = useState(false);
     const [scrollOffset, setScrollOffset] = useState(0);
 
     // Split items into 3 columns
@@ -215,15 +215,10 @@ export default function ScrollingCardColumns({ items }: ScrollingCardColumnsProp
         return () => container.removeEventListener('wheel', handleWheel);
     }, [handleWheel]);
 
-    // Speed multiplier: 1 = normal, 0.25 = slow on hover
-    const speedMultiplier = isHovered ? 0.25 : 1;
-
     return (
         <div
             ref={containerRef}
             className="relative w-full h-full overflow-hidden"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
         >
             {/* Top fade gradient */}
             <div
@@ -248,21 +243,18 @@ export default function ScrollingCardColumns({ items }: ScrollingCardColumnsProp
                     direction="up"
                     onCardClick={handleCardClick}
                     globalScrollOffset={scrollOffset}
-                    speedMultiplier={speedMultiplier}
                 />
                 <CardColumn
                     items={column2Items}
                     direction="down"
                     onCardClick={handleCardClick}
                     globalScrollOffset={scrollOffset}
-                    speedMultiplier={speedMultiplier}
                 />
                 <CardColumn
                     items={column3Items}
                     direction="up"
                     onCardClick={handleCardClick}
                     globalScrollOffset={scrollOffset}
-                    speedMultiplier={speedMultiplier}
                 />
             </div>
         </div>
