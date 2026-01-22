@@ -11,7 +11,7 @@ export default function HeroText() {
     return (
         <div className="flex flex-col text-center md:text-left">
             {/* Desktop: Single line "YOUR PROJECTS ARE", then rotating text, then "WITH US" */}
-            <div className="hidden md:block">
+            <div className="md:block">
                 <h1 className="font-new-black text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-white font-light leading-tight whitespace-nowrap">
                     YOUR PROJECTS ARE
                 </h1>
