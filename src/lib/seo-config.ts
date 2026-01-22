@@ -10,8 +10,8 @@ export const getSiteUrl = () => {
 
 export const siteConfig = {
     name: 'Senu',
-    title: 'Senu - Creative Design Studio | Video Editing, Motion Graphics & 3D modeling',
-    description: 'Creative design studio crafting stunning video content, motion graphics, 3D modeling, and graphic design. From viral social media shorts to cinematic ads - we bring your vision to life with our expert creative team.',
+    title: 'Senu - Creative Design Studio | Video Editing, Branding',
+    description: 'Creative design studio crafting stunning video content, motion graphics, branding, and socail media design. From viral social media shorts to cinematic ads.',
     url: getSiteUrl(),
     ogImage: '/images/og-image.jpg',
     links: {
