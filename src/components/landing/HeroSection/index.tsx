@@ -88,7 +88,7 @@ const HeroSection = () => {
     <section className="w-full h-screen flex items-center px-4 lg:px-6 xl:px-8 pt-20 md:pt-0">
       <div className="max-w-[1600px] mx-auto w-full h-full flex items-center">
         {/* Desktop Layout: Split view - screen height */}
-        <div className="hidden md:flex md:flex-row gap-6 lg:gap-8 xl:gap-10 items-center w-full h-[85vh]">
+        <div className="hidden md:flex md:flex-row gap-10 lg:gap-14 xl:gap-16 items-center w-full h-[85vh]">
           {/* Left side: Text content - reduced width on laptops */}
           <div className="w-full md:w-[40%] lg:w-[35%] xl:w-[35%] flex-shrink-0">
             <HeroText />

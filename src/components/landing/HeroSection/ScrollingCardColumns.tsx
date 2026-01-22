@@ -14,29 +14,31 @@ interface ScrollingCardColumnsProps {
     items: GalleryItem[];
 }
 
-// Single column with requestAnimationFrame-based smooth scroll + drag support
+// Single column with individual drag scroll support
 function CardColumn({
     items,
     direction = 'up',
     onCardClick,
-    scrollOffset,
+    globalScrollOffset,
     speedMultiplier = 1,
-    isDragging,
-    dragDelta
 }: {
     items: GalleryItem[];
     direction?: 'up' | 'down';
     onCardClick: (link?: string) => void;
-    scrollOffset: number;
+    globalScrollOffset: number;
     speedMultiplier: number;
-    isDragging: boolean;
-    dragDelta: number;
 }) {
     const columnRef = useRef<HTMLDivElement>(null);
     const [imageLoadStates, setImageLoadStates] = useState<Record<number, boolean>>({});
     const positionRef = useRef(direction === 'down' ? -33.333 : 0);
     const lastTimeRef = useRef(0);
     const animationRef = useRef<number | null>(null);
+
+    // Per-column drag state
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragDelta, setDragDelta] = useState(0);
+    const lastMouseY = useRef(0);
+    const hasDragged = useRef(false);
 
     // Triple items for seamless infinite scroll
     const tripleItems = [...items, ...items, ...items];
@@ -45,9 +47,48 @@ function CardColumn({
         setImageLoadStates(prev => ({ ...prev, [index]: true }));
     };
 
+    // Mouse drag handlers for this column only
+    const handleMouseDown = useCallback((e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsDragging(true);
+        lastMouseY.current = e.clientY;
+        hasDragged.current = false;
+    }, []);
+
+    const handleMouseMove = useCallback((e: React.MouseEvent) => {
+        if (!isDragging) return;
+        e.stopPropagation();
+        const delta = e.clientY - lastMouseY.current;
+        if (Math.abs(delta) > 3) {
+            hasDragged.current = true;
+        }
+        setDragDelta(delta);
+        lastMouseY.current = e.clientY;
+    }, [isDragging]);
+
+    const handleMouseUp = useCallback(() => {
+        setIsDragging(false);
+        setDragDelta(0);
+        setTimeout(() => {
+            hasDragged.current = false;
+        }, 100);
+    }, []);
+
+    const handleMouseLeave = useCallback(() => {
+        if (isDragging) {
+            handleMouseUp();
+        }
+    }, [isDragging, handleMouseUp]);
+
+    const handleCardClick = useCallback((link?: string) => {
+        if (!hasDragged.current && link) {
+            onCardClick(link);
+        }
+    }, [onCardClick]);
+
     // Smooth animation loop
     useEffect(() => {
-        const speed = direction === 'up' ? -0.012 : 0.012; // Base speed (very slow & smooth)
+        const speed = direction === 'up' ? -0.012 : 0.012;
 
         const animate = (currentTime: number) => {
             if (!lastTimeRef.current) lastTimeRef.current = currentTime;
@@ -56,15 +97,15 @@ function CardColumn({
 
             // When dragging, only apply drag delta, pause auto-scroll
             if (!isDragging) {
-                // Apply auto-scroll speed with multiplier (slower when hovered)
                 const adjustedSpeed = speed * speedMultiplier * (delta / 16);
                 positionRef.current += adjustedSpeed;
 
-                // Apply mouse wheel scroll offset
-                positionRef.current += scrollOffset * 0.05;
+                // Apply global wheel scroll
+                const wheelDirection = direction === 'up' ? 1 : -1;
+                positionRef.current += globalScrollOffset * 0.05 * wheelDirection;
             } else {
-                // Apply drag delta directly (convert px to % of container)
-                positionRef.current += dragDelta * 0.02;
+                // Apply per-column drag delta
+                positionRef.current += dragDelta * 0.025;
             }
 
             // Loop around for infinite scroll
@@ -90,13 +131,17 @@ function CardColumn({
                 cancelAnimationFrame(animationRef.current);
             }
         };
-    }, [direction, speedMultiplier, scrollOffset, isDragging, dragDelta]);
+    }, [direction, speedMultiplier, globalScrollOffset, isDragging, dragDelta]);
 
     return (
         <div
             ref={columnRef}
-            className="flex flex-col gap-3 lg:gap-4 will-change-transform"
+            className={`flex flex-col gap-3 lg:gap-4 will-change-transform select-none ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
             style={{ transform: `translateY(${positionRef.current}%)` }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
         >
             {tripleItems.map((item, index) => {
                 const originalIndex = index % items.length;
@@ -106,7 +151,7 @@ function CardColumn({
                     <div
                         key={`${direction}-${index}`}
                         className="relative w-full aspect-[3/4] rounded-xl lg:rounded-2xl overflow-hidden cursor-pointer group flex-shrink-0"
-                        onClick={() => onCardClick(item.link)}
+                        onClick={() => handleCardClick(item.link)}
                     >
                         {/* Skeleton loader */}
                         {!isLoaded && (
@@ -144,61 +189,22 @@ export default function ScrollingCardColumns({ items }: ScrollingCardColumnsProp
     const [isHovered, setIsHovered] = useState(false);
     const [scrollOffset, setScrollOffset] = useState(0);
 
-    // Drag state
-    const [isDragging, setIsDragging] = useState(false);
-    const [dragDelta, setDragDelta] = useState(0);
-    const lastMouseY = useRef(0);
-    const hasDragged = useRef(false);
-
     // Split items into 3 columns
     const column1Items = items.filter((_, i) => i % 3 === 0);
     const column2Items = items.filter((_, i) => i % 3 === 1);
     const column3Items = items.filter((_, i) => i % 3 === 2);
 
     const handleCardClick = useCallback((link?: string) => {
-        // Only navigate if not dragged
-        if (!hasDragged.current && link) {
+        if (link) {
             router.push(link);
         }
     }, [router]);
 
-    // Handle mouse wheel for manual scrolling
+    // Handle mouse wheel for global scrolling
     const handleWheel = useCallback((e: WheelEvent) => {
         e.preventDefault();
-        setScrollOffset(e.deltaY * 0.02);
+        setScrollOffset(e.deltaY * 0.015);
         setTimeout(() => setScrollOffset(0), 50);
-    }, []);
-
-    // Mouse drag handlers
-    const handleMouseDown = useCallback((e: React.MouseEvent) => {
-        setIsDragging(true);
-        lastMouseY.current = e.clientY;
-        hasDragged.current = false;
-        if (containerRef.current) {
-            containerRef.current.style.cursor = 'grabbing';
-        }
-    }, []);
-
-    const handleMouseMove = useCallback((e: React.MouseEvent) => {
-        if (!isDragging) return;
-        const delta = e.clientY - lastMouseY.current;
-        if (Math.abs(delta) > 3) {
-            hasDragged.current = true;
-        }
-        setDragDelta(delta);
-        lastMouseY.current = e.clientY;
-    }, [isDragging]);
-
-    const handleMouseUp = useCallback(() => {
-        setIsDragging(false);
-        setDragDelta(0);
-        if (containerRef.current) {
-            containerRef.current.style.cursor = 'grab';
-        }
-        // Reset hasDragged after a small delay to allow click to process
-        setTimeout(() => {
-            hasDragged.current = false;
-        }, 100);
     }, []);
 
     useEffect(() => {
@@ -215,12 +221,9 @@ export default function ScrollingCardColumns({ items }: ScrollingCardColumnsProp
     return (
         <div
             ref={containerRef}
-            className="relative w-full h-full overflow-hidden cursor-grab select-none"
+            className="relative w-full h-full overflow-hidden"
             onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => { setIsHovered(false); handleMouseUp(); }}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
+            onMouseLeave={() => setIsHovered(false)}
         >
             {/* Top fade gradient */}
             <div
@@ -244,28 +247,22 @@ export default function ScrollingCardColumns({ items }: ScrollingCardColumnsProp
                     items={column1Items}
                     direction="up"
                     onCardClick={handleCardClick}
-                    scrollOffset={scrollOffset}
+                    globalScrollOffset={scrollOffset}
                     speedMultiplier={speedMultiplier}
-                    isDragging={isDragging}
-                    dragDelta={dragDelta}
                 />
                 <CardColumn
                     items={column2Items}
                     direction="down"
                     onCardClick={handleCardClick}
-                    scrollOffset={-scrollOffset}
+                    globalScrollOffset={scrollOffset}
                     speedMultiplier={speedMultiplier}
-                    isDragging={isDragging}
-                    dragDelta={-dragDelta}
                 />
                 <CardColumn
                     items={column3Items}
                     direction="up"
                     onCardClick={handleCardClick}
-                    scrollOffset={scrollOffset}
+                    globalScrollOffset={scrollOffset}
                     speedMultiplier={speedMultiplier}
-                    isDragging={isDragging}
-                    dragDelta={dragDelta}
                 />
             </div>
         </div>
