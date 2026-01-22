@@ -49,7 +49,7 @@ export default function HeroText() {
 
             {/* Contact Us Button - LEFT aligned on desktop, bigger */}
             <div className="mt-6 md:mt-8 flex justify-center md:justify-start">
-                <Link
+                <Link 
                     href="/contact"
                     className="bg-blue text-white font-alexandria rounded-full px-8 md:px-10 py-3 md:py-4 text-sm md:text-base font-semibold tracking-widest hover:bg-blue/90 transition-colors duration-300 inline-flex items-center justify-center"
                 >

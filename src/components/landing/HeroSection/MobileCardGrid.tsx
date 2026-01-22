@@ -14,7 +14,7 @@ interface MobileCardGridProps {
     items: GalleryItem[];
 }
 
-// Auto-scrolling row component with optimized performance
+// Auto-scrolling row component with optimized performance and stable state
 function AutoScrollRow({
     items,
     direction = 'left',
@@ -28,14 +28,19 @@ function AutoScrollRow({
     const innerRef = useRef<HTMLDivElement>(null);
     const [imageLoadStates, setImageLoadStates] = useState<Record<number, boolean>>({});
 
-    // Animation & Drag state
-    const [isDragging, setIsDragging] = useState(false);
+    // Animation & Drag state - using Refs for everything to prevent re-render resets
     const positionRef = useRef(0);
     const lastTimeRef = useRef(0);
     const animationRef = useRef<number | null>(null);
+    const isDraggingRef = useRef(false);
     const dragStartX = useRef(0);
     const dragStartPos = useRef(0);
-    const hasDragged = useRef(false);
+    const hasDraggedRef = useRef(false);
+    const rowWidthRef = useRef(0);
+
+    // Provide some visual state for cursor/active effects if needed, 
+    // but keep it separate from the animation loop
+    const [isDraggingState, setIsDraggingState] = useState(false);
 
     // Triple items for infinite scroll
     const tripleItems = [...items, ...items, ...items];
@@ -46,33 +51,34 @@ function AutoScrollRow({
 
     // Touch/Mouse drag handlers
     const handleStart = useCallback((e: React.MouseEvent | React.TouchEvent) => {
-        setIsDragging(true);
+        isDraggingRef.current = true;
+        setIsDraggingState(true);
         const x = 'touches' in e ? e.touches[0].pageX : e.pageX;
         dragStartX.current = x;
         dragStartPos.current = positionRef.current;
-        hasDragged.current = false;
-        if (containerRef.current) containerRef.current.style.cursor = 'grabbing';
+        hasDraggedRef.current = false;
     }, []);
 
     const handleMove = useCallback((e: React.MouseEvent | React.TouchEvent) => {
-        if (!isDragging) return;
+        if (!isDraggingRef.current) return;
         const x = 'touches' in e ? e.touches[0].pageX : e.pageX;
-        const walk = x - dragStartX.current;
-        if (Math.abs(walk) > 5) hasDragged.current = true;
+        const walk = (x - dragStartX.current) * 1.2; // Slightly faster drag
+        if (Math.abs(walk) > 5) hasDraggedRef.current = true;
 
         positionRef.current = dragStartPos.current + walk;
+
         if (innerRef.current) {
             innerRef.current.style.transform = `translateX(${positionRef.current}px)`;
         }
-    }, [isDragging]);
+    }, []);
 
     const handleEnd = useCallback(() => {
-        setIsDragging(false);
-        if (containerRef.current) containerRef.current.style.cursor = 'grab';
+        isDraggingRef.current = false;
+        setIsDraggingState(false);
     }, []);
 
     const handleCardClick = (link?: string) => {
-        if (!hasDragged.current && link) {
+        if (!hasDraggedRef.current && link) {
             onCardClick(link);
         }
     };
@@ -86,41 +92,48 @@ function AutoScrollRow({
             const delta = currentTime - lastTimeRef.current;
             lastTimeRef.current = currentTime;
 
-            if (!isDragging && innerRef.current && containerRef.current) {
-                // Apply movement
-                positionRef.current += speed * (delta / 16);
-
-                // Infinite loop logic
-                const rowWidth = innerRef.current.scrollWidth / 3;
-                if (direction === 'left') {
-                    if (positionRef.current <= -rowWidth * 2) {
-                        positionRef.current += rowWidth;
-                    }
-                } else {
-                    if (positionRef.current >= 0) {
-                        positionRef.current -= rowWidth;
+            if (innerRef.current) {
+                // Initialize row width if not set
+                if (rowWidthRef.current === 0) {
+                    rowWidthRef.current = innerRef.current.scrollWidth / 3;
+                    // Initial center position if starting for the first time
+                    if (positionRef.current === 0) {
+                        positionRef.current = -rowWidthRef.current;
                     }
                 }
 
-                innerRef.current.style.transform = `translateX(${positionRef.current}px)`;
+                // Only apply auto-scroll if NOT dragging
+                if (!isDraggingRef.current) {
+                    positionRef.current += speed * (delta / 16);
+
+                    // Infinite loop logic
+                    const rowWidth = rowWidthRef.current;
+                    if (direction === 'left') {
+                        if (positionRef.current <= -rowWidth * 2) {
+                            positionRef.current += rowWidth;
+                        }
+                    } else {
+                        if (positionRef.current >= 0) {
+                            positionRef.current -= rowWidth;
+                        }
+                    }
+
+                    innerRef.current.style.transform = `translateX(${positionRef.current}px)`;
+                }
             }
 
             animationRef.current = requestAnimationFrame(animate);
         };
-
-        // Initial position
-        const rowWidth = innerRef.current ? innerRef.current.scrollWidth / 3 : 0;
-        positionRef.current = direction === 'left' ? -rowWidth : -rowWidth;
 
         animationRef.current = requestAnimationFrame(animate);
 
         return () => {
             if (animationRef.current) cancelAnimationFrame(animationRef.current);
         };
-    }, [direction, isDragging, items]);
+    }, [direction, items.length]); // Items length added as safety, but won't change normally
 
     return (
-        <div className="relative w-full overflow-hidden px-0">
+        <div className="relative w-full overflow-hidden px-0 touch-pan-y">
             {/* Left fade gradient */}
             <div
                 className="absolute left-0 top-0 bottom-0 w-12 z-10 pointer-events-none"
@@ -135,7 +148,7 @@ function AutoScrollRow({
 
             <div
                 ref={containerRef}
-                className="cursor-grab select-none py-2"
+                className={`select-none py-2 ${isDraggingState ? 'cursor-grabbing' : 'cursor-grab'}`}
                 onMouseDown={handleStart}
                 onMouseMove={handleMove}
                 onMouseUp={handleEnd}
@@ -143,6 +156,7 @@ function AutoScrollRow({
                 onTouchStart={handleStart}
                 onTouchMove={handleMove}
                 onTouchEnd={handleEnd}
+                style={{ touchAction: 'pan-y' }}
             >
                 <div
                     ref={innerRef}

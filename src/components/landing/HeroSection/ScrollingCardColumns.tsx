@@ -19,12 +19,10 @@ function CardColumn({
     items,
     direction = 'up',
     onCardClick,
-    globalScrollOffset,
 }: {
     items: GalleryItem[];
     direction?: 'up' | 'down';
     onCardClick: (link?: string) => void;
-    globalScrollOffset: number;
 }) {
     const columnRef = useRef<HTMLDivElement>(null);
     const [imageLoadStates, setImageLoadStates] = useState<Record<number, boolean>>({});
@@ -99,10 +97,6 @@ function CardColumn({
             if (!isDragging) {
                 const adjustedSpeed = speed * speedMultiplier * (delta / 16);
                 positionRef.current += adjustedSpeed;
-
-                // Apply global wheel scroll
-                const wheelDirection = direction === 'up' ? 1 : -1;
-                positionRef.current += globalScrollOffset * 0.05 * wheelDirection;
             } else {
                 // Apply per-column drag delta
                 positionRef.current += dragDelta * 0.025;
@@ -131,7 +125,7 @@ function CardColumn({
                 cancelAnimationFrame(animationRef.current);
             }
         };
-    }, [direction, isHovered, globalScrollOffset, isDragging, dragDelta]);
+    }, [direction, isHovered, isDragging, dragDelta]);
 
     return (
         <div
@@ -187,7 +181,6 @@ function CardColumn({
 export default function ScrollingCardColumns({ items }: ScrollingCardColumnsProps) {
     const router = useRouter();
     const containerRef = useRef<HTMLDivElement>(null);
-    const [scrollOffset, setScrollOffset] = useState(0);
 
     // Split items into 3 columns
     const column1Items = items.filter((_, i) => i % 3 === 0);
@@ -199,21 +192,6 @@ export default function ScrollingCardColumns({ items }: ScrollingCardColumnsProp
             router.push(link);
         }
     }, [router]);
-
-    // Handle mouse wheel for global scrolling
-    const handleWheel = useCallback((e: WheelEvent) => {
-        e.preventDefault();
-        setScrollOffset(e.deltaY * 0.015);
-        setTimeout(() => setScrollOffset(0), 50);
-    }, []);
-
-    useEffect(() => {
-        const container = containerRef.current;
-        if (!container) return;
-
-        container.addEventListener('wheel', handleWheel, { passive: false });
-        return () => container.removeEventListener('wheel', handleWheel);
-    }, [handleWheel]);
 
     return (
         <div
@@ -242,19 +220,16 @@ export default function ScrollingCardColumns({ items }: ScrollingCardColumnsProp
                     items={column1Items}
                     direction="up"
                     onCardClick={handleCardClick}
-                    globalScrollOffset={scrollOffset}
                 />
                 <CardColumn
                     items={column2Items}
                     direction="down"
                     onCardClick={handleCardClick}
-                    globalScrollOffset={scrollOffset}
                 />
                 <CardColumn
                     items={column3Items}
                     direction="up"
                     onCardClick={handleCardClick}
-                    globalScrollOffset={scrollOffset}
                 />
             </div>
         </div>
