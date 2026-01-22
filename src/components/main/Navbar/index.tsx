@@ -73,7 +73,7 @@ const Navbar: React.FC<NavbarProps> = ({ hideOnSectionId }) => {
     <>
       <header className={`fixed top-0 left-0 w-full z-40 pt-[46px] px-4 lg:px-0 transition-all duration-500 ease-in-out ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
         }`}>
-        <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-full w-full max-w-[1000px] lg:max-w-[1100px] xl:max-w-[1280px] h-[71px] mx-auto pr-4 lg:pr-[24px] py-[16px] flex items-center">
+        <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-full w-full max-w-[1000px] lg:max-w-[1100px] xl:max-w-[1280px] h-[60px] lg:h-[71px] mx-auto pr-4 lg:pr-[24px] py-[12px] lg:py-[16px] flex items-center">
           <nav className="relative flex items-center justify-between w-full">
             {/* Left: Logo */}
             <div className="flex-shrink-0">
@@ -86,25 +86,22 @@ const Navbar: React.FC<NavbarProps> = ({ hideOnSectionId }) => {
             <div className="hidden lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <div className="flex items-center gap-x-8 font-alexandria text-xs uppercase font-normal">
                 <Link href="/">
-                  <p className={`transition-all ${
-                    isActive('/') 
-                      ? 'text-yellow opacity-100' 
+                  <p className={`transition-all ${isActive('/')
+                      ? 'text-yellow opacity-100'
                       : 'text-white opacity-50 hover:opacity-100'
-                  }`}>Home</p>
+                    }`}>Home</p>
                 </Link>
                 <Link href="/portfolio">
-                  <p className={`transition-all ${
-                    isActive('/portfolio') 
-                      ? 'text-yellow opacity-100' 
+                  <p className={`transition-all ${isActive('/portfolio')
+                      ? 'text-yellow opacity-100'
                       : 'text-white opacity-50 hover:opacity-100'
-                  }`}>Portfolio</p>
+                    }`}>Portfolio</p>
                 </Link>
                 <Link href="/about">
-                  <p className={`transition-all ${
-                    isActive('/about') 
-                      ? 'text-yellow opacity-100' 
+                  <p className={`transition-all ${isActive('/about')
+                      ? 'text-yellow opacity-100'
                       : 'text-white opacity-50 hover:opacity-100'
-                  }`}>About</p>
+                    }`}>About</p>
                 </Link>
 
               </div>
@@ -141,25 +138,22 @@ const Navbar: React.FC<NavbarProps> = ({ hideOnSectionId }) => {
           <div className="bg-glass-fill backdrop-blur-md border border-white/10 rounded-3xl p-8">
             <nav className="flex flex-col items-center text-center gap-y-6">
               <Link href="/">
-                <p className={`transition-all ${
-                  isActive('/') 
-                    ? 'text-yellow opacity-100' 
+                <p className={`transition-all ${isActive('/')
+                    ? 'text-yellow opacity-100'
                     : 'text-white opacity-50 hover:opacity-100'
-                }`}>Home</p>
+                  }`}>Home</p>
               </Link>
               <Link href="/portfolio">
-                <p className={`transition-all ${
-                  isActive('/portfolio') 
-                    ? 'text-yellow opacity-100' 
+                <p className={`transition-all ${isActive('/portfolio')
+                    ? 'text-yellow opacity-100'
                     : 'text-white opacity-50 hover:opacity-100'
-                }`}>Portfolio</p>
+                  }`}>Portfolio</p>
               </Link>
               <Link href="/about">
-                <p className={`transition-all ${
-                  isActive('/about') 
-                    ? 'text-yellow opacity-100' 
+                <p className={`transition-all ${isActive('/about')
+                    ? 'text-yellow opacity-100'
                     : 'text-white opacity-50 hover:opacity-100'
-                }`}>About</p>
+                  }`}>About</p>
               </Link>
 
             </nav>

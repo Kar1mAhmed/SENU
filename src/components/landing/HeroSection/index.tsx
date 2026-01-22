@@ -81,12 +81,12 @@ const HeroSection = () => {
   }
 
   return (
-    <section className="w-full h-screen flex items-center pt-20 md:pt-0 overflow-hidden relative">
+    <section className="w-full h-screen flex items-center pt-28 md:pt-0 overflow-hidden relative">
       <div className="max-w-[1800px] mx-auto w-full h-full flex items-center px-4 md:px-10 lg:px-16 xl:px-24">
         {/* Desktop Layout - 50/50 Split Grid */}
         <div className="hidden md:grid md:grid-cols-2 gap-16 lg:gap-24 xl:gap-32 items-center w-full h-[85vh]">
-          {/* Left side: Text content - centered within its half */}
-          <div className="w-full flex justify-center z-20">
+          {/* Left side: Text content - left aligned */}
+          <div className="w-full flex justify-start z-20">
             <div className="max-w-xl w-full">
               <HeroText />
             </div>

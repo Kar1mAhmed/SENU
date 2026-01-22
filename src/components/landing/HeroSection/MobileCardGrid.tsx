@@ -83,9 +83,10 @@ function AutoScrollRow({
         }
     };
 
-    // Auto-scroll animation using transform
+    // Auto-scroll animation using transform - optimized for performance
     useEffect(() => {
         const speed = direction === 'left' ? -0.5 : 0.5;
+        let rafId: number | null = null;
 
         const animate = (currentTime: number) => {
             if (!lastTimeRef.current) lastTimeRef.current = currentTime;
@@ -104,7 +105,8 @@ function AutoScrollRow({
 
                 // Only apply auto-scroll if NOT dragging
                 if (!isDraggingRef.current) {
-                    positionRef.current += speed * (delta / 16);
+                    // Normalized to 60fps for consistent speed
+                    positionRef.current += speed * (delta / 16.67);
 
                     // Infinite loop logic
                     const rowWidth = rowWidthRef.current;
@@ -118,17 +120,18 @@ function AutoScrollRow({
                         }
                     }
 
+                    // Use transform for GPU acceleration
                     innerRef.current.style.transform = `translateX(${positionRef.current}px)`;
                 }
             }
 
-            animationRef.current = requestAnimationFrame(animate);
+            rafId = requestAnimationFrame(animate);
         };
 
-        animationRef.current = requestAnimationFrame(animate);
+        rafId = requestAnimationFrame(animate);
 
         return () => {
-            if (animationRef.current) cancelAnimationFrame(animationRef.current);
+            if (rafId !== null) cancelAnimationFrame(rafId);
         };
     }, [direction, items.length]); // Items length added as safety, but won't change normally
 
