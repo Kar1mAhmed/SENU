@@ -86,12 +86,14 @@ const HeroSection = () => {
         {/* Desktop Layout - 50/50 Split Grid */}
         <div className="hidden md:grid md:grid-cols-2 gap-16 lg:gap-24 xl:gap-32 items-center w-full h-[85vh]">
           {/* Left side: Text content - left aligned */}
-          <div className="w-full flex items-center z-20 pr-8">
-            <HeroText />
+          <div className="w-full min-w-0 flex items-center relative z-30">
+            <div className="w-full">
+              <HeroText />
+            </div>
           </div>
 
           {/* Right side: Gallery - occupies the other half */}
-          <div className="w-full h-full min-w-0 z-10 relative">
+          <div className="w-full min-w-0 h-full relative z-10">
             {loading && galleryItems.length === 0 ? (
               <GallerySkeleton />
             ) : (
