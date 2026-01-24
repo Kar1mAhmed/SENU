@@ -15,7 +15,7 @@ export default function HeroText() {
             <h1 className="font-new-black text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-white font-light leading-tight">
                 YOUR PROJECTS ARE
             </h1>
-            <h1 className="font-new-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl text-white font-light leading-tight">
+            <h1 className="font-new-black text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-white font-light leading-tight">
                 <RotatingText
                     words={['SELLING MORE', 'GROWING FASTER', 'STANDING OUT', 'WINNING HEARTS']}
                     colors={['#4FAF78', '#0055D1', '#FAC53A', '#EF4444']}
