@@ -34,7 +34,7 @@ export default function Home() {
         {/* <FadeIn direction="up" delay={0.2}>
           <EmailSignup />
         </FadeIn> */}
-        <div className="-mt-12 md:-mt-20 relative z-20">
+        <div className="-mt-16 md:-mt-24 relative z-20">
           <Ribbon />
         </div>
         <FadeIn direction="up" delay={0.2}>
