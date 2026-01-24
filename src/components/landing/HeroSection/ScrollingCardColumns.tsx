@@ -198,19 +198,19 @@ export default function ScrollingCardColumns({ items }: ScrollingCardColumnsProp
             ref={containerRef}
             className="relative w-full h-full overflow-hidden"
         >
-            {/* Top fade gradient */}
+            {/* Top fade gradient - blends with Navbar */}
             <div
-                className="absolute top-0 left-0 right-0 h-16 lg:h-24 z-10 pointer-events-none"
+                className="absolute top-0 left-0 right-0 h-24 lg:h-32 z-20 pointer-events-none"
                 style={{
-                    background: 'linear-gradient(to bottom, rgb(7, 7, 7) 0%, transparent 100%)',
+                    background: 'linear-gradient(to bottom, rgb(7, 7, 7) 10%, transparent 100%)',
                 }}
             />
 
-            {/* Bottom fade gradient */}
+            {/* Bottom fade gradient - minimal fade over ribbon */}
             <div
-                className="absolute bottom-0 left-0 right-0 h-8 lg:h-12 z-10 pointer-events-none"
+                className="absolute bottom-0 left-0 right-0 h-14 lg:h-20 z-20 pointer-events-none"
                 style={{
-                    background: 'linear-gradient(to top, rgb(7, 7, 7) 0%, transparent 100%)',
+                    background: 'linear-gradient(to top, rgb(7, 7, 7) 20%, transparent 100%)',
                 }}
             />
 
