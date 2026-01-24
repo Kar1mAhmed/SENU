@@ -208,14 +208,14 @@ export default function ScrollingCardColumns({ items }: ScrollingCardColumnsProp
 
             {/* Bottom fade gradient */}
             <div
-                className="absolute bottom-0 left-0 right-0 h-16 lg:h-24 z-10 pointer-events-none"
+                className="absolute bottom-0 left-0 right-0 h-8 lg:h-12 z-10 pointer-events-none"
                 style={{
                     background: 'linear-gradient(to top, rgb(7, 7, 7) 0%, transparent 100%)',
                 }}
             />
 
-            {/* Three column grid */}
-            <div className="grid grid-cols-3 gap-2 lg:gap-3 xl:gap-4 h-full px-1 lg:px-2">
+            {/* Three column grid - Tighter gaps on laptop (gap-2), wider on big screens (xl:gap-4) */}
+            <div className="grid grid-cols-3 gap-2 lg:gap-2 xl:gap-4 h-full px-1 lg:px-2">
                 <CardColumn
                     items={column1Items}
                     direction="up"

@@ -82,10 +82,11 @@ const HeroSection = () => {
   }
 
   return (
-    <section className="w-full h-screen flex items-center pt-28 md:pt-0 overflow-hidden relative">
+    <section className="w-full min-h-[90vh] md:min-h-screen flex items-center pt-20 pb-10 md:pt-0 md:pb-0 overflow-hidden relative">
       <div className="max-w-[1800px] mx-auto w-full h-full flex items-center px-4 md:px-10 lg:px-16 xl:px-24">
         {/* Desktop Layout - Flex based 50/50 split */}
-        <div className="hidden md:flex md:flex-row gap-16 lg:gap-24 xl:gap-32 items-center w-full h-[85vh]">
+        {/* Gap is tighter on laptop (gap-12/16) and spacious on big screens (xl:gap-32) */}
+        <div className="hidden md:flex md:flex-row gap-12 lg:gap-16 xl:gap-32 items-center w-full h-[85vh]">
           {/* Left side: Text content */}
           <div style={{ width: '50%', flexShrink: 0 }}>
             <HeroText />
