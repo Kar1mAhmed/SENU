@@ -87,14 +87,14 @@ const HeroSection = () => {
         {/* Desktop Layout - Flex based split */}
         {/* Laptop: Gap-8, 45% Text / 55% Gallery for better fit */}
         {/* Desktop: Gap-32, 50% Text / 50% Gallery for spacious look */}
-        <div className="hidden md:flex md:flex-row gap-8 lg:gap-8 xl:gap-32 items-center w-full h-full pt-24 pb-0">
+        <div className="hidden md:flex md:flex-row gap-8 lg:gap-12 xl:gap-32 items-center w-full h-full pt-28 pb-8">
           {/* Left side: Text content - vertically centered */}
-          <div className="w-[50%] lg:w-[45%] xl:w-[50%] flex-shrink-0 h-full flex items-center">
+          <div className="w-[40%] xl:w-[45%] flex items-center">
             <HeroText />
           </div>
 
-          {/* Right side: Gallery - Added padding to prevent cutoff on right */}
-          <div className="w-[50%] lg:w-[55%] xl:w-[50%] flex-shrink-0 h-full pr-4 lg:pr-10 xl:pr-0">
+          {/* Right side: Gallery - flexible width to prevent cutoff */}
+          <div className="flex-1 h-full pr-8 lg:pr-16 xl:pr-0">
             {loading && galleryItems.length === 0 ? (
               <GallerySkeleton />
             ) : (
