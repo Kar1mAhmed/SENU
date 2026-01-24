@@ -12,7 +12,7 @@ export default function HeroText() {
     return (
         <div className="flex flex-col text-center md:text-left">
             {/* Main heading - responsive sizing */}
-            <h1 className="font-new-black text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl text-white font-light leading-tight">
+            <h1 className="font-new-black text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-white font-light leading-tight">
                 YOUR PROJECTS ARE
             </h1>
             <h1 className="font-new-black text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl text-white font-light leading-tight">
@@ -22,7 +22,7 @@ export default function HeroText() {
                     duration={2500}
                 />
             </h1>
-            <h1 className="font-new-black text-3xl sm:text-4xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl text-white font-light leading-tight">
+            <h1 className="font-new-black text-2xl sm:text-3xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl text-white font-light leading-tight">
                 WITH US
             </h1>
 
