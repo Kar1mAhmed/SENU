@@ -104,7 +104,7 @@ const HeroSection = () => {
         </div>
 
         {/* Mobile Layout */}
-        <div className="flex flex-col md:hidden gap-8 w-full mt-16">
+        <div className="flex flex-col md:hidden gap-8 w-full mt-20">
           <div className="px-2">
             <HeroText />
           </div>
