@@ -82,18 +82,19 @@ const HeroSection = () => {
   }
 
   return (
-    <section className="w-full min-h-[90vh] md:min-h-screen flex items-center pt-20 pb-10 md:pt-0 md:pb-0 overflow-hidden relative">
+    <section className="w-full h-auto xl:min-h-[90vh] flex items-center pt-24 pb-12 xl:pt-0 xl:pb-0 overflow-hidden relative">
       <div className="max-w-[1800px] mx-auto w-full h-full flex items-center px-4 md:px-10 lg:px-16 xl:px-24">
-        {/* Desktop Layout - Flex based 50/50 split */}
-        {/* Gap is tighter on laptop (gap-12/16) and spacious on big screens (xl:gap-32) */}
-        <div className="hidden md:flex md:flex-row gap-12 lg:gap-16 xl:gap-32 items-center w-full h-[85vh]">
+        {/* Desktop Layout - Flex based split */}
+        {/* Laptop: Gap-8, 45% Text / 55% Gallery for better fit */}
+        {/* Desktop: Gap-32, 50% Text / 50% Gallery for spacious look */}
+        <div className="hidden md:flex md:flex-row gap-8 lg:gap-8 xl:gap-32 items-center w-full h-auto xl:h-[85vh]">
           {/* Left side: Text content */}
-          <div style={{ width: '50%', flexShrink: 0 }}>
+          <div className="w-[50%] lg:w-[45%] xl:w-[50%] flex-shrink-0">
             <HeroText />
           </div>
 
           {/* Right side: Gallery */}
-          <div style={{ width: '50%', flexShrink: 0, height: '100%' }}>
+          <div className="w-[50%] lg:w-[55%] xl:w-[50%] flex-shrink-0 h-[600px] lg:h-[700px] xl:h-full">
             {loading && galleryItems.length === 0 ? (
               <GallerySkeleton />
             ) : (
