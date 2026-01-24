@@ -93,8 +93,8 @@ const HeroSection = () => {
             <HeroText />
           </div>
 
-          {/* Right side: Gallery - full height */}
-          <div className="w-[50%] lg:w-[55%] xl:w-[50%] flex-shrink-0 h-full">
+          {/* Right side: Gallery - Added padding to prevent cutoff on right */}
+          <div className="w-[50%] lg:w-[55%] xl:w-[50%] flex-shrink-0 h-full pr-4 lg:pr-10 xl:pr-0">
             {loading && galleryItems.length === 0 ? (
               <GallerySkeleton />
             ) : (

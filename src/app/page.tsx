@@ -35,9 +35,7 @@ export default function Home() {
           <EmailSignup />
         </FadeIn> */}
         <div className="-mt-12 md:-mt-20 relative z-20">
-          <FadeIn direction="left" delay={0.1}>
-            <Ribbon />
-          </FadeIn>
+          <Ribbon />
         </div>
         <FadeIn direction="up" delay={0.2}>
           <OurClients />
