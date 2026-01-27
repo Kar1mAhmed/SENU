@@ -21,7 +21,7 @@ const serviceData = [
         title: 'Video Editing',
         projectsCount: '300+',
         description: 'Professional video production and editing to tell your story effectively.',
-        imageSrc: '/images/covers/8.webp',
+        imageSrc: '/images/covers/6.webp',
     },
     {
         title: 'Social Media Designs',
@@ -33,7 +33,7 @@ const serviceData = [
         title: 'Motion Graphics',
         projectsCount: '60+',
         description: 'Bringing animations and static designs to life with dynamic motion graphics.',
-        imageSrc: '/images/covers/6.webp',
+        imageSrc: '/images/covers/8.webp',
     },
 ];
 
