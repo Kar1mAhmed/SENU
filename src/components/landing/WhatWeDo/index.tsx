@@ -15,25 +15,25 @@ const serviceData = [
         title: 'Branding',
         projectsCount: '20+',
         description: 'Developing unique brand identities and visual strategies that resonate with your audience.',
-        imageSrc: '/images/covers/7.jpg',
+        imageSrc: '/images/covers/7.webp',
     },
     {
         title: 'Video Editing',
         projectsCount: '300+',
         description: 'Professional video production and editing to tell your story effectively.',
-        imageSrc: '/images/covers/8.jpg',
+        imageSrc: '/images/covers/8.webp',
     },
     {
         title: 'Social Media Designs',
         projectsCount: '150+',
         description: 'Creative and engaging designs tailored for all social media platforms.',
-        imageSrc: '/images/covers/5.jpg',
+        imageSrc: '/images/covers/5.webp',
     },
     {
         title: 'Motion Graphics',
         projectsCount: '60+',
         description: 'Bringing animations and static designs to life with dynamic motion graphics.',
-        imageSrc: '/images/covers/6.jpg',
+        imageSrc: '/images/covers/6.webp',
     },
 ];
 
@@ -52,7 +52,7 @@ const WhatWeDo: React.FC = () => {
 
                 {/* Static Services Grid */}
                 <div className="w-full h-full">
-                    <StaggerContainer staggerDelay={0.15} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-8 md:gap-y-8 lg:gap-8 h-full w-full max-w-[1800px] mx-auto px-4 md:px-10 lg:px-16 xl:px-24">
+                    <StaggerContainer staggerDelay={0.15} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-8 md:gap-y-0 h-full w-full">
                         {serviceData.map((data, index) => {
                             const service: Service = {
                                 id: index.toString(),
@@ -67,10 +67,10 @@ const WhatWeDo: React.FC = () => {
                                 <StaggerItem
                                     key={index}
                                     direction="up"
-                                    className="flex justify-center items-center"
+                                    className="flex justify-center items-center px-3 md:px-4 lg:px-6 w-full"
                                 >
                                     <div
-                                        className="w-full cursor-pointer"
+                                        className="w-full max-w-[260px] md:max-w-[300px] lg:max-w-[360px] cursor-pointer mt-4 md:mt-2"
                                         onClick={() => {
                                             router.push(`/portfolio`);
                                         }}
